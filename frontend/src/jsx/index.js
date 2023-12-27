@@ -112,6 +112,8 @@ import Error404 from "./pages/Error404";
 import Error500 from "./pages/Error500";
 import Error503 from "./pages/Error503";
 import { ThemeContext } from "../context/ThemeContext";
+import NewUser from "./components/Dashboard/Adduser/NewUser";
+import ProfileUser from "./components/Dashboard/ViewUser/ProfileUser";
 
 const Markup = () => {
   const { menuToggle } = useContext(ThemeContext);
@@ -123,6 +125,8 @@ const Markup = () => {
     { url: "wallet", component: MyWallet },
     { url: "liste-transactions", component: InvoicesList },
     { url: "nouvelle-transaction", component: CreateInvoices },
+    { url: "nouvel-utilisateur", component: NewUser },
+    { url: "utilisateur/:id", component: ProfileUser },
     { url: "card-center", component: CardCenter },
     { url: "transaction-details", component: TransactionDetails },
     { url: "task", component: Task },

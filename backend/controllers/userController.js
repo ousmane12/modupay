@@ -15,7 +15,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // Check if user exists
-  const userExists = await User.findOne({ email })
+  const userExists = await User.findOne({ phoneNumber })
 
   if (userExists) {
     res.status(400)
@@ -83,6 +83,14 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user)
 })
 
+// @desc    Get user data
+// @route   GET /api/users/all
+// @access  Private
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find();
+  res.status(200).json(users)
+})
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -94,4 +102,5 @@ module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getUsers,
 }

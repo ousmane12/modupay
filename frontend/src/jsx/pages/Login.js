@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
-import { loadingToggleAction,loginAction,
+import { loadingToggleAction, loginAction,
 } from '../../store/actions/AuthActions';
 
 // image
@@ -10,12 +10,24 @@ import logoWhite from "../../images/logo-whiite-text.png";
 import loginbg from "../../images/bg-login.jpg";
 
 function Login (props) {
-  const [email, setEmail] = useState('demo@example.com');
-    let errorsObj = { email: '', password: '' };
+  
+    let errorsObj = { login: '', password: '' };
     const [errors, setErrors] = useState(errorsObj);
-    const [password, setPassword] = useState('123456');
+
+    const [formData, setFormData] = useState({
+      login: '',
+      password: '',
+    })
+    const { email, password } = formData
 
     const dispatch = useDispatch();
+
+    const onChange = (e) => {
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }))
+    }  
 
     function onLogin(e) {
         e.preventDefault();
@@ -31,9 +43,9 @@ function Login (props) {
         }
         setErrors(errorObj);
         if (error) {
-			return ;
-		}
-		dispatch(loadingToggleAction(true));	
+          return ;
+        }
+		    dispatch(loadingToggleAction(true));	
         dispatch(loginAction(email, password, props.history));
     }
 
@@ -84,10 +96,12 @@ function Login (props) {
                                         <label className="mb-2 ">
                                           <strong>Login</strong>
                                         </label>
-                                        <input type="email" className="form-control"
+                                        <input type="text" className="form-control"
+                                          id='email'
+                                          name='email'
                                           value={email}
-                                           onChange={(e) => setEmail(e.target.value)}
-										   placeholder="Type Your Email Address"
+                                          onChange={onChange}
+										   placeholder="Veuillez saisir votre login"
                                         />
                                       {errors.email && <div className="text-danger fs-12">{errors.email}</div>}
                                     </div>
@@ -96,16 +110,15 @@ function Login (props) {
                                         <input
                                           type="password"
                                           className="form-control"
+                                          id='password'
+                                          name='password'
                                           value={password}
-										  placeholder="Type Your Password"
-                                            onChange={(e) =>
-                                                setPassword(e.target.value)
-                                            }
+										  placeholder="Veuillez saisir votre mot de passe"
+                                            onChange={onChange}
                                         />
                                         {errors.password && <div className="text-danger fs-12">{errors.password}</div>}
                                     </div>
                                   <div className="form-row d-flex justify-content-between mt-4 mb-2">
-                                    
                                     
                                   </div>
                                   <div className="text-center">

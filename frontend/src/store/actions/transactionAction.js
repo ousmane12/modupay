@@ -6,11 +6,11 @@ import {
     updateTransaction,
 } from '../../services/transactionService';
 import {
-    CONFIRMED_CREATE_POST_ACTION,
-    CONFIRMED_DELETE_POST_ACTION,
-    CONFIRMED_EDIT_POST_ACTION,
-    CONFIRMED_GET_POSTS,
-} from './PostTypes';
+    CONFIRMED_CREATE_TRANSACTION_ACTION,
+    CONFIRMED_DELETE_TRANSACTION_ACTION,
+    CONFIRMED_EDIT_TRANSACTION_ACTION,
+    CONFIRMED_GET_TRANSACTIONS,
+} from './TransactionTypes';
 
 export function deleteTransactionAction(postId, history) {
     return (dispatch, getState) => {
@@ -23,7 +23,7 @@ export function deleteTransactionAction(postId, history) {
 
 export function confirmedDeleteTransactionAction(postId) {
     return {
-        type: CONFIRMED_DELETE_POST_ACTION,
+        type: CONFIRMED_DELETE_TRANSACTION_ACTION,
         payload: postId,
     };
 }
@@ -34,7 +34,7 @@ export function createTransactionAction(postData, history) {
         createTransaction(postData).then((response) => {
             const singleTransaction = {
                 ...postData,
-                id: response.data.name,
+                id: response.data.amount,
             };
             dispatch(confirmedCreateTransactionAction(singleTransaction));
             history.push('/postpage');
@@ -54,30 +54,30 @@ export function getTransactionsAction() {
 export function confirmedCreateTransactionAction(singleTransaction) {
 	
     return {
-        type: CONFIRMED_CREATE_POST_ACTION,
+        type: CONFIRMED_CREATE_TRANSACTION_ACTION,
         payload: singleTransaction,
     };
 }
 
-export function confirmedGetTransactionsAction(posts) {
+export function confirmedGetTransactionsAction(transactions) {
     return {
-        type: CONFIRMED_GET_POSTS,
-        payload: posts,
+        type: CONFIRMED_GET_TRANSACTIONS,
+        payload: transactions,
     };
 }
 
-export function confirmedUpdateTransactionAction(post) {
+export function confirmedUpdateTransactionAction(transaction) {
 
     return {
-        type: CONFIRMED_EDIT_POST_ACTION,
-        payload: post,
+        type: CONFIRMED_EDIT_TRANSACTION_ACTION,
+        payload: transaction,
     };
 }
 
-export function updateTransactionAction(post, history) {
+export function updateTransactionAction(transaction, history) {
     return (dispatch, getState) => {
-        updateTransaction(post, post.id).then((reponse) => {
-            dispatch(confirmedUpdateTransactionAction(post));
+        updateTransaction(transaction, transaction.id).then((reponse) => {
+            dispatch(confirmedUpdateTransactionAction(transaction));
             history.push('/postpage');
         });
 			

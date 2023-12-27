@@ -12,7 +12,7 @@ import { Dropdown } from "react-bootstrap";
 
 const Header = ({ onNote }) => {
   const [searchBut, setSearchBut] = useState(false);	
-  var path = window.location.pathname.split("/");
+  var path = window.location?.pathname.split("/");
   var name = path[path.length - 1].split("-");
   var filterName = name.length >= 3 ? name.filter((n, i) => i > 0) : name;
   var finalName = filterName.includes("app")
@@ -100,7 +100,7 @@ const Header = ({ onNote }) => {
 					</Dropdown.Menu>
 				</Dropdown> */}
 				<li className="nav-item invoices-btn">
-					<Link to={"#"} className="btn btn-primary ms-5"><i className="far fa-file-alt fs-20 me-2"></i>Nouvelle Transaction</Link>
+					<Link to="/nouvelle-transaction" className="btn btn-primary ms-5"><i className="far fa-file-alt fs-20 me-2"></i>Nouvelle Transaction</Link>
 				</li>
 				
             </ul>

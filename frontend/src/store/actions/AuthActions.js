@@ -13,24 +13,11 @@ export const LOGIN_CONFIRMED_ACTION = '[login action] confirmed login';
 export const LOGIN_FAILED_ACTION = '[login action] failed login';
 export const LOADING_TOGGLE_ACTION = '[Loading action] toggle loading';
 export const LOGOUT_ACTION = '[Logout action] logout action';
+export const FETCH_DATA_ACTION = '[Fetch action] fetch action';
 
-export function signupAction(email, password, history) {
+export function signupAction(firstName, lastName, login, role, phoneNumber, email, password, history) {
     return (dispatch) => {
-        signUp(email, password)
-        .then((response) => {
-            saveTokenInLocalStorage(response.data);
-            runLogoutTimer(
-                dispatch,
-                response.data.expiresIn * 1000,
-                history,
-            );
-            dispatch(confirmedSignupAction(response.data));
-            history.push('/dashboard');
-        })
-        .catch((error) => {
-            const errorMessage = formatError(error.response.data);
-            dispatch(signupFailedAction(errorMessage));
-        });
+        
     };
 }
 
@@ -47,17 +34,17 @@ export function loginAction(email, password, history) {
         login(email, password)
             .then((response) => {
                 saveTokenInLocalStorage(response.data);
-                runLogoutTimer(
+                /* runLogoutTimer(
                     dispatch,
                     response.data.expiresIn * 1000,
                     history,
-                );
+                ); */
                 dispatch(loginConfirmedAction(response.data));
 				history.push('/dashboard');                
             })
             .catch((error) => {
 				console.log(error);
-                const errorMessage = formatError(error.response.data);
+                const errorMessage = formatError(error.response?.data);
                 dispatch(loginFailedAction(errorMessage));
             });
     };
@@ -80,6 +67,13 @@ export function loginConfirmedAction(data) {
 export function confirmedSignupAction(payload) {
     return {
         type: SIGNUP_CONFIRMED_ACTION,
+        payload,
+    };
+}
+
+export function fetchDataAction(payload) {
+    return {
+        type: FETCH_DATA_ACTION,
         payload,
     };
 }

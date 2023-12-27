@@ -1,37 +1,50 @@
 import axios from 'axios';
 import swal from "sweetalert";
+//import axiosInstance from '../services/AxiosInstance';
 import {
     loginConfirmedAction,
     logout,
 } from '../store/actions/AuthActions';
 
-export function signUp(email, password) {
+export function signUp(firstName, lastName, login, role, phoneNumber, email, password) {
     //axios call
     const postData = {
+        firstName, 
+        lastName, 
+        login, 
+        role, 
+        phoneNumber,
         email,
         password,
-        returnSecureToken: true,
     };
+    
+    const userDetailsString = localStorage.getItem('userDetails');
+    // Parse userDetails string to convert it into an object
+    const userDetails = JSON.parse(userDetailsString);
+    // Access the token property
+    const token = userDetails?.token;
+    console.log("My token: " + token);
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD3RPAp3nuETDn9OQimqn_YF6zdzqWITII`,
+        `http://localhost:8000/api/users`,
         postData,
+        { headers }
     );
 }
 
 export function login(email, password) {
     const postData = {
-        email,
-        password,
-        returnSecureToken: true,
+        "login": email,
+        "password": password,
     };
     return axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD3RPAp3nuETDn9OQimqn_YF6zdzqWITII`,
+        `http://localhost:8000/api/users/login`,
         postData,
     );
 }
 
 export function formatError(errorResponse) {
-    switch (errorResponse.error.message) {
+    switch (errorResponse) {
         case 'EMAIL_EXISTS':
             //return 'Email already exists';
             swal("Oops", "Email already exists", "error");
@@ -48,14 +61,14 @@ export function formatError(errorResponse) {
             return 'User Disabled';
 
         default:
-            return '';
+            return errorResponse.message;
     }
 }
 
 export function saveTokenInLocalStorage(tokenDetails) {
-    tokenDetails.expireDate = new Date(
+    /* tokenDetails.expireDate = new Date(
         new Date().getTime() + tokenDetails.expiresIn * 1000,
-    );
+    ); */
     localStorage.setItem('userDetails', JSON.stringify(tokenDetails));
 }
 

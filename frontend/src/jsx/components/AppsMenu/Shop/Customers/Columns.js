@@ -1,36 +1,50 @@
 import {format} from 'date-fns';
 import { ColumnFilter } from './ColumnFilter';
+import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import { Link } from "react-router-dom";
 export const COLUMNS = [
-	{
-		Header : 'ID',
-		Footer : 'ID',
-		accessor: 'id',
-		Filter: ColumnFilter,
-		//disableFilters: true,
-	},
 	{
 		Header : 'Nom',
 		Footer : 'Nom',
-		accessor: 'first_name',
-		Filter: ColumnFilter,
+		accessor: 'firstName',
 	},
 	{
 		Header : 'Prenom',
 		Footer : 'Prenom',
-		accessor: 'last_name',
-		Filter: ColumnFilter,
+		accessor: 'lastName',
 	},
 	{
-		Header : 'Role',
-		Footer : 'Role',
+		Header : 'Email',
+		Footer : 'Email',
 		accessor: 'email',
-		Filter: ColumnFilter,
 	},
 	{
 		Header : 'Téléphone',
 		Footer : 'Phone',
-		accessor: 'phone',
-		Filter: ColumnFilter,
+		accessor: 'phoneNumber',
+	},
+	{
+		Header : 'Role',
+		Footer : 'Role',
+		accessor: 'role',
+	},
+	{
+		Header : 'Actions',
+		Footer : 'Actions',
+		accessor: '_id',
+		Cell: ({ row }) => (
+			<div className="d-flex">
+			  <Link to={`/utilisateur/${row.original?._id}`} className="btn btn-primary shadow btn-xs sharp me-2">
+				<FaEye />
+			  </Link>
+			  <Link to={`/editer-utilisateur/${row.original?._id}`} className="btn btn-secondary	 shadow btn-xs sharp me-2">
+				<FaEdit />
+			  </Link>
+			  <button className="btn btn-danger shadow btn-xs sharp" onClick={() => {}}>
+				<FaTrash />
+			  </button>
+			</div>
+		),
 	},
 ]
 
@@ -38,7 +52,7 @@ export const GROUPED_COLUMNS = [
 	{
 		Header : 'Id',
 		Footer : 'Id',
-		accessor: 'id'
+		accessor: '_id'
 	},
 	{
 		Header : 'Name',
@@ -47,12 +61,12 @@ export const GROUPED_COLUMNS = [
 			{
 				Header : 'First Name',
 				Footer : 'First Name',
-				accessor: 'first_name'
+				accessor: 'firstName'
 			},
 			{
 				Header : 'Last Name',
 				Footer : 'Last Name',
-				accessor: 'last_name'
+				accessor: 'lastName'
 			},
 		]
 	},
