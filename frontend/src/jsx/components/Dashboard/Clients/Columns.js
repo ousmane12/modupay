@@ -1,12 +1,10 @@
-import swal from "sweetalert";
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-import {
-    deleteUserAction,
-} from '../../../../../store/actions/userActions';
+import swal from "sweetalert";
 
-
+const handleValidateClick = (transactionId) => {
+    console.log(`Validating transaction with ID: ${transactionId}`);
+  };
 export const COLUMNS = [
 	{
 		Header : 'Nom',
@@ -19,19 +17,9 @@ export const COLUMNS = [
 		accessor: 'lastName',
 	},
 	{
-		Header : 'Email',
-		Footer : 'Email',
-		accessor: 'email',
-	},
-	{
 		Header : 'Téléphone',
 		Footer : 'Phone',
 		accessor: 'phoneNumber',
-	},
-	{
-		Header : 'Role',
-		Footer : 'Role',
-		accessor: 'role',
 	},
 	{
 		Header : 'Actions',
@@ -55,13 +43,17 @@ export const COLUMNS = [
 			  onClick={() =>
 				swal({
 				  title: "Etes-vous sûr?",
-				  text: "Une fois validée l'utilisateur sera supprimé'",
+				  text:
+					"Une fois validée le client sera supprimé'",
 				  icon: "warning",
 				  buttons: true,
 				  dangerMode: true,
 				}).then((willDelete) => {
 				  if (willDelete) {
-					handleDeleteClick(row.original?._id);
+					//handleDeleteClick(row.original?._id)
+					swal("Le client a bien été supprimé!", {
+					  icon: "success",
+					});
 				  } else {
 					swal("Votre action est annulée!");
 				  }
@@ -118,21 +110,3 @@ export const GROUPED_COLUMNS = [
 		]
 	},
 ]
-
-const handleDeleteClick = (userId) => {
-	//const dispatch = useDispatch();
-  
-	// Dispatch an action to delete the user
-	/* dispatch(deleteUserAction(userId)).then((response) => {
-	  // Handle success or failure
-	  if (response.success) {
-		swal("L'utilisateur a bien été supprimé!", {
-		  icon: "success",
-		});
-	  } else {
-		swal("Erreur lors de la suppression de l'utilisateur", {
-		  icon: "error",
-		});
-	  }
-	}); */
-};

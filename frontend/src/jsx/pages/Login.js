@@ -3,6 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 import { loadingToggleAction, loginAction,
 } from '../../store/actions/AuthActions';
+import { ToastContainer, toast } from "react-toastify";
 
 // image
 import logo from "../../images/logo-white.png";
@@ -10,7 +11,18 @@ import logoWhite from "../../images/logo-whiite-text.png";
 import loginbg from "../../images/bg-login.jpg";
 
 function Login (props) {
-  
+  const notifyTopCenter = () => {
+    toast.warn("✔️ Top Center !", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
     let errorsObj = { login: '', password: '' };
     const [errors, setErrors] = useState(errorsObj);
 
@@ -45,6 +57,25 @@ function Login (props) {
         if (error) {
           return ;
         }
+        {/* <button
+                onClick={notifyTopCenter}
+                type="button"
+                className="btn btn-dark mb-2  me-2"
+                id="toastr-success-top-center"
+              >
+                <ToastContainer
+                  position="top-center"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                />
+                Top Center
+              </button> */}
 		    dispatch(loadingToggleAction(true));	
         dispatch(loginAction(email, password, props.history));
     }

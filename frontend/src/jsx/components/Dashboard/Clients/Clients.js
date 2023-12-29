@@ -1,20 +1,20 @@
 import React, { useMemo, useState, useEffect } from "react";
-import PageTitle from "../../../../layouts/PageTitle";
+import PageTitle from "../../../layouts/PageTitle";
 import { Link } from "react-router-dom";
 import { useTable, useGlobalFilter, useFilters, usePagination } from 'react-table';
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 import { COLUMNS } from './Columns';
-import { GlobalFilter } from './GlobalFilter'; 
+import { GlobalRecherche } from './GlobalRecherche'; 
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getUsersAction,
 	loadingToggleAction
-} from '../../../../../store/actions/userActions';
+} from '../../../../store/actions/userActions';
 //import './table.css';
 import './filtering.css';
 
 
-const Customers = () => {
+const Clients = () => {
 	const { users, errorMessage, successMessage, showLoading } = useSelector(
 		(state) => state.users
 	  )
@@ -25,6 +25,7 @@ const Customers = () => {
 		  dispatch(loadingToggleAction(showLoading))
 		};
 	  }, [successMessage, showLoading, dispatch]);
+	const clients = users.filter(transaction => transaction.role === 'user');
     const columns = useMemo( () => COLUMNS, [] )
 	const tableInstance = useTable({
 		columns ,
@@ -53,13 +54,13 @@ const Customers = () => {
 	
 	return(
 		<>
-		<PageTitle activeMenu="Utilisateurs" motherMenu="Liste" />
+		<PageTitle activeMenu="Clients" motherMenu="Liste" />
 		<div className="card">
 			<div className="card-header">
-				<h4 className="card-title">Tous les utilisateurs</h4>
+				<h4 className="card-title">Tous les clients</h4>
 				<div className="text-center">
 					<div className="nav-item invoices-btn">
-						<Link to="/nouvel-utilisateur" className="btn btn-primary">
+						<Link to="/nouveau-client" className="btn btn-primary">
 							<i className="fas fa-plus-circle fs-10 me-2"></i>
 							<span>Ajouter</span>
 						</Link>
@@ -68,7 +69,7 @@ const Customers = () => {
 			</div>
 			<div className="card-body">
 				<div className="table-responsive">
-					<GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+					<GlobalRecherche filter={globalFilter} setFilter={setGlobalFilter} />
 					<table {...getTableProps()} className="table dataTable display">
 						<thead>
 							{headerGroups.map(headerGroup => (
@@ -120,7 +121,7 @@ const Customers = () => {
 						<div className="filter-pagination  mt-3">
 							<button className="previous-button" onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{'<<'}</button>
 							<button className="previous-button" onClick={() => previousPage()} disabled={!canPreviousPage}>
-								Précedant
+								Précédant
 							</button>
 							<button className="next-button" onClick={() => nextPage()} disabled={!canNextPage}>
 								Suivant
@@ -136,4 +137,4 @@ const Customers = () => {
 	
 }
 
-export default Customers;
+export default Clients;

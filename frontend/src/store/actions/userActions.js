@@ -2,10 +2,15 @@ import {
     formatError,
     fetchUsers,
     createUser,
+    updateUser,
+    createClient,
+    deleteUser,
 } from '../../services/userService';
 
 
 export const USER_CREATE_FAILED_ACTION = '[add action] failed add';
+export const USER_DELETE_FAILED_ACTION = '[delete action] failed delete';
+export const USER_DELETE_SUCCESS_ACTION = '[delete action] delete action';
 export const USER_FETCH_FAILED_ACTION = '[add action] failed fetch';
 export const USER_EDIT_ACTION = '[Edit action] edit action';
 export const USER_EDIT_FAILED_ACTION = '[Edit action] edit failed';
@@ -18,12 +23,31 @@ export function createAction(firstName, lastName, login, role, phoneNumber, emai
         createUser(firstName, lastName, login, role, phoneNumber, email, password)
         .then((response) => {
             if (response.status === 201) {
-                console.log("Success",response);
                 dispatch(confirmedCreateAction(response.data));
                 history.push('/utilisateurs');
               } else {
                 // Treat other status codes as errors
-                console.log("errorrrr", response);
+                const errorMessage = formatError(response.data);
+                dispatch(failedCreateAction(errorMessage));
+              } 
+        })
+        .catch((error) => {
+            console.log(error);
+            const errorMessage = formatError(error);
+            dispatch(failedCreateAction(errorMessage));
+        });
+    };
+}
+
+export function createClientAction(firstName, lastName, role, phoneNumber, history) {
+    return (dispatch) => {
+        createClient(firstName, lastName, role, phoneNumber)
+        .then((response) => {
+            if (response.status === 201) {
+                dispatch(confirmedCreateAction(response.data));
+                history.push('/clients');
+              } else {
+                // Treat other status codes as errors
                 const errorMessage = formatError(response.data);
                 dispatch(failedCreateAction(errorMessage));
               } 
@@ -52,6 +76,35 @@ export function getUsersAction() {
     };
   }
 
+export function deleteUserAction(postId, history) {
+    return (dispatch) => {
+        deleteUser(postId).then((response) => {
+            dispatch(confirmedDeleteUserAction(response.data));
+            history.push('/liste-utilisateurs');
+        }).catch((error) => {
+            console.log(error);
+            dispatch(failedFetchAction(error.message));
+        });
+    };
+}
+  
+export function updateUserAction(user, userId, history) {
+    return async (dispatch) => {
+      try {
+        dispatch(loadingToggleAction(true));
+        const response = await updateUser(user, userId);
+        dispatch(updateAction(userId, response.data));
+        history.push('/utilisateurs');
+      } catch (error) {
+        console.log(error);
+        const errorMessage = formatError(error);
+        dispatch(failedFetchAction(errorMessage));
+      } finally {
+        dispatch(loadingToggleAction(false));
+      }
+    };
+}
+
 export function confirmedCreateAction(payload) {
     return {
         type: USER_CREATED_ACTION,
@@ -63,6 +116,13 @@ export function fetchDataAction(payload) {
     return {
         type: FETCH_DATA_ACTION,
         payload,
+    };
+}
+
+export function updateAction(userId, updatedData) {
+    return {
+        type: USER_EDIT_ACTION,
+        payload: { userId, updatedData },
     };
 }
 
@@ -84,5 +144,12 @@ export function loadingToggleAction(status) {
     return {
         type: LOADING_TOGGLE_ACTION,
         payload: status,
+    };
+}
+
+export function confirmedDeleteUserAction(postId) {
+    return {
+        type: USER_DELETE_SUCCESS_ACTION,
+        payload: postId,
     };
 }

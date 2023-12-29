@@ -1,218 +1,167 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import CustomSelect from './CustomeSelect';
+import swal from "sweetalert";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getUsersAction,
+  loadingToggleAction
+} from '../../../store/actions/userActions';
+import {
+  createTransactionAction,
+} from '../../../store/actions/transactionAction';
 
-import DropzoneBlog from './Invoices/DropzoneBlog';
-
-const CreateInvoices = () =>{
-  const [showEmetteurFields, setShowEmetteurFields] = useState(false);
-  const [showDestinataireFields, setShowDestinataireFields] = useState(false);
+const CreateInvoices = (props) => {
   const [formData, setFormData] = useState({
-	nomE: '',
-	prenomE: '',
-	telephoneE: '',
+    sender: '',
+    receiver: '',
+    amount: 0,
+    amountConverted: 0,
   });
-  const [formDataD, setFormDataD] = useState({
-	nomD: '',
-	prenomD: '',
-	telephoneD: '',
-  });
+  const { users } = useSelector(
+    (state) => state.users
+  )
+  const errorMessage = useSelector((state) => state.transactions.errorMessage);
+  //const successMessage = useSelector((state) => state.transactions.successMessage);
+  const dispatch = useDispatch();
 
-  const {nomE, prenomE, telephoneE} = formData;
-  const {nomD, prenomD, telephoneD} = formDataD;
+  useEffect(() => {
+    dispatch(getUsersAction());
+    return () => {
+      dispatch(loadingToggleAction(false))
+    };
+  }, [dispatch]);
 
   const onChange = (e) => {
-	setFormData((prevState) => ({
-		...prevState,
-		[e.target.name]: e.target.value
-	}));
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value
+    }));
   };
 
-  const onChangeD = (e) => {
-	setFormDataD((prevState) => ({
-		...prevState,
-		[e.target.name]: e.target.value
-	}));
+  const { sender, receiver, amount, amountConverted } = formData
+
+  const onSubmitAlert = (e) => {
+    e.preventDefault();
+    swal({
+      title: "Etes-vous sûr?",
+      text: "Une fois validée la transaction sera initiée",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willInitiate) => {
+      if (willInitiate) {
+        onSubmit(e);
+      } else {
+        swal("Votre action est annulée!");
+      }
+    });
   };
+
   const onSubmit = (e) => {
-	e.preventDefault();
+    e.preventDefault();
+    dispatch(createTransactionAction(sender, receiver, amount, amountConverted, props.history));
+    if (errorMessage) {
+      swal("Erreur lors de l'initiation de la transaction", {
+        icon: "error",
+      });
+    } else {
+		notifyTopCenter();
+		props.history.push('/valider-transaction');
+	}
   };
 
-  const handleNouveauClick = (fieldType) => {
-    if (fieldType === 'emetteur') {
-      setShowEmetteurFields(true);
-    } else if (fieldType === 'destinataire') {
-      setShowDestinataireFields(true);
-    }
+  const notifyTopCenter = () => {
+    toast.warn("✔️ Top Center !", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
-	return(
-		<>
-			<div className="row">
-				<div className="col-xl-12">
-					<div className="card">
-						<div className="card-body">
-							<div className="col-xl-12">
-								<div className="card-header">
-									<h4 className="card-title">Nouvelle Transaction</h4>
-								</div>
-								<div className="card-body">
-									<div className="basic-form">
-										<form onSubmit={onSubmit}>
-										<div className="row">
-										<div className="row">
-											<div className="form-group mb-3 col-md-8">
-											<label>Emetteur</label>
-											<select
-												defaultValue={"option"}
-												id="inputState"
-												className="form-control"
-											>
-												<option value="option" disabled>
-												Choisir...
-												</option>
-												<option name="user">Option 1</option>
-												<option>Option 2</option>
-												<option>Option 3</option>
-											</select>
-											</div>
-											<div className="form-group mb-0 col-md-4 mt-4">
-												<button type="button" className="btn btn-primary" onClick={() => handleNouveauClick('emetteur')}>
-													Nouveau
-												</button>
-											</div>
-										</div>
-										{showEmetteurFields && (
-											// Render additional fields for Emetteur here
-											<div className="row">
-												<div className="form-group mb-3 col-md-4">
-													<label>Nom Emetteur</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="Veuillez saisir le nom"
-														id='nomE'
-														name='nomE'
-														value={nomE}
-														onChange={onChange}
-													/>
-												</div>
-												<div className="form-group mb-3 col-md-4">
-													<label>Prenom Emetteur</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="Veuillez saisir le prenom"
-														id='prenomE'
-														name='prenomE'
-														value={prenomE}
-														onChange={onChange}
-													/>
-												</div>
-												<div className="form-group mb-3 col-md-4">
-													<label>Telephone Emetteur</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="1234"
-														id='telephoneE'
-														name='telephoneE'
-														value={telephoneE}
-														onChange={onChange}
-													/>
-												</div>
-											</div>
-										)}
-										<div className="row">
-											<div className="form-group mb-3 col-md-8">
-												<label>Destinataire</label>
-												<select
-													defaultValue={"option"}
-													id="inputState"
-													className="form-control"
-												>
-													<option value="option" disabled>
-													Choisir...
-													</option>
-													<option>Option 1</option>
-													<option>Option 2</option>
-													<option>Option 3</option>
-												</select>
-											</div>
-											<div className="form-group mb-0 col-md-4 mt-4">
-												<button type="button" className="btn btn-primary" onClick={() => handleNouveauClick('destinataire')}>
-													Nouveau
-												</button>
-											</div>
-										</div>
-										{showDestinataireFields && (
-											// Render additional fields for Destinataire here
-											<div className="row">
-												<div className="form-group mb-3 col-md-4">
-													<label>Nom Destinataire</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="Veuillez saisir le nom"
-														id='nomD'
-														name='nomD'
-														value={nomD}
-														onChange={onChangeD}
-													/>
-												</div>
-												<div className="form-group mb-3 col-md-4">
-													<label>Prenom Destinataire</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="Veuillez saisir le prenom"
-														id='prenomD'
-														name='prenomD'
-														value={prenomD}
-														onChange={onChangeD}
-													/>
-												</div>
-												<div className="form-group mb-3 col-md-4">
-													<label>Telephone Destinataire</label>
-													<input
-														type="text"
-														className="form-control"
-														placeholder="1234"
-														id='telephoneD'
-														name='telephoneD'
-														value={telephoneD}
-														onChange={onChange}
-													/>
-												</div>
-											</div>
-										)}
-											<div className="form-group mb-3 col-md-6">
-											<label>Montant</label>
-											<input
-												type="text"
-												className="form-control"
-												placeholder="1234"
-											/>
-											</div>
-											<div className="form-group mb-3 col-md-6">
-											<label>Montant Converti</label>
-											<input
-												type="text"
-												className="form-control"
-												placeholder="650"
-											/>
-											</div>
-										</div>
-										<button type="submit" className="btn btn-primary">
-											Initier transaction
-										</button>
-										</form>
-									</div>
-								</div>
-        					</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
-	)
+
+  const handleReceiverSelect = (receiverId) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      receiver: receiverId
+    }));
+  };
+
+  const handleSenderSelect = (senderId) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      sender: senderId
+    }));
+  };
+
+  return (
+    <>
+      <div className="row">
+        <div className="col-xl-12">
+          <div className="card">
+            <div className="card-body">
+              <div className="col-xl-12">
+                <div className="card-header">
+                  <h4 className="card-title">Nouvelle Transaction</h4>
+                </div>
+                <div className="card-body">
+                  <div className="basic-form">
+                    <form onSubmit={onSubmitAlert}>
+                      <div className="row">
+                        <div className="form-group col-md-12">
+                          <label>Emetteur</label>
+                          <CustomSelect options={users} onSelect={handleSenderSelect} />
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="form-group mt-0 col-md-12">
+                          <label>Destinataire</label>
+                          <CustomSelect options={users} onSelect={handleReceiverSelect} />
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="form-group mb-5 col-md-5">
+                          <label>Montant</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="0"
+                            value={amount}
+                            onChange={onChange}
+                            name="amount"
+                            required
+                          />
+                        </div>
+                        <div className="form-group mb-3 col-md-5">
+                          <label>Montant Converti</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="650"
+                            value={amountConverted}
+                            onChange={onChange}
+                            name="amountConverted"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <button type="submit" className="btn btn-primary">
+                        Initier transaction
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+	  <ToastContainer/>
+    </>
+  )
 }
-export default CreateInvoices; 
+export default CreateInvoices;

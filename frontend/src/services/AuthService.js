@@ -23,7 +23,6 @@ export function signUp(firstName, lastName, login, role, phoneNumber, email, pas
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
     const token = userDetails?.token;
-    console.log("My token: " + token);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
         `http://localhost:8000/api/users`,

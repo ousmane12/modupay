@@ -8,19 +8,14 @@ import {
 
 const initialState = {
     transactions: [],
+    successMessage: false,
+    errorMessage: false
 };
 
 export default function TransactionsReducer(state = initialState, actions) {
     
     if (actions.type === CREATE_TRANSACTION_ACTION) {
-        const post = {
-            id: Math.random(),
-            title: 'Post Title 2asdasd',
-            description: 'Sample Description 2asdasdas',
-        };
-
         const transactions = [...state.transactions];
-        transactions.push(post);
         return {
             ...state,
             transactions,

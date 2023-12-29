@@ -6,7 +6,6 @@ export function getTransactions() {
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
     const token = userDetails?.token;
-    console.log("My token: " + token);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.get(
         `http://localhost:8000/api/transactions`,
@@ -14,21 +13,17 @@ export function getTransactions() {
     );
 }
 
-export function createTransaction(postData) {
+export function createTransaction(sender, receiver, amount, amountConverted) {
     const postData = {
-        firstName, 
-        lastName, 
-        login, 
-        role, 
-        phoneNumber,
-        email,
-        password,
+        sender, 
+        receiver, 
+        amount,
+        amountConverted,
     };
-    
     const userDetailsString = localStorage.getItem('userDetails');
     const userDetails = JSON.parse(userDetailsString);
     const token = userDetails?.token;
-    console.log("My token: " + token);
+    console.log("My transdata: " + sender, receiver, amount, amountConverted);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
         `http://localhost:8000/api/transactions`,
@@ -38,11 +33,25 @@ export function createTransaction(postData) {
 }
 
 export function updateTransaction(post, postId) {
-    return axios.put(`posts/${postId}.json`, post);
+    const userDetailsString = localStorage.getItem('userDetails');
+    // Parse userDetails string to convert it into an object
+    const userDetails = JSON.parse(userDetailsString);
+    // Access the token property
+    console.log(post);
+    const token = userDetails?.token;
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    return axios.put(`http://localhost:8000/api/transactions/${postId}`, post, { headers });
 }
 
 export function deleteTransaction(postId) {
-    return axiosInstance.delete(`posts/${postId}.json`);
+    const userDetailsString = localStorage.getItem('userDetails');
+    // Parse userDetails string to convert it into an object
+    const userDetails = JSON.parse(userDetailsString);
+    // Access the token property
+    const token = userDetails?.token;
+    console.log("My token: " + token);
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    return axios.delete(`http://localhost:8000/api/transactions/${postId}`, { headers });
 }
 
 export function formatTransactions(postsData) {

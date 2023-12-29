@@ -1,6 +1,7 @@
 /// Menu
 import Metismenu from "metismenujs";
 import React, { Component, useContext, useEffect } from "react";
+import { useSelector } from 'react-redux';
 /// Scroll
 import PerfectScrollbar from "react-perfect-scrollbar";
 /// Link
@@ -34,6 +35,8 @@ class MM extends Component {
 }
 
 const SideBar = () => {
+  const user = useSelector(state => state.auth.auth);
+ //console.log(user.firstName);
 	const {
 		iconHover,
 		sidebarposition,
@@ -76,7 +79,7 @@ const SideBar = () => {
       "liste-transactions",
     ],
     inv = [
-      "ecom-invoice",
+      "inventaire",
     ],
     users = [
       "utilisateurs",
@@ -84,40 +87,8 @@ const SideBar = () => {
     transaction_validate = [
       "valider-transaction",
     ],
-    app = [
-      "app-profile",
-      "post-details",
-      "app-calender",
-      "email-compose",
-      "email-inbox",
-      "email-read",
-      "ecom-product-grid",
-      "ecom-product-list",
-      "ecom-product-order",
-      "ecom-checkout",
-      "ecom-invoice",
-      "utilisateurs",
-      "post-details",
-      "ecom-product-detail",
-    ],
-    email = ["email-compose", "email-inbox", "email-read"],
-    shop = [
-      "ecom-product-grid",
-      "ecom-product-list",
-      "ecom-product-list",
-      "ecom-product-order",
-      "ecom-checkout",
-      "ecom-invoice",
-      "utilisateurs",
-      "ecom-product-detail",
-    ],
-    charts = [
-      "chart-rechart",
-      "chart-flot",
-      "chart-chartjs",
-      "chart-chartist",
-      "chart-sparkline",
-      "chart-apexchart",
+    clients = [
+      "clients",
     ],
     bootstrap = [
       "ui-accordion",
@@ -196,8 +167,8 @@ const SideBar = () => {
 				  <img src={profile} width={20} alt="" />
 				  <div className="d-flex align-items-center sidebar-info">
 					<div>
-					  <span className="font-w700 d-block mb-2">Ousmane Elhadji</span>
-					  <small className="text-end font-w400">Admin</small>
+					  <span className="font-w700 d-block mb-2">{user.firstName} {user.lastName}</span>
+					  <small className="text-end font-w400">{user.role}</small>
 					</div>
 					<i className="fas fa-sort-down ms-4"></i>
 				  </div>
@@ -212,7 +183,7 @@ const SideBar = () => {
 						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
 						<circle cx={12} cy={7} r={4} />
 					  </svg>
-					  <span className="ms-2">Profile </span>
+					  <span className="ms-2">Mon profil</span>
 					</Link>
 					<LogoutPage />
 				  </Dropdown.Menu>
@@ -247,7 +218,7 @@ const SideBar = () => {
           </li>
 
           <li className={`${inv.includes(path) ? "mm-active" : ""}`}>
-          <Link to="/ecom-invoice">
+          <Link to="/inventaire">
               <i className="fas fa-atlas"></i>
               Inventaire Transactions
             </Link>
@@ -260,24 +231,17 @@ const SideBar = () => {
           </Link>
           </li>
 
-          <li className={`${transaction.includes(path) ? "mm-active" : ""}`}>
-            <Link className="has-arrow" to="#" >
-              <i className="fas fa-archive"></i>
-              <span className="nav-text">Transactions</span>
-            </Link>
-            <ul>
-              <li><Link className={`${path === "nouvelle-transaction" ? "mm-active" : ""}`} to="/nouvelle-transaction">Nouvelle Transaction</Link></li>
-              <li><Link className={`${ path === "ecom-product-order" ? "mm-active" : "" }`} to="/ecom-product-order">Traiter Transaction</Link></li>
-              <li><Link className={`${path === "invoices-list" ? "mm-active" : ""}`} to="/invoices-list"> Transactions</Link></li>
-              <li><Link className={`${ path === "ecom-invoice" ? "mm-active" : "" }`} to="/ecom-invoice">Facture</Link></li>
-            </ul>
+          <li className={`${clients.includes(path) ? "mm-active" : ""}`}>
+          <Link to="/clients">
+              <i className="fas fa-address-book"></i>
+              Clients
+          </Link>
           </li>
-			
-          
+
           <li className={`${bootstrap.includes(path) ? "mm-active" : ""}`}>
             <Link className="has-arrow ai-icon" to="#" >
               <i className="fab fa-bootstrap"></i>
-              <span className="nav-text">Nouvelle Transaction</span>
+              <span className="nav-text">Bootstrap</span>
             </Link>
             <ul >
               <li><Link className={`${path === "ui-accordion" ? "mm-active" : ""}`} to="/ui-accordion">Accordion</Link></li>
@@ -311,20 +275,6 @@ const SideBar = () => {
               <li><Link className={`${path === "uc-lightgallery" ? "mm-active" : ""}`} to="/uc-lightgallery">Light Gallery</Link></li>
             </ul>
           </li>
-          <li className={`${redux.includes(path) ? "mm-active" : ""}`}>
-              <Link className="has-arrow ai-icon" to="#" >
-                  <i className="flaticon-087-stop"></i><span className="nav-text">Redux</span>
-              </Link>
-          <ul>
-                <li><Link className={`${path === "todo" ? "mm-active" : ""}`} to="/todo">Todo</Link></li>
-          </ul>
-         </li>
-          <li className={`${widget.includes(path) ? "mm-active" : ""}`}>
-            <Link to="widget-basic" className="ai-icon" >
-              <i className="fas fa-user-check"></i>
-              <span className="nav-text">Widget</span>
-            </Link>
-          </li>
           <li className={`${forms.includes(path) ? "mm-active" : ""}`}>
             <Link className="has-arrow ai-icon" to="#" >
               <i className="fas fa-file-alt"></i>
@@ -344,31 +294,6 @@ const SideBar = () => {
                   Form Validate
                 </Link>
               </li>
-            </ul>
-          </li>
-          <li className={`${table.includes(path) ? "mm-active" : ""}`}>
-             <Link className="has-arrow ai-icon" to="#" ><i className="fas fa-table"></i><span className="nav-text">Table</span></Link>
-            <ul>
-                <li>
-                <Link className={`${ path === "table-filtering" ? "mm-active" : "" }`} to="/table-filtering">
-                  Table Filtering
-                </Link>
-              </li>
-              <li>
-                <Link className={`${ path === "table-sorting" ? "mm-active" : "" }`} to="/table-sorting">
-                  Table Sorting
-                </Link>
-              </li>
-              <li>
-                <Link className={`${ path === "table-bootstrap-basic" ? "mm-active" : "" }`} to="/table-bootstrap-basic">
-                  Bootstrap
-                </Link>
-              </li>
-                <li>
-                  <Link className={`${ path === "table-datatable-basic" ? "mm-active" : ""}`} to="/table-datatable-basic">
-                    Datatable
-                  </Link>
-                </li>
             </ul>
           </li>
           <li className={`${pages.includes(path) ? "mm-active" : ""}`}>
@@ -392,8 +317,8 @@ const SideBar = () => {
           </li>
         </MM>
 		<div className="copyright">
-			<p><strong>Invome Admin Dashboard</strong> © 2022 All Rights Reserved</p>
-			<p className="fs-12">Made with <span className="heart"></span> by DexignLabs</p>
+			<p><strong>ModuPay Admin Dashboard</strong> © 2023 Tous droits réservés</p>
+			<p className="fs-12">Made with <span className="heart"></span> by besstech</p>
 		</div>
       </PerfectScrollbar>
     </div>

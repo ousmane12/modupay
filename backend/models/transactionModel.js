@@ -13,15 +13,20 @@ const transactionSchema = mongoose.Schema(
     },
     status: { 
       type: String, 
-      enum: ['pending', 'completed'], 
+      enum: ['pending', 'completed', 'cancelled'], 
       default: 'pending' 
     },
     amount: {
       type: Number,
       required: [true, 'Please add an amount value'],
     },
+    amountConverted: {
+      type: Number,
+      required: [true, 'Please add an amount converted value'],
+    },
     sender: { 
-      type: mongoose.Schema.Types.ObjectId, ref: 'User', 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User', 
       required: true 
     },
     receiver: { 

@@ -3,8 +3,8 @@ import PageTitle from "../../../layouts/PageTitle";
 import { connect, useDispatch } from 'react-redux';
 import {
     loadingToggleAction,
-    signupAction,
-} from '../../../../store/actions/AuthActions';
+    createAction,
+} from '../../../../store/actions/userActions';
 
 
 function NewUser(props) {
@@ -61,11 +61,11 @@ function NewUser(props) {
             error = true;
         }
         if (phoneNumber === '') {
-            errorObj.password = 'Le numéro de téléphone est réquis';
+            errorObj.phoneNumber = 'Le numéro de téléphone est réquis';
             error = true;
         }
         if (email === '') {
-            errorObj.password = 'Le mail est réquis';
+            errorObj.email = 'Le mail est réquis';
             error = true;
         }
         if(password !== password2){
@@ -75,9 +75,8 @@ function NewUser(props) {
         }
         setErrors(errorObj);
         if (error) return;
-        console.log(formData);
         dispatch(loadingToggleAction(true));
-        dispatch(signupAction(firstName, lastName, login, role, phoneNumber, email, password, props.history));
+        dispatch(createAction(firstName, lastName, login, role, phoneNumber, email, password, props.history));
     }
   return (
     <Fragment>

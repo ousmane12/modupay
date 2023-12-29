@@ -114,6 +114,10 @@ import Error503 from "./pages/Error503";
 import { ThemeContext } from "../context/ThemeContext";
 import NewUser from "./components/Dashboard/Adduser/NewUser";
 import ProfileUser from "./components/Dashboard/ViewUser/ProfileUser";
+import EditUser from "./components/Dashboard/EditUser/EditUser";
+import Clients from "./components/Dashboard/Clients/Clients";
+import AddClient from "./components/Dashboard/AddClient/AddClient";
+import Inventaire from "./components/Dashboard/Inventaire/Inventaire";
 
 const Markup = () => {
   const { menuToggle } = useContext(ThemeContext);
@@ -126,6 +130,7 @@ const Markup = () => {
     { url: "liste-transactions", component: InvoicesList },
     { url: "nouvelle-transaction", component: CreateInvoices },
     { url: "nouvel-utilisateur", component: NewUser },
+    { url: "editer-utilisateur/:id", component: EditUser },
     { url: "utilisateur/:id", component: ProfileUser },
     { url: "card-center", component: CardCenter },
     { url: "transaction-details", component: TransactionDetails },
@@ -195,6 +200,9 @@ const Markup = () => {
     { url: "ecom-invoice", component: Invoice },
     { url: "ecom-product-detail", component: ProductDetail },
     { url: "utilisateurs", component: Customers },
+    { url: "clients", component: Clients },
+    { url: "nouveau-client", component: AddClient },
+    { url: "inventaire", component: Inventaire },
 
     /// Form
     { url: "form-element", component: Element },
