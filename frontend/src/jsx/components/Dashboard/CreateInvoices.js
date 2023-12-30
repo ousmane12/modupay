@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  getUsersAction,
+	getClientsAction,
   loadingToggleAction
 } from '../../../store/actions/userActions';
 import {
@@ -27,7 +27,7 @@ const CreateInvoices = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUsersAction());
+    dispatch(getClientsAction());
     return () => {
       dispatch(loadingToggleAction(false))
     };
@@ -124,7 +124,7 @@ const CreateInvoices = (props) => {
                         </div>
                       </div>
                       <div className="row">
-                        <div className="form-group mb-5 col-md-5">
+                        <div className="form-group mb-5 col-md-6">
                           <label>Montant</label>
                           <input
                             type="text"
@@ -149,7 +149,7 @@ const CreateInvoices = (props) => {
                           />
                         </div>
                       </div>
-                      <button type="submit" className="btn btn-primary">
+                      <button type="submit" className="btn btn-primary ">
                         Initier transaction
                       </button>
                     </form>

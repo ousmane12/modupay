@@ -7,9 +7,20 @@ const User = require('../models/userModel')
 // @route   GET /api/transactions
 // @access  Private
 const getTransactions = asyncHandler(async (req, res) => {
-  const transactions = await Transaction.find()
+  try {
+    // Fetch transactions with population
+    const transactions = await Transaction.find({ /* Your query criteria */ })
+      .populate('initiatedBy')  // Populate initiatedBy field with all fields
+      .populate('sender')       // Populate sender field with all fields
+      .populate('receiver') 
 
-  res.status(200).json(transactions)
+    // Send the transactions as a response
+    res.json(transactions);
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 })
 
 // @desc    Set transaction

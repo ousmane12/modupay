@@ -23,7 +23,6 @@ export function createTransaction(sender, receiver, amount, amountConverted) {
     const userDetailsString = localStorage.getItem('userDetails');
     const userDetails = JSON.parse(userDetailsString);
     const token = userDetails?.token;
-    console.log("My transdata: " + sender, receiver, amount, amountConverted);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
         `http://localhost:8000/api/transactions`,
@@ -37,7 +36,6 @@ export function updateTransaction(post, postId) {
     // Parse userDetails string to convert it into an object
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
-    console.log(post);
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.put(`http://localhost:8000/api/transactions/${postId}`, post, { headers });
@@ -49,7 +47,6 @@ export function deleteTransaction(postId) {
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
     const token = userDetails?.token;
-    console.log("My token: " + token);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.delete(`http://localhost:8000/api/transactions/${postId}`, { headers });
 }

@@ -56,6 +56,27 @@ export function getTransactionsAction() {
     };
 }
 
+export function getTransactionsInventaireAction(start, endDate, history) {
+    return (dispatch) => {
+        getTransactions().then((response) => {
+            let transactions = formatTransactions(response.data);
+            let newTransactions = filterTransactionsByDate(transactions, start, endDate);
+            if(newTransactions.length > 0) {
+                dispatch(confirmedGetTransactionsAction(newTransactions));
+                const dataToPass = {
+                    startDate: start,
+                    endDate: endDate,
+                };
+                  
+                history.push({
+                pathname: '/facture',
+                state: { data: dataToPass },
+                });
+            } 
+        });
+    };
+}
+
 export function confirmedCreateTransactionAction(singleTransaction) {
 	
     return {
@@ -90,7 +111,6 @@ export function confirmedUpdateTransactionAction(transaction) {
 export function updateTransactionAction(transaction, transaction_id, history) {
     return (dispatch) => {
         updateTransaction(transaction, transaction_id).then((response) => {
-            console.log(response);
             dispatch(confirmedUpdateTransactionAction(response.data));
             history.push('/liste-transactions');
         }).catch((err) => {
@@ -100,3 +120,22 @@ export function updateTransactionAction(transaction, transaction_id, history) {
 			
     };
 }
+
+
+function filterTransactionsByDate(transactions, startDate, endDate) {
+    // Convert start and end dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    const filteredTransactions = transactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.createdAt);
+    
+        return (
+          transactionDate >= start &&
+          transactionDate <= end &&
+          transaction.status === "completed"
+        );
+      });
+  
+    return filteredTransactions;
+  }  

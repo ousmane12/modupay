@@ -14,47 +14,10 @@ import Footer from "./layouts/Footer";
 import ScrollToTop from "./layouts/ScrollToTop";
 /// Dashboard
 import Home from "./components/Dashboard/Home";
-import DashboardDark from "./components/Dashboard/DashboardDark";
-import MyWallet from "./components/Dashboard/MyWallet";
 import InvoicesList from "./components/Dashboard/InvoicesList";
 import CreateInvoices from "./components/Dashboard/CreateInvoices";
-import CardCenter from "./components/Dashboard/CardCenter";
 import TransactionDetails from "./components/Dashboard/TransactionDetails";
-
-import Task from "./components/Dashboard/Task";
-
-/////Demo
-import Theme1 from "./components/Dashboard/Demo/Theme1";
-import Theme2 from "./components/Dashboard/Demo/Theme2";
-import Theme3 from "./components/Dashboard/Demo/Theme3";
-import Theme4 from "./components/Dashboard/Demo/Theme4";
-import Theme5 from "./components/Dashboard/Demo/Theme5";
-import Theme6 from "./components/Dashboard/Demo/Theme6";
-
-
-/// App
-import AppProfile from "./components/AppsMenu/AppProfile/AppProfile";
-import Compose from "./components/AppsMenu/Email/Compose/Compose";
-import Inbox from "./components/AppsMenu/Email/Inbox/Inbox";
-import Read from "./components/AppsMenu/Email/Read/Read";
-import Calendar from "./components/AppsMenu/Calendar/Calendar";
-import PostDetails from "./components/AppsMenu/AppProfile/PostDetails";
-
-/// Product List
-import ProductGrid from "./components/AppsMenu/Shop/ProductGrid/ProductGrid";
-import ProductList from "./components/AppsMenu/Shop/ProductList/ProductList";
-import ProductDetail from "./components/AppsMenu/Shop/ProductGrid/ProductDetail";
-import Checkout from "./components/AppsMenu/Shop/Checkout/Checkout";
-import Invoice from "./components/AppsMenu/Shop/Invoice/Invoice";
-import ProductOrder from "./components/AppsMenu/Shop/ProductOrder";
 import Customers from "./components/AppsMenu/Shop/Customers/Customers";
-
-/// Charts
-import SparklineChart from "./components/charts/Sparkline";
-import ChartJs from "./components/charts/Chartjs";
-import Chartist from "./components/charts/chartist";
-import RechartJs from "./components/charts/rechart";
-import ApexChart from "./components/charts/apexcharts";
 
 /// Bootstrap
 import UiAlert from "./components/bootstrap/Alert";
@@ -81,12 +44,6 @@ import MainSweetAlert from "./components/PluginsMenu/SweetAlert/SweetAlert";
 import Toastr from "./components/PluginsMenu/Toastr/Toastr";
 import JqvMap from "./components/PluginsMenu/JqvMap/JqvMap";
 import Lightgallery from "./components/PluginsMenu/Lightgallery/Lightgallery";
-
-//Redux
-import Todo from "./pages/Todo";
-
-/// Widget
-import Widget from "./pages/Widget";
 
 /// Table
 import SortingTable from "./components/table/SortingTable/SortingTable";
@@ -118,6 +75,8 @@ import EditUser from "./components/Dashboard/EditUser/EditUser";
 import Clients from "./components/Dashboard/Clients/Clients";
 import AddClient from "./components/Dashboard/AddClient/AddClient";
 import Inventaire from "./components/Dashboard/Inventaire/Inventaire";
+import InventaireFacture from "./components/Dashboard/Invoice/InventaireFacture";
+import ProductOrder from "./components/AppsMenu/Shop/ProductOrder";
 
 const Markup = () => {
   const { menuToggle } = useContext(ThemeContext);
@@ -125,39 +84,13 @@ const Markup = () => {
     /// Dashboard
     { url: "", component: Home },
     { url: "dashboard", component: Home },
-    { url: "dashboard-dark", component: DashboardDark },
-    { url: "wallet", component: MyWallet },
     { url: "liste-transactions", component: InvoicesList },
     { url: "nouvelle-transaction", component: CreateInvoices },
     { url: "nouvel-utilisateur", component: NewUser },
     { url: "editer-utilisateur/:id", component: EditUser },
     { url: "utilisateur/:id", component: ProfileUser },
-    { url: "card-center", component: CardCenter },
     { url: "transaction-details", component: TransactionDetails },
-    { url: "task", component: Task },
-	
-	///Demo
-    { url: "theme1", component: Theme1 },
-    { url: "theme2", component: Theme2 },
-    { url: "theme3", component: Theme3 },
-    { url: "theme4", component: Theme4 },
-    { url: "theme5", component: Theme5 },
-    { url: "theme6", component: Theme6 },
-	
-	/// Apps
-    { url: "app-profile", component: AppProfile },
-    { url: "email-compose", component: Compose },
-    { url: "email-inbox", component: Inbox },
-    { url: "email-read", component: Read },
-    { url: "app-calender", component: Calendar },
-    { url: "post-details", component: PostDetails },
-
-    /// Chart
-    { url: "chart-sparkline", component: SparklineChart },
-    { url: "chart-chartjs", component: ChartJs },
-    { url: "chart-chartist", component: Chartist },
-    { url: "chart-apexchart", component: ApexChart },
-    { url: "chart-rechart", component: RechartJs },
+    { url: "valider-transaction", component: ProductOrder },
 
     /// Bootstrap
     { url: "ui-alert", component: UiAlert },
@@ -185,24 +118,11 @@ const Markup = () => {
     { url: "map-jqvmap", component: JqvMap },
     { url: "uc-lightgallery", component: Lightgallery },
 
-	///Redux
-	{ url: "todo", component: Todo },
-	
-    /// Widget
-    { url: "widget-basic", component: Widget },
-
-    /// Shop
-    { url: "ecom-product-grid", component: ProductGrid },
-    { url: "ecom-product-list", component: ProductList },
-    { url: "ecom-product-detail", component: ProductDetail },
-    { url: "valider-transaction", component: ProductOrder },
-    { url: "ecom-checkout", component: Checkout },
-    { url: "ecom-invoice", component: Invoice },
-    { url: "ecom-product-detail", component: ProductDetail },
     { url: "utilisateurs", component: Customers },
     { url: "clients", component: Clients },
     { url: "nouveau-client", component: AddClient },
     { url: "inventaire", component: Inventaire },
+    { url: "facture", component: InventaireFacture },
 
     /// Form
     { url: "form-element", component: Element },

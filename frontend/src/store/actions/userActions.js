@@ -65,7 +65,8 @@ export function getUsersAction() {
       try {
         dispatch(loadingToggleAction(true));
         const response = await fetchUsers();
-        dispatch(fetchDataAction(response.data));
+        const clients = response.data.filter(user => user.role !== 'user');
+        dispatch(fetchDataAction(clients));
       } catch (error) {
         console.log(error);
         const errorMessage = formatError(error);
@@ -75,6 +76,23 @@ export function getUsersAction() {
       }
     };
   }
+
+export function getClientsAction() {
+return async (dispatch) => {
+    try {
+    dispatch(loadingToggleAction(true));
+    const response = await fetchUsers();
+    const clients = response.data.filter(user => user.role === 'user');
+    dispatch(fetchDataAction(clients));
+    } catch (error) {
+    console.log(error);
+    const errorMessage = formatError(error);
+    dispatch(failedFetchAction(errorMessage));
+    } finally {
+    dispatch(loadingToggleAction(false));
+    }
+};
+}
 
 export function deleteUserAction(postId, history) {
     return (dispatch) => {

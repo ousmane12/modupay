@@ -1,7 +1,6 @@
 import React,{ useEffect, useState, useRef } from 'react';
 import {Link} from 'react-router-dom';
-import {Dropdown} from 'react-bootstrap';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     getTransactionsAction,
 } from '../../../store/actions/transactionAction';
@@ -19,6 +18,15 @@ const formatDate = (inputDate) =>{
   
 	return formattedDate;
 }
+
+const formatMoney = (amount, currencyCode) => {
+    // Assuming amount is a number
+    return amount.toLocaleString('fr-FR', {
+      style: 'currency',
+      currency: currencyCode, // Use XOF or any other desired currency code
+      minimumFractionDigits: 2,
+    });
+  }
 
 const InvoicesList = () =>{
 	const { transactions } = useSelector(
@@ -105,6 +113,7 @@ const InvoicesList = () =>{
 							<thead>
 								<tr role='row'>
 									<th className="sorting_asc">Date</th>
+									<th className="sorting_asc">Emetteur</th>
 									<th className="sorting_asc">Recepteur</th>
 									<th className="sorting_asc">Montant</th>
 									<th className="sorting_asc">Montant Converti</th>
@@ -122,13 +131,23 @@ const InvoicesList = () =>{
 										{/* Update this part based on your transaction structure */}
 										<img src={avt1} alt="" className="rounded me-3" width="50" />
 										<div>
-											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.receiver}</h6>
-											<span className="fs-14">{transaction.receiver}</span>
+											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.sender.firstName}</h6>
+											<span className="fs-14">{transaction.sender.lastName}</span>
 										</div>
 										</div>
 									</td>
-									<td><span className="text-black">$ {transaction.amount}</span></td>
-									<td><span className="text-black">{transaction.amountConverted} FCFA</span></td>
+									<td>
+										<div className="d-flex align-items-center">
+										{/* Update this part based on your transaction structure */}
+										<img src={avt1} alt="" className="rounded me-3" width="50" />
+										<div>
+											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.receiver.firstName}</h6>
+											<span className="fs-14">{transaction.receiver.lastName}</span>
+										</div>
+										</div>
+									</td>
+									<td><span className="text-black">{formatMoney(transaction.amount, "USD")}</span></td>
+									<td><span className="text-black">{formatMoney(transaction.amountConverted, "XOF")}</span></td>
 									<td className="py-2 text-right">
 										<span className={`badge badge-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
 										{transaction.status}

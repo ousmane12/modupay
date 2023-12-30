@@ -22,6 +22,15 @@ const ProductOrder = (props) => {
   const { transactions } = useSelector(
 		(state) => state.transactions
 	  )
+    console.log(transactions);
+    const formatMoney = (amount, currencyCode) => {
+      // Assuming amount is a number
+      return amount.toLocaleString('fr-FR', {
+        style: 'currency',
+        currency: currencyCode, // Use XOF or any other desired currency code
+        minimumFractionDigits: 2,
+      });
+    }
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getTransactionsAction())
@@ -30,14 +39,14 @@ const ProductOrder = (props) => {
   const handleDeleteClick = (transactionId) => {
     swal({
       title: "Etes-vous sûr?",
-      text: "Une fois validée la transaction sera completée",
+      text: "Une fois validée la transaction sera annulée",
       icon: "warning",
       buttons: true,
       dangerMode: true,
     }).then((willInitiate) => {
       if (willInitiate) {
         console.log(`Deleting transaction with ID: ${transactionId}`);
-        const formData = {"status": "canceled"};
+        const formData = {"status": "cancelled"};
         dispatch(updateTransactionAction(formData, transactionId, props.history));
       } else {
         swal("Votre action est annulée!");
@@ -101,11 +110,11 @@ const ProductOrder = (props) => {
                           width="24"
                           alt=""
                         />{" "}
-                        <span className="w-space-no">Dr. Jackson</span>
+                        <span className="w-space-no">{transaction.receiver.firstName} {transaction.receiver.lastName}</span>
                       </div>
                     </td>
-                    <td>$ {transaction.amount}</td>
-                    <td>{transaction.amountConverted} FCFA</td>
+                    <td>{transaction.receiver.phoneNumber}</td>
+                    <td>{formatMoney(transaction.amountConverted, "XOF")}</td>
                     <td className="py-2 text-right">
                             <span className={`badge badge-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
                               {transaction.status}

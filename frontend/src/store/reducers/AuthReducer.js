@@ -5,7 +5,6 @@ import {
     LOGOUT_ACTION,
     SIGNUP_CONFIRMED_ACTION,
     SIGNUP_FAILED_ACTION,
-    FETCH_DATA_ACTION,
 } from '../actions/AuthActions';
 
 const initialState = {

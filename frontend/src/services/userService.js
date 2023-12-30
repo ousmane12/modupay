@@ -45,13 +45,11 @@ export function createClient(firstName, lastName, role, phoneNumber) {
         "phoneNumber": phoneNumber,
         "password": generateRandomPassword(12),
     };
-    console.log("Creating", postData);
     const userDetailsString = localStorage.getItem('userDetails');
     // Parse userDetails string to convert it into an object
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
     const token = userDetails?.token;
-    console.log(token);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
         `http://localhost:8000/api/users`,

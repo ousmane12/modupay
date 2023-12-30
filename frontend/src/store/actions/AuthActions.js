@@ -1,9 +1,7 @@
 import {
     formatError,
     login,
-    runLogoutTimer,
     saveTokenInLocalStorage,
-    signUp,
 } from '../../services/AuthService';
 
 
@@ -15,11 +13,6 @@ export const LOADING_TOGGLE_ACTION = '[Loading action] toggle loading';
 export const LOGOUT_ACTION = '[Logout action] logout action';
 export const FETCH_DATA_ACTION = '[Fetch action] fetch action';
 
-export function signupAction(firstName, lastName, login, role, phoneNumber, email, password, history) {
-    return (dispatch) => {
-        
-    };
-}
 
 export function logout(history) {
     localStorage.removeItem('userDetails');

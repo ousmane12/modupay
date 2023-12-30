@@ -1,26 +1,14 @@
-import React,{ useContext, useEffect} from 'react';
+import React,{ useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
-import {Dropdown} from 'react-bootstrap';
-
-///Images
-import small from "./../../../images/profile/small/pic1.jpg";
-import avt1 from "./../../../images/avatar/1.jpg";
-import avt2 from "./../../../images/avatar/2.jpg";
-import avt3 from "./../../../images/avatar/3.jpg";
-import avt4 from "./../../../images/avatar/4.jpg";
-import avt5 from "./../../../images/avatar/5.jpg";
-import avt6 from "./../../../images/avatar/6.jpg";
+import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer, toast } from "react-toastify";
 
 
 //Import Components
 import { ThemeContext } from "../../../context/ThemeContext";
-
-import DonutChart from './Dashboard/DonutChart';
-import WidgetChart3 from './Dashboard/WidgetChart3';
 import PreviousTransactions from './Dashboard/PreviousTransactions';
-import NouiRangeSlider from './Dashboard/NouiRangeSlider';
 
 const TotalInvoices = loadable(() =>
 	pMinDelay(import("./Dashboard/TotalInvoices"), 1000)
@@ -34,16 +22,17 @@ const Unpaidinvoices = loadable(() =>
 const Totalinvoicessent = loadable(() =>
 	pMinDelay(import("./Dashboard/Totalinvoicessent"), 1000)
 );
-const ChartBarApex = loadable(() =>
-	pMinDelay(import("./Dashboard/ChartBarApex"), 1000)
-);
 
 
 const Home = () => {
 	const { changeBackground } = useContext(ThemeContext);
-	useEffect(() => {
-		changeBackground({ value: "light", label: "Light" });
-	}, []);
+	const { transactions } = useSelector(
+		(state) => state.transactions
+	  )
+	  
+	const filterTransactionsByStatus = (targetStatus) =>{
+		return transactions.filter(transaction => transaction.status === targetStatus).length;
+	}
 	return(
 		<>
 			<div className="row">
@@ -59,8 +48,8 @@ const Home = () => {
 											</svg>
 										</span>
 										<div className="invoices">
-											<h4>2,478</h4>
-											<span>Total Invoices</span>
+											<h4>{transactions.length}</h4>
+											<span>Transactions</span>
 										</div>
 									</div>
 								</div>
@@ -69,7 +58,6 @@ const Home = () => {
 										<TotalInvoices />
 									</div>
 								</div>
-								
 							</div>
 						</div>
 						<div className="col-xl-3 col-sm-6">
@@ -83,8 +71,8 @@ const Home = () => {
 											</svg>
 										</span>
 										<div className="invoices">
-											<h4>983</h4>
-											<span>Paid Invoices</span>
+											<h4>{filterTransactionsByStatus("completed")}</h4>
+											<span>Completées</span>
 										</div>
 									</div>
 								</div>
@@ -108,8 +96,8 @@ const Home = () => {
 
 										</span>
 										<div className="invoices">
-											<h4>1,256</h4>
-											<span>Unpaid Invoices</span>
+											<h4>{filterTransactionsByStatus("cancelled")}</h4>
+											<span>Annulées</span>
 										</div>
 									</div>
 								</div>
@@ -132,8 +120,8 @@ const Home = () => {
 											</svg>
 										</span>
 										<div className="invoices">
-											<h4>652</h4>
-											<span>Total Invoices</span>
+											<h4>{filterTransactionsByStatus("pending")}</h4>
+											<span>En attente</span>
 										</div>
 									</div>
 								</div>
@@ -146,336 +134,26 @@ const Home = () => {
 						</div>
 					</div>
 				</div>
-				<div className="col-xl-6">
+				<div className="col-xl-12">
 					<div className="row">
 						<div className="col-xl-12">
-							<div className="card">
-								<div className="card-body">
-									<div className="row">
-										<div className="col-xl-5 col-xxl-12 col-md-5">
-											<h4 className="fs-20 text-black mb-4 font-w700">Spendings</h4>
-											<div className="row">
-												<div className="d-flex col-xl-12 col-xxl-6  col-md-12 col-6 mb-4">
-													<svg className="me-3" width="14" height="54" viewBox="0 0 14 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<rect x="-6.10352e-05" width="14" height="54" rx="7" fill="#AC39D4"/>
-													</svg>
-													<div>
-														<p className="fs-14 mb-2">Investment</p>
-														<span className="fs-16 font-w600 text-light"><span className="text-black me-2 font-w700">$1,567</span>/$5,000</span>
-													</div>
-												</div>
-												<div className="d-flex col-xl-12 col-xxl-6 col-md-12 col-6 mb-4">
-													<svg className="me-3" width="14" height="54" viewBox="0 0 14 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<rect x="-6.10352e-05" width="14" height="54" rx="7" fill="#40D4A8"/>
-													</svg>
-													<div>
-														<p className="fs-14 mb-2">Installment</p>
-														<span className="fs-16 font-w600 text-light"><span className="text-black me-2 font-w700">$1,567</span>/$5,000</span>
-													</div>
-												</div>
-												<div className="d-flex col-xl-12 col-xxl-6 col-md-12 col-6 mb-4">
-													<svg className="me-3" width="14" height="54" viewBox="0 0 14 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<rect x="-6.10352e-05" width="14" height="54" rx="7" fill="#1EB6E7"/>
-													</svg>
-													<div>
-														<p className="fs-14 mb-2">Restaurant</p>
-														<span className="fs-16 font-w600 text-light"><span className="text-black me-2 font-w700">$1,567</span>/$5,000</span>
-													</div>
-												</div>
-												<div className="d-flex col-xl-12 col-xxl-6 col-md-12 col-6 mb-4">
-													<svg className="me-3" width="14" height="54" viewBox="0 0 14 54" fill="none" xmlns="http://www.w3.org/2000/svg">	
-														<rect x="-6.10352e-05" width="14" height="54" rx="7" fill="#461EE7"/>
-													</svg>
-													<div>
-														<p className="fs-14 mb-2">Property</p>
-														<span className="fs-16 font-w600 text-light"><span className="text-black me-2 font-w700">$1,567</span>/$5,000</span>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div className="col-xl-7  col-xxl-12 col-md-7">
-											<div className="row">
-												<div className="col-sm-6 mb-4">
-													<div className="bg-gradient1 rounded text-center p-3">
-														<div className="d-inline-block position-relative donut-chart-sale mb-3">
-															<DonutChart value="60" backgroundColor="rgba(255, 255, 255,1)"
-																backgroundColor2= "rgba(255, 255, 255, 0.2)"
-															/>
-															<small className="text-white">71%</small>
-														</div>
-														<span className="fs-14 text-white d-block">Investment</span>
-													</div>
-												</div>
-												<div className="col-sm-6 mb-4">
-													<div className="bg-gradient2 rounded text-center p-3">
-														<div className="d-inline-block position-relative donut-chart-sale mb-3">
-															<DonutChart value="40" backgroundColor="rgba(255, 255, 255,1)"
-																backgroundColor2= "rgba(255, 255, 255, 0.2)"
-															/>
-															<small className="text-white">30%</small>
-														</div>
-														<span className="fs-14 text-white d-block">Installment</span>
-													</div>
-												</div>
-												<div className="col-sm-6 mb-sm-0 mb-4">
-													<div className="rounded text-center p-3 bg-gradient3">
-														<div className="d-inline-block position-relative donut-chart-sale mb-3">
-															<DonutChart value="12" backgroundColor="rgba(255, 255, 255,1)"
-																backgroundColor2= "rgba(255, 255, 255, 0.2)"
-															/>
-															<small className="text-white">5%</small>
-														</div>
-														<span className="fs-14 text-white d-block">Restaurant</span>
-													</div>
-												</div>
-												<div className="col-sm-6 mb-sm-0 mb-4">
-													<div className="rounded text-center p-3 bg-gradient4">
-														<div className="d-inline-block position-relative donut-chart-sale mb-3">
-															<DonutChart value="90" backgroundColor="rgba(255, 255, 255,1)"
-																backgroundColor2= "rgba(255, 255, 255, 0.2)"
-															/>
-															<small className="text-white">96%</small>
-														</div>
-														<span className="fs-14 text-white d-block">Property</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="col-xl-12">
-							<div className="card">
-								<div className="card-header d-sm-flex d-block border-0 pb-0">
-									<div className="pe-3 me-auto mb-sm-0 mb-3">
-										<h4 className="fs-20 text-black mb-1 font-w700">Transaction Overview</h4>
-										<span className="fs-12">Lorem ipsum dolor sit amet, consectetur</span>
-									</div>
-									<div className="d-flex align-items-center justify-content-between">
-										<Link to={"#"} className="btn btn-outline-primary me-3"><i className="las la-download text-primary scale5 me-3"></i>Download Report</Link>
-										<Dropdown className="dropdown">
-											<Dropdown.Toggle as="div" className="btn-link i-false">
-												<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd"><rect x="0" y="0" width="24" height="24"></rect><circle fill="#000000" cx="5" cy="12" r="2"></circle><circle fill="#000000" cx="12" cy="12" r="2"></circle><circle fill="#000000" cx="19" cy="12" r="2"></circle></g></svg>
-											</Dropdown.Toggle>
-											<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
-												<Dropdown.Item className="dropdown-item">Delete</Dropdown.Item>
-												<Dropdown.Item className="dropdown-item">Edit</Dropdown.Item>
-											</Dropdown.Menu>
-										</Dropdown>
-									</div>
-								</div>
-								<div className="card-body">
-									<div id="chartBar" className="chartBar">
-										<ChartBarApex />
-									</div>
-									<div className="d-flex justify-content-between flex-wrap">
-										<div className="d-flex">
-											<label className="form-check-label font-w600 fs-16" htmlFor="flexSwitchCheckChecked1"
-												>Number
-											</label>
-											<div className="form-check form-switch toggle-switch">
-												<input className="form-check-input custome" type="checkbox"
-													id="flexSwitchCheckChecked1"  
-													defaultChecked
-												/>
-											</div>
-											<label className="form-check-label font-w600 fs-16" htmlFor="flexSwitchCheckChecked2">Analytics</label>	
-											<div className="form-check form-switch toggle-switch">
-											    <input className="form-check-input custome" type="checkbox" 
-													defaultChecked
-													id="flexSwitchCheckChecked2"  
-												/>
-											</div>
-										</div>
-										<div>
-											<span className="fs-16 font-w600">
-												<svg className="me-2" width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<rect x="0.639771" width="18.9471" height="19" rx="9.47357" fill="#09BD3C"/>
-												</svg>
-												Income	
-											</span>
-											<span className="fs-16 font-w600">
-												<svg className="mx-2" width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<rect x="0.344925" width="18.9471" height="19" rx="9.47357" fill="#FD5353"/>
-												</svg>
-												Expense	
-											</span>
-										</div>
-									</div>	
-								</div>
-							</div>
-						</div>
-						<div className="col-xl-12">
-							<div className="card overflow-hidden">
-								<div className="card-header d-sm-flex d-block border-0 pb-0">
-									<div className="mb-sm-0 mb-2">
-										<p className="fs-14 mb-1 font-w700">Weekly Wallet Usage</p>
-										<span className="mb-0">
-										<svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-											<path d="M11.9999 6L5.99994 -2.62268e-07L-6.10352e-05 6" fill="#2BC155"/>
-										</svg>
-										<strong className="fs-32 text-black ms-2 me-3 font-w800">43%</strong>Than last week</span>
-									</div>
-									<span className="fs-12">
-										<svg width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="me-1">
-											<path d="M0.999939 13.5C1.91791 12.4157 4.89722 9.22772 6.49994 7.5L12.4999 10.5L19.4999 1.5" stroke="#2BC155" strokeWidth="2"/>
-											<path d="M6.49994 7.5C4.89722 9.22772 1.91791 12.4157 0.999939 13.5H19.4999V1.5L12.4999 10.5L6.49994 7.5Z" fill="url(#paint0_linear2)"/>
-											<defs>
-											<linearGradient id="paint0_linear2" x1="10.2499" y1="3" x2="10.9999" y2="13.5" gradientUnits="userSpaceOnUse">
-											<stop offset="0" stopColor="#2BC155" stopOpacity="0.73"/>
-											<stop offset="1" stopColor="#2BC155" stopOpacity="0"/>
-											</linearGradient>
-											</defs>
-										</svg>
-									4% (30 days)</span>
-								</div>
-								<div className="card-body p-0">
-									{/* <canvas id="widgetChart3" height="80"></canvas> */}
-									<WidgetChart3 />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-xl-6">
-					<div className="row">
-						<div className="col-xl-12">
-							<div className="row">
-								<div className="col-xl-6 col-xxl-12 col-sm-6">
-									<div className="card">
-										<div className="card-header border-0 pb-0">
-											<div>
-												<h4 className="mb-2 font-w700">Quick Transfer</h4>
-												<span className="fs-12">Lorem ipsum dolor sit amet, consectetur</span>
-											</div>
-											<Dropdown className="dropdown">
-												<Dropdown.Toggle as="div" className="btn-link i-false">
-													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-													</svg>
-												</Dropdown.Toggle>
-												<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
-													<Dropdown.Item className="dropdown-item">Delete</Dropdown.Item>
-													<Dropdown.Item className="dropdown-item">Edit</Dropdown.Item>
-												</Dropdown.Menu>
-											</Dropdown>
-										</div>
-										<div className="card-body">	
-											<div className="user-bx">
-												<img src={small} alt="" />
-												<div>
-													<h6 className="user-name">Samuel</h6>
-													<span className="meta">@sam224</span>
-												</div>
-												<i className="las la-check-circle check-icon"></i>
-											</div>
-											<h4 className="mt-3 mb-3">Recent Friend<Link to={"#"} className="fs-16 float-end text-secondary font-w600">See More</Link></h4>
-											<ul className="user-list">
-												<li><img src={avt1} alt="" /></li>
-												<li><img src={avt2} alt="" /></li>
-												<li><img src={avt3} alt="" /></li>
-												<li><img src={avt4} alt="" /></li>
-												<li><img src={avt5} alt="" /></li>
-												<li><img src={avt6} alt="" /></li>
-											</ul>
-											<h4 className="mt-3 mb-0">Insert Amount</h4>
-											<div className="format-slider">
-												{/* <input className="form-control amount-input"  title="Formatted number" id="input-format" 
-													placeholder="20.000"
-												/> */}
-												<div id="slider-format">
-													<NouiRangeSlider />
-												</div>
-												
-											</div>
-											<div className="text-secondary fs-16 d-flex justify-content-between font-w600 mt-4">
-												<span>Your Balance</span>
-												<span>$ 456,345.62</span>
-											</div>
-										</div>
-										<div className="card-footer border-0 pt-0">
-											<Link to={"#"} className="btn btn-primary d-block btn-lg text-uppercase">Transfer Now</Link>
-										</div>
-									</div>
-								</div>
-								<div className="col-xl-6 col-xxl-12 col-sm-6">
-									<div className="card">
-										<div className="card-header border-0 pb-0">
-											<div>
-												<h4 className="mb-2 fs-20 font-w700">Bar Spendings</h4>
-												<span className="fs-12">Lorem ipsum dolor sit amet, consectetur</span>
-											</div>
-											
-											<Dropdown className="dropdown">
-												<Dropdown.Toggle as="div" className="btn-link i-false">
-													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-													</svg>
-												</Dropdown.Toggle>
-												<Dropdown.Menu className="dropdown-menu dropdown-menu-right">
-													<Dropdown.Item className="dropdown-item">Delete</Dropdown.Item>
-													<Dropdown.Item className="dropdown-item">Edit</Dropdown.Item>
-												</Dropdown.Menu>
-											</Dropdown>
-										</div>
-										<div className="card-body">	
-											<div className="progress default-progress">
-												<div className="progress-bar bg-gradient1 progress-animated" style={{width: "45%", height:"20px"}}>
-													<span className="sr-only">45% Complete</span>
-												</div>
-											</div>
-											<div className="d-flex align-items-end mt-2 pb-3 justify-content-between">
-												<span>Investment</span>
-												<span className="fs-16 font-w600 text-light"><span className="text-black pe-2">$1415</span>/$2000</span>
-											</div>
-											<div className="progress default-progress mt-4">
-												<div className="progress-bar bg-gradient2 progress-animated" style={{width: "70%", height:"20px"}} >
-													<span className="sr-only">70% Complete</span>
-												</div>
-											</div>
-											<div className="d-flex align-items-end mt-2 pb-3 justify-content-between">
-												<span>Restaurant</span>
-												<span className="fs-16 font-w600 text-light"><span className="text-black pe-2">$1567</span>/$5000</span>
-											</div>
-											<div className="progress default-progress mt-4">
-												<div className="progress-bar bg-gradient4 progress-animated" style={{width: "35%", height:"20px"}} >
-													<span className="sr-only">35% Complete</span>
-												</div>
-											</div>
-											<div className="d-flex align-items-end mt-2 pb-3 justify-content-between">
-												<span>Installment</span>
-												<span className="fs-16 font-w600 text-light"><span className="text-black pe-2">$487</span>/$10000</span>
-											</div>
-											<div className="progress default-progress mt-4">
-												<div className="progress-bar bg-gradient3 progress-animated" style={{width: "95%", height:"20px"}}>
-													<span className="sr-only">95% Complete</span>
-												</div>
-											</div>
-											<div className="d-flex align-items-end mt-2 justify-content-between">
-												<span>Property</span>
-												<span className="fs-16 font-w600 text-light"><span className="text-black pe-2">$3890</span>/$4000</span>
-											</div>
-										</div>
-										<div className="card-footer border-0 pt-0">
-											<Link to={"#"} className="btn btn-outline-primary d-block btn-lg">View More</Link>
-										</div>
-									</div>
-								</div>
-						
-							</div>
-						</div>
-						<div className="col-xl-12">
-							<PreviousTransactions />
+							<PreviousTransactions transactions={transactions}/>
 						</div>
 					</div>
 				</div>
 				
-			</div>	
+			</div>
+			<ToastContainer
+                  position="bottom-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+            />	
 		</>
 	)
 }

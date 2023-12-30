@@ -4,6 +4,23 @@ import swal from "sweetalert";
 
 const handleValidateClick = (transactionId) => {
     console.log(`Validating transaction with ID: ${transactionId}`);
+	swal({
+		title: "Etes-vous sûr?",
+		text:
+		  "Une fois validée le client sera supprimé'",
+		icon: "warning",
+		buttons: true,
+		dangerMode: true,
+	  }).then((willDelete) => {
+		if (willDelete) {
+		  //handleDeleteClick(row.original?._id)
+		  swal("Le client a bien été supprimé!", {
+			icon: "success",
+		  });
+		} else {
+		  swal("Votre action est annulée!");
+		}
+	  })
   };
 export const COLUMNS = [
 	{
@@ -40,24 +57,7 @@ export const COLUMNS = [
 				<FaEdit />
 			  </Link>
 			  <button className="btn btn-danger shadow btn-xs sharp"
-			  onClick={() =>
-				swal({
-				  title: "Etes-vous sûr?",
-				  text:
-					"Une fois validée le client sera supprimé'",
-				  icon: "warning",
-				  buttons: true,
-				  dangerMode: true,
-				}).then((willDelete) => {
-				  if (willDelete) {
-					//handleDeleteClick(row.original?._id)
-					swal("Le client a bien été supprimé!", {
-					  icon: "success",
-					});
-				  } else {
-					swal("Votre action est annulée!");
-				  }
-				})
+			  onClick={() => handleValidateClick(row.original._id)
 			  }>
 				<FaTrash />
 			  </button>

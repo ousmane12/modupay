@@ -1,13 +1,12 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useEffect } from "react";
 import PageTitle from "../../../layouts/PageTitle";
 import { Link } from "react-router-dom";
 import { useTable, useGlobalFilter, useFilters, usePagination } from 'react-table';
-import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 import { COLUMNS } from './Columns';
 import { GlobalRecherche } from './GlobalRecherche'; 
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getUsersAction,
+	getClientsAction,
 	loadingToggleAction
 } from '../../../../store/actions/userActions';
 //import './table.css';
@@ -20,7 +19,7 @@ const Clients = () => {
 	  )
 	const dispatch = useDispatch();
 	useEffect(() => {
-		dispatch(getUsersAction())
+		dispatch(getClientsAction())
 		return () => {
 		  dispatch(loadingToggleAction(showLoading))
 		};
