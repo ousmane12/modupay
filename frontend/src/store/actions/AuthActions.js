@@ -15,10 +15,12 @@ export const FETCH_DATA_ACTION = '[Fetch action] fetch action';
 
 
 export function logout(history) {
-    localStorage.removeItem('userDetails');
-    history.push('/login');
-    return {
-        type: LOGOUT_ACTION,
+    return (dispatch) => {
+        localStorage.removeItem('userDetails');
+        history.push('/login');
+        dispatch({
+            type: LOGOUT_ACTION,
+        });
     };
 }
 

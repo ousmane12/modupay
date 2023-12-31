@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-
 /// React router dom
-import {  Switch, Route } from "react-router-dom";
+import {  Switch, Route, useLocation } from "react-router-dom";
 
 /// Css
 import "./index.css";
@@ -42,7 +41,6 @@ import Select2 from "./components/PluginsMenu/Select2/Select2";
 import MainNouiSlider from "./components/PluginsMenu/NouiSlider/MainNouiSlider";
 import MainSweetAlert from "./components/PluginsMenu/SweetAlert/SweetAlert";
 import Toastr from "./components/PluginsMenu/Toastr/Toastr";
-import JqvMap from "./components/PluginsMenu/JqvMap/JqvMap";
 import Lightgallery from "./components/PluginsMenu/Lightgallery/Lightgallery";
 
 /// Table
@@ -77,6 +75,7 @@ import AddClient from "./components/Dashboard/AddClient/AddClient";
 import Inventaire from "./components/Dashboard/Inventaire/Inventaire";
 import InventaireFacture from "./components/Dashboard/Invoice/InventaireFacture";
 import ProductOrder from "./components/AppsMenu/Shop/ProductOrder";
+import TransactionsDetails from "./components/Dashboard/DetailTransaction/TransactionDetails";
 
 const Markup = () => {
   const { menuToggle } = useContext(ThemeContext);
@@ -91,6 +90,7 @@ const Markup = () => {
     { url: "utilisateur/:id", component: ProfileUser },
     { url: "transaction-details", component: TransactionDetails },
     { url: "valider-transaction", component: ProductOrder },
+    { url: "detail-transaction/:id", component: TransactionsDetails },
 
     /// Bootstrap
     { url: "ui-alert", component: UiAlert },
@@ -115,7 +115,6 @@ const Markup = () => {
     { url: "uc-noui-slider", component: MainNouiSlider },
     { url: "uc-sweetalert", component: MainSweetAlert },
     { url: "uc-toastr", component: Toastr },
-    { url: "map-jqvmap", component: JqvMap },
     { url: "uc-lightgallery", component: Lightgallery },
 
     { url: "utilisateurs", component: Customers },
@@ -148,7 +147,8 @@ const Markup = () => {
     { url: "page-error-500", component: Error500 },
     { url: "page-error-503", component: Error503 },
   ];
-  let path = window.location?.pathname;
+  const location = useLocation();
+  let path = location.pathname;
   path = path.split("/");
   path = path[path.length - 1];
 

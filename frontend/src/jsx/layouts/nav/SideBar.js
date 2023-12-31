@@ -2,6 +2,7 @@
 import Metismenu from "metismenujs";
 import React, { Component, useContext, useEffect } from "react";
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 /// Scroll
 import PerfectScrollbar from "react-perfect-scrollbar";
 /// Link
@@ -61,9 +62,11 @@ const SideBar = () => {
   let scrollPosition = useScrollPosition(({ prevPos, currPos }) => {
   });
   /// Path
-  let path = window.location?.pathname;
+  const location = useLocation();
+  let path = location.pathname;
   path = path.split("/");
   path = path[path.length - 1];
+
   /// Active menu
   let deshBoard = [
       "",

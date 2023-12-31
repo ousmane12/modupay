@@ -1,8 +1,7 @@
-import React, { Fragment, useState, useReducer } from "react";
-import { Button, Dropdown, Modal, Tab, Nav, Form } from "react-bootstrap";
+import React, { Fragment, useReducer } from "react";
+import { Button, Modal, Tab, Nav, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
-import { SRLWrapper } from "simple-react-lightbox";
 //** Import Image */
 import profile from "../../../../images/profile/profile.png";
 import PageTitle from "../../../layouts/PageTitle";
@@ -30,13 +29,6 @@ const ProfileUser = () => {
     const location = useLocation();
     const user = location.state?.user;
  
-  const options = {
-    settings: {
-      overlayColor: "#000000",
-    },
-  };
-
-
   return (
     <Fragment>
       <PageTitle activeMenu="Profil" motherMenu="Utilisateur" />

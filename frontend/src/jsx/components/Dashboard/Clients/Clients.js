@@ -24,7 +24,6 @@ const Clients = () => {
 		  dispatch(loadingToggleAction(showLoading))
 		};
 	  }, [successMessage, showLoading, dispatch]);
-	const clients = users.filter(transaction => transaction.role === 'user');
     const columns = useMemo( () => COLUMNS, [] )
 	const tableInstance = useTable({
 		columns ,

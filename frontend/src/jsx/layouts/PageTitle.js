@@ -1,8 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const PageTitle = ({ motherMenu, activeMenu, pageContent }) => {
-  let path = window.location?.pathname.split("/");
+	const location = useLocation();
+	let path = location.pathname;
+	path = path.split("/");
+	path = path[path.length - 1];
 
   return (
     <div className="row page-titles mx-0">

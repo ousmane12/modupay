@@ -1,18 +1,14 @@
 import React,{useState} from "react";
 
-import { Link } from "react-router-dom";
-/// Scroll
-import PerfectScrollbar from "react-perfect-scrollbar";
-
-/// Image
-//import profile from "../../../images/user.jpg";
-import avatar from "../../../images/avatar/1.jpg";
-import { Dropdown } from "react-bootstrap";
-//import LogoutPage from './Logout';
+import { Link, useLocation } from "react-router-dom";
 
 const Header = ({ onNote }) => {
   const [searchBut, setSearchBut] = useState(false);	
-  var path = window.location?.pathname.split("/");
+  const location = useLocation();
+	let path = location.pathname;
+	path = path.split("/");
+	path = path[path.length - 1];
+  //var path = window.location?.pathname.split("/");
   var name = path[path.length - 1].split("-");
   var filterName = name.length >= 3 ? name.filter((n, i) => i > 0) : name;
   var finalName = filterName.includes("app")

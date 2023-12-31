@@ -1,11 +1,6 @@
 import swal from "sweetalert";
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-import {
-    deleteUserAction,
-} from '../../../../../store/actions/userActions';
-
 
 export const COLUMNS = [
 	{

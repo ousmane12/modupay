@@ -60,7 +60,7 @@ export function formatError(errorResponse) {
             return 'User Disabled';
 
         default:
-            return errorResponse.message;
+            return errorResponse?.message;
     }
 }
 

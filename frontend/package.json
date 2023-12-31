@@ -1,7 +1,7 @@
 {
-  "name": "invome",
+  "name": "modupay",
   "version": "0.1.0",
-  "homepage": "https://invome.dexignlab.com/login",
+  "homepage": "https://modupay.senlogis.com/login",
   "private": true,
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",

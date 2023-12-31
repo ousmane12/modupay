@@ -18,7 +18,6 @@ export const SortingTable = () => {
 		getTableProps, 
 		getTableBodyProps, 
 		headerGroups,
-		footerGroups,
 		rows, 
 		prepareRow,
 	} = tableInstance

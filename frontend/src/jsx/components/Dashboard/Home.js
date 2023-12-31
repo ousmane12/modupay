@@ -1,13 +1,12 @@
-import React,{ useContext, useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import React,{ useEffect } from 'react';
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
-import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer, toast } from "react-toastify";
+import { useSelector, useDispatch } from 'react-redux';
+import { ToastContainer } from "react-toastify";
+import {
+    getTransactionsAction,
+} from '../../../store/actions/transactionAction';
 
-
-//Import Components
-import { ThemeContext } from "../../../context/ThemeContext";
 import PreviousTransactions from './Dashboard/PreviousTransactions';
 
 const TotalInvoices = loadable(() =>
@@ -25,11 +24,15 @@ const Totalinvoicessent = loadable(() =>
 
 
 const Home = () => {
-	const { changeBackground } = useContext(ThemeContext);
+	const dispatch = useDispatch();
 	const { transactions } = useSelector(
 		(state) => state.transactions
-	  )
-	  
+	)
+	  useEffect(() => {
+		dispatch(getTransactionsAction())
+		//chackboxFun()
+	}, [dispatch])
+
 	const filterTransactionsByStatus = (targetStatus) =>{
 		return transactions.filter(transaction => transaction.status === targetStatus).length;
 	}

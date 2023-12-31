@@ -1,4 +1,5 @@
 import React,{ useEffect, useState, useRef } from 'react';
+import { FaEye } from 'react-icons/fa';
 import {Link} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -70,27 +71,7 @@ const InvoicesList = () =>{
 		chageData(i * sort, (i + 1) * sort);
 	  };
 	const pendingTransactions = transactions.filter(transaction => transaction.status === 'completed');
-	const chackbox = document.querySelectorAll('.application_sorting_1 input')
-	const motherChackBox = document.querySelector('.sorting_asc input')
-	const chackboxFun = (type) => {
-		for (let i = 0; i < chackbox.length; i++) {
-		const element = chackbox[i]
-			if (type === 'all') {
-				if (motherChackBox.checked) {
-					element.checked = true
-				} else {
-					element.checked = false
-				}
-			} else {
-				if (!element.checked) {
-					motherChackBox.checked = false
-					break
-				} else {
-					motherChackBox.checked = true
-				}
-			}
-		}
-	}
+	
 	return(
 		<>
 			<div className="d-flex mb-3">
@@ -153,6 +134,14 @@ const InvoicesList = () =>{
 										{transaction.status}
 										<span className="ms-1 fas fa-stream" />
 										</span>
+									</td>
+									<td>
+									<Link to={{
+											pathname: `/detail-transaction/${transaction?._id}`,
+											state: { data: transaction },
+										}} className="btn btn-primary shadow btn-xs sharp me-2">
+										<FaEye />
+									</Link>
 									</td>                                       
 									</tr>
 								))}

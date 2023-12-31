@@ -6,7 +6,6 @@ import "bootstrap-daterangepicker/daterangepicker.css";
 import {
     getTransactionsInventaireAction,
 } from '../../../../store/actions/transactionAction';
-import { ToastContainer, toast } from "react-toastify";
 
 import PageTitle from "../../../layouts/PageTitle";
 

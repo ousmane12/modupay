@@ -12,7 +12,8 @@ const getTransactions = asyncHandler(async (req, res) => {
     const transactions = await Transaction.find({ /* Your query criteria */ })
       .populate('initiatedBy')  // Populate initiatedBy field with all fields
       .populate('sender')       // Populate sender field with all fields
-      .populate('receiver') 
+      .populate('receiver')
+      .populate('completedBy') 
 
     // Send the transactions as a response
     res.json(transactions);

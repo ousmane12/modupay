@@ -22,7 +22,12 @@ const ProductOrder = (props) => {
   const { transactions } = useSelector(
 		(state) => state.transactions
 	  )
-    console.log(transactions);
+    const userDetailsString = localStorage.getItem('userDetails');
+    // Parse userDetails string to convert it into an object
+    const userDetails = JSON.parse(userDetailsString);
+    // Access the token property
+    const userId = userDetails?._id;
+      console.log("USER:", userId);
     const formatMoney = (amount, currencyCode) => {
       // Assuming amount is a number
       return amount.toLocaleString('fr-FR', {
@@ -46,7 +51,7 @@ const ProductOrder = (props) => {
     }).then((willInitiate) => {
       if (willInitiate) {
         console.log(`Deleting transaction with ID: ${transactionId}`);
-        const formData = {"status": "cancelled"};
+        const formData = {"status": "cancelled", "completedBy": userId};
         dispatch(updateTransactionAction(formData, transactionId, props.history));
       } else {
         swal("Votre action est annulée!");
@@ -63,7 +68,7 @@ const ProductOrder = (props) => {
     }).then((willInitiate) => {
       if (willInitiate) {
       console.log(`Validating transaction with ID: ${transactionId}`);
-      const formData = {"status": "completed"};
+      const formData = {"status": "completed", "completedBy": userId};
       dispatch(updateTransactionAction(formData, transactionId, props.history));
     } else {
       swal("Votre action est annulée!");
