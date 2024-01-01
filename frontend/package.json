@@ -1,7 +1,7 @@
 {
   "name": "modupay",
   "version": "0.1.0",
-  "homepage": "https://modupay.senlogis.com/login",
+  "homepage": "http://localhost:8000",
   "private": true,
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",

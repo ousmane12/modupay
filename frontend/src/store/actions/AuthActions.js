@@ -29,13 +29,12 @@ export function loginAction(email, password, history) {
         login(email, password)
             .then((response) => {
                 saveTokenInLocalStorage(response.data);
-                /* runLogoutTimer(
-                    dispatch,
-                    response.data.expiresIn * 1000,
-                    history,
-                ); */
-                dispatch(loginConfirmedAction(response.data));
-				history.push('/dashboard');                
+                if(response.data?.message !== null){
+                    dispatch(loginFailedAction(response.data.message));
+                }else{
+                    dispatch(loginConfirmedAction(response.data));
+                    history.push('/dashboard');  
+                }                
             })
             .catch((error) => {
 				console.log(error);

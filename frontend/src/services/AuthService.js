@@ -36,6 +36,7 @@ export function login(email, password) {
         "login": email,
         "password": password,
     };
+    console.log(postData);
     return axios.post(
         `http://localhost:8000/api/users/login`,
         postData,

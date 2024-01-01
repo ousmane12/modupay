@@ -9,7 +9,6 @@ import {
     getUsersAction,
 	loadingToggleAction
 } from '../../../../../store/actions/userActions';
-//import './table.css';
 import './filtering.css';
 
 
