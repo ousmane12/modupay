@@ -25,7 +25,7 @@ export function signUp(firstName, lastName, login, role, phoneNumber, email, pas
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `http://localhost:8000/api/users`,
+        `https://modoupay-api.onrender.com/api/users`,
         postData,
         { headers }
     );
@@ -38,7 +38,7 @@ export function login(email, password) {
     };
     console.log(postData);
     return axios.post(
-        `http://localhost:8000/api/users/login`,
+        `https://modoupay-api.onrender.com/api/users/login`,
         postData,
     );
 }

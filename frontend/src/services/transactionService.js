@@ -8,7 +8,7 @@ export function getTransactions() {
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.get(
-        `http://localhost:8000/api/transactions`,
+        `https://modoupay-api.onrender.com/api/transactions`,
         { headers }
     );
 }
@@ -25,7 +25,7 @@ export function createTransaction(sender, receiver, amount, amountConverted) {
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `http://localhost:8000/api/transactions`,
+        `https://modoupay-api.onrender.com/api/transactions`,
         postData,
         { headers }
     );
@@ -38,7 +38,7 @@ export function updateTransaction(post, postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.put(`http://localhost:8000/api/transactions/${postId}`, post, { headers });
+    return axios.put(`https://modoupay-api.onrender.com/api/transactions/${postId}`, post, { headers });
 }
 
 export function deleteTransaction(postId) {
@@ -48,7 +48,7 @@ export function deleteTransaction(postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.delete(`http://localhost:8000/api/transactions/${postId}`, { headers });
+    return axios.delete(`https://modoupay-api.onrender.com/api/transactions/${postId}`, { headers });
 }
 
 export function formatTransactions(postsData) {

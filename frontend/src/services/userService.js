@@ -8,7 +8,7 @@ export function fetchUsers() {
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.get(
-        `http://localhost:8000/api/users/all`,
+        `https://modoupay-api.onrender.com/api/users/all`,
         { headers }
     );
 }
@@ -30,7 +30,7 @@ export function createUser(firstName, lastName, login, role, phoneNumber, email,
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `http://localhost:8000/api/users`,
+        `https://modoupay-api.onrender.com/api/users`,
         postData,
         { headers }
     );
@@ -52,7 +52,7 @@ export function createClient(firstName, lastName, role, phoneNumber) {
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `http://localhost:8000/api/users`,
+        `https://modoupay-api.onrender.com/api/users`,
         postData,
         { headers }
     );
@@ -65,7 +65,7 @@ export function updateUser(post, postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.put(`http://localhost:8000/api/users/${postId}`, post, { headers });
+    return axios.put(`https://modoupay-api.onrender.com/api/users/${postId}`, post, { headers });
 }
 
 export function deleteUser(postId) {
@@ -75,7 +75,7 @@ export function deleteUser(postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.delete(`http://localhost:8000/api/users/${postId}`, { headers });
+    return axios.delete(`https://modoupay-api.onrender.com/api/users/${postId}`, { headers });
 }
 
 export function formatUsers(postsData) {
