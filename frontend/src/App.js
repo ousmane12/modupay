@@ -9,6 +9,7 @@ import { isAuthenticated } from './store/selectors/AuthSelectors';
 /// Style
 import "./vendor/bootstrap-select/dist/css/bootstrap-select.min.css";
 import "./css/style.css";
+import { checkAutoLogin } from './services/AuthService';
 
 
 const SignUp = lazy(() => import('./jsx/pages/Registration'));
@@ -22,12 +23,12 @@ const Login = lazy(() => {
 function App (props) {
     const dispatch = useDispatch();
     useEffect(() => {
-        //checkAutoLogin(dispatch, props.history);
+        checkAutoLogin(dispatch, props.history);
     }, [dispatch, props.history]);
     
     let routes = (  
         <Switch>
-            <Route path='/login' component={Login} />
+            <Route path='/' component={Login} />
             <Route path='/page-register' component={SignUp} />
             <Route path='/page-forgot-password' component={ForgotPassword} />
         </Switch>

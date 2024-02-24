@@ -29,12 +29,11 @@ export function loginAction(email, password, history) {
         login(email, password)
             .then((response) => {
                 saveTokenInLocalStorage(response.data);
-                if(response.data?.message !== null){
+                if(response.data?.status !== 200){
                     dispatch(loginFailedAction(response.data.message));
-                }else{
-                    dispatch(loginConfirmedAction(response.data));
-                    history.push('/dashboard');  
-                }                
+                }
+                dispatch(loginConfirmedAction(response.data));
+                history.push('/dashboard');                               
             })
             .catch((error) => {
 				console.log(error);

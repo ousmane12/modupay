@@ -45,7 +45,7 @@ function Register(props) {
                 <div className="col-xl-12">
                   <div className="auth-form">
                     <div className="text-center mb-3">
-                      <Link to="/login">
+                      <Link to="/">
                         <img src={logo} alt="" />
                       </Link>
                     </div>
