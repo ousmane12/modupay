@@ -25,11 +25,10 @@ export function createAction(firstName, lastName, login, role, phoneNumber, emai
             if (response.status === 201) {
                 dispatch(confirmedCreateAction(response.data));
                 history.push('/utilisateurs');
-              } else {
+              } 
                 // Treat other status codes as errors
                 const errorMessage = formatError(response.data);
                 dispatch(failedCreateAction(errorMessage));
-              } 
         })
         .catch((error) => {
             console.log(error);

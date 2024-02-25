@@ -40,7 +40,7 @@ const Header = ({ onNote }) => {
         <nav className="navbar navbar-expand">
           <div className="collapse navbar-collapse justify-content-between">
             <div className="header-left">
-				<div
+				{/* <div
 					className="dashboard_bar"
 					style={{ textTransform: "capitalize" }}
 				  >
@@ -48,8 +48,8 @@ const Header = ({ onNote }) => {
 					  ? "Dashboard"
 					  : finalName.join(" ") === "dashboard dark"
 					  ? "Dashboard"
-					  : finalName.join(" ")}
-				</div>
+					  : finalName.join("")}
+				</div> */}
             </div>
             <ul className="navbar-nav header-right">
 				<li className="nav-item d-flex align-items-center">

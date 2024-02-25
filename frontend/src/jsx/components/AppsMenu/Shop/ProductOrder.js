@@ -27,7 +27,6 @@ const ProductOrder = (props) => {
     const userDetails = JSON.parse(userDetailsString);
     // Access the token property
     const userId = userDetails?._id;
-      console.log("USER:", userId);
     const formatMoney = (amount, currencyCode) => {
       // Assuming amount is a number
       return amount.toLocaleString('fr-FR', {
