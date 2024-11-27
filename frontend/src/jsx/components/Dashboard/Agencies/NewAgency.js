@@ -35,8 +35,8 @@ function NewAgency(props) {
     const fetchInitialData = async () => {
       try {
         const userResponse = await fetchUsers();
-        if (isMounted) {
-          setUsers(userResponse.data.filter((user) => user.role === 'agency_manager' && user.agency === undefined));
+        if(isMounted) {
+          setUsers(userResponse.data.filter((user) => user.role === 'agency_manager' && (user.agency === undefined || user.country === null)));
         }
 
         if (user.role === 'admin') {

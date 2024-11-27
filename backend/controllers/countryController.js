@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
-const Country = require('../models/countryModel')
+const Country = require('../models/countryModel');
+const Agency = require('../models/agencyModel');
 const User = require('../models/userModel')
 
 // @desc    Create a new country

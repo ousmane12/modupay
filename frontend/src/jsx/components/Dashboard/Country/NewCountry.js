@@ -121,7 +121,7 @@ function NewCountry(props) {
                         ))}
                         <div className="form-group mb-3 col-md-12">
                           <label className="mb-1"><strong>Manageur</strong></label>
-                          <CustomSelect options={users.filter(user => user.role === 'country_manager' && user.agency === null)} onSelect={handleUserSelect} />
+                          <CustomSelect options={users.filter(user => user.role === 'country_manager' && (user.country === undefined || user.country === null))} onSelect={handleUserSelect} />
                         </div>
                         <div className="row">
                           <div className="form-group mb-3 col-md-4"></div>

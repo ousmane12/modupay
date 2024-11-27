@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler')
-const Expense = require('../models/expenseModel')
-const Country = require('../models/countryModel')
-const Agency = require('../models/agencyModel')
+const Expense = require('../models/expenseModel');
+const Country = require('../models/countryModel');
+const Agency = require('../models/agencyModel');
 
 // @desc    Create a new transaction
 // @route   POST /api/transactions

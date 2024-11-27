@@ -1,7 +1,9 @@
+const asyncHandler = require('express-async-handler')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel');
+const Country = require('../models/countryModel');
+const Agency = require('../models/agencyModel');
 const Investment = require('../models/investmentModel');
 const permissionsConfig = require('../config/roles');
 
@@ -9,14 +11,16 @@ const permissionsConfig = require('../config/roles');
 // @route   POST /api/users
 // @access  Private
 const createUser = asyncHandler(async (req, res) => {
+  console.log('creating:', req.body);
   const { name, phoneNumber, email, role } = req.body;
 
   // Vérification des champs requis
   if (!name || !email || !phoneNumber || !role) {
     res.status(400);
-    throw new Error('Please add all fields');
+    throw new Error('Veuillez fournir tous les champs requis');
   }
 
+  // Vérifier si le rôle est valide
   if (!permissionsConfig[role]) {
     return res.status(400).json({ message: 'Rôle invalide.' });
   }
@@ -25,22 +29,11 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
-    throw new Error('Un utilisateur existe avec cet email');
+    throw new Error('Un utilisateur existe déjà avec cet email');
   }
 
   // Génération d'un mot de passe par défaut
   const defaultPassword = Math.random().toString(36).slice(-8);
-
-  // Hash du mot de passe
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(defaultPassword, salt);
-  const crypto = require('crypto');
-  const resetToken = crypto.randomBytes(20).toString('hex');
-
-  // Ajouter le token au modèle
-  const resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-  const resetPasswordExpires = Date.now() + 10 * 60 * 1500; // Expire après 10 minutes
-
 
   // Création de l'utilisateur
   const userData = {
@@ -48,48 +41,56 @@ const createUser = asyncHandler(async (req, res) => {
     email,
     role,
     phoneNumber,
-    password: hashedPassword,
-    resetPasswordToken,
-    resetPasswordExpires,
+    password: defaultPassword,
   };
 
-  // Ajouter `country` ou `agency` au modèle utilisateur en fonction du rôle
+  // Ajouter `country` ou `agency` en fonction du rôle de l'utilisateur connecté
   if (req.user.role === 'country_manager' && role === 'agency_manager') {
     userData.country = req.user.country;
-    // Ajouter l'utilisateur comme manager dans `Country`
-   
   } else if (req.user.role === 'agency_manager' && role === 'agent') {
     userData.country = req.user.country;
     userData.agency = req.user.agency;
   }
 
   const user = new User(userData);
-  // Génération d'un token pour définir le mot de passe
+
+  // Génération du reset token
+  const resetToken = user.getResetPasswordToken();
+  const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
+
+  console.log('resetUrl:', resetUrl);
+
+  // Sauvegarder l'utilisateur avec le token généré
   await user.save();
 
-  // Construire le lien pour définir le mot de passe
-  const resetUrl = `${process.env.RESET_PASS_URL}/${resetPasswordToken}`;
-
-  // Envoi de l'email
+  // Envoi de l'e-mail
   try {
     const sendEmail = require('../utils/sendEmail');
     await sendEmail({
       to: email,
       subject: 'Création de Compte BIBA',
-      text: `Bonjour ${name},\n\nUn compte a été créé pour vous. Votre identifiant est:\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe:\n\n${resetUrl}\n\nCe lien expire dans 15 minutes.`,
+      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe :\n\n${resetUrl}\n\nCe lien expire dans 15 minutes.`,
     });
 
-    res.status(201).json({ message: 'Utilisateur créé avec succès et e-mail envoyé', createdUser: user });
+    res.status(201).json({
+      message: 'Utilisateur créé avec succès et e-mail envoyé',
+      createdUser: user,
+    });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+
+    // Supprimer les champs liés au token en cas d'échec
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
     res.status(500);
-    throw new Error('Utilisateur créé, mais n\'a pas réussi à envoyer l\'e-mail. Veuillez réessayer plus tard.');
+    throw new Error(
+      "Utilisateur non créé, échec de l'envoi de l'e-mail. Veuillez réessayer plus tard."
+    );
   }
 });
+
 
 // Enregistrer un partenaire
 const registerPartner = asyncHandler(async (req, res) => {
@@ -323,9 +324,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'L\'utilisateur avec cet e-mail n\'existe pas' });
   }
 
-  // Génère un token de réinitialisation
-  const resetToken = user.getResetPasswordToken();
-
   // Hash le token et configure une expiration
   user.resetPasswordToken = user.getResetPasswordToken();
   user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
@@ -340,7 +338,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Demande de changement de Mot de passe',
-      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${resetUrl}\n\nCe lien expirera dans 1 heure.`,
+      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${user.resetPasswordToken}\n\nCe lien expirera dans 1 heure.`,
     });
     res.status(201).json({ message: 'Le lien de changement de mot de passe est envoyé par mail' });
   } catch (error) {
