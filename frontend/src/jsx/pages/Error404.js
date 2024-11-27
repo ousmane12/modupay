@@ -11,15 +11,11 @@ const Error404 = () => {
                      <h1 className="error-text font-weight-bold">404</h1>
                      <h4>
                         <i className="fa fa-exclamation-triangle text-warning" />{" "}
-                        The page you were looking for is not found!
+                        La page que vous cherchez n'existe pas!
                      </h4>
-                     <p>
-                        You may have mistyped the address or the page may have
-                        moved.
-                     </p>
                      <div>
-                        <Link className="btn btn-primary" to="/dashboard">
-                           Back to Home
+                        <Link className="btn btn-primary" to="/login">
+                           Retourner à l'accueil
                         </Link>
                      </div>
                   </div>

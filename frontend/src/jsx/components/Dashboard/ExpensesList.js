@@ -1,10 +1,5 @@
 import React,{ useEffect, useState, useRef } from 'react';
-import { FaEye } from 'react-icons/fa';
 import {Link} from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-    getTransactionsAction,
-} from '../../../store/actions/transactionAction';
 
 import avt1 from './../../../images/avatar/1.png';
 import { getExpenses } from '../../../services/transactionService';

@@ -51,7 +51,7 @@ const Home = () => {
 			});
 		}
 		//chackboxFun()
-	}, [dispatch])
+	}, [dispatch, user])
 
 	const filterTransactionsByStatus = (targetStatus) =>{
 		return transactions.filter(transaction => transaction.status === targetStatus).length;

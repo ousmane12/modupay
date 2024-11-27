@@ -1,7 +1,7 @@
 {
-  "name": "Biba Express",
+  "name": "modupay",
   "version": "0.1.0",
-  "homepage": "http://localhost:3000/login",
+  "homepage": "http://localhost:8000",
   "private": true,
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",

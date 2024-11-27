@@ -76,7 +76,7 @@ const createUser = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Création de Compte BIBA',
-      text: `Bonjour ${name},\n\nUn compte a été créé pour vous. Veuillez utiliser le lien ci-dessous pour définir votre mot de passe:\n\n${resetUrl}\n\nThis link will expire in 10 minutes.`,
+      text: `Bonjour ${name},\n\nUn compte a été créé pour vous. Votre identifiant est:\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe:\n\n${resetUrl}\n\nCe lien expire dans 15 minutes.`,
     });
 
     res.status(201).json({ message: 'Utilisateur créé avec succès et e-mail envoyé', createdUser: user });

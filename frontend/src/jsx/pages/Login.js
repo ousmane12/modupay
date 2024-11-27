@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import { loadingToggleAction, loginAction,
 } from '../../store/actions/AuthActions';
 
-// image
-import logo from "../../images/logo-whiite-text.png";
 import logoWhite from "../../images/logo.png";
 
 function Login (props) {

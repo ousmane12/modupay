@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Modal } from "react-bootstrap";
 import swal from "sweetalert";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createExpense } from "../../../services/transactionService";
 
 const initialState = false;
@@ -23,10 +23,6 @@ const Header = (props) => {
 	});
 	const [state, dispatch] = useReducer(reducer, initialState);
  	const user = useSelector(state => state.auth.auth);
-  	const location = useLocation();
-	let path = location.pathname;
-	path = path.split("/");
-	path = path[path.length - 1];
   //var path = window.location?.pathname.split("/");
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
