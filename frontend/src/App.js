@@ -10,6 +10,8 @@ import { isAuthenticated } from './store/selectors/AuthSelectors';
 import "./vendor/bootstrap-select/dist/css/bootstrap-select.min.css";
 import "./css/style.css";
 import { checkAutoLogin } from './services/AuthService';
+import PublicRoute from './PublicRoute';
+import Error404 from './jsx/pages/Error404';
 
 
 const SignUp = lazy(() => import('./jsx/pages/Registration'));
@@ -20,41 +22,17 @@ const Login = lazy(() => {
   });
 });
 
-function App (props) {
+function App(props) {
     const dispatch = useDispatch();
+
     useEffect(() => {
         checkAutoLogin(dispatch, props.history);
     }, [dispatch, props.history]);
-    
-    let routes = (  
-        <Switch>
-            <Route path='/' component={Login} />
-            <Route path='/page-register' component={SignUp} />
-            <Route path='/page-forgot-password' component={ForgotPassword} />
-        </Switch>
-    );
-    if (props.isAuthenticated) {
-		return (
-			<>
-                <Suspense fallback={
-                    <div id="preloader">
-                        <div className="sk-three-bounce">
-                            <div className="sk-child sk-bounce1"></div>
-                            <div className="sk-child sk-bounce2"></div>
-                            <div className="sk-child sk-bounce3"></div>
-                        </div>
-                    </div>  
-                   }
-                >
-                    <Index / >
-                </Suspense>
-            </>
-        );
-	
-	}else{
-		return (
-			<div className="vh-100">
-                <Suspense fallback={
+
+    return (
+        <div className="vh-100">
+            <Suspense
+                fallback={
                     <div id="preloader">
                         <div className="sk-three-bounce">
                             <div className="sk-child sk-bounce1"></div>
@@ -62,14 +40,36 @@ function App (props) {
                             <div className="sk-child sk-bounce3"></div>
                         </div>
                     </div>
-                  }
-                >
-                    {routes}
-                </Suspense>
-			</div>
-		);
-	}
-};
+                }
+            >
+                <Switch>
+                    {!props.isAuthenticated ? (
+                        <>
+                            <Route path="/reset-password/:token" component={SignUp} />
+                            <PublicRoute
+                                path="/forgot-password"
+                                component={ForgotPassword}
+                                isAuthenticated={props.isAuthenticated}
+                            />
+                            <PublicRoute
+                                path="/reset-password/:token"
+                                component={SignUp}
+                                isAuthenticated={props.isAuthenticated}
+                            />
+                            <Route path="/login" component={Login} />
+                        </>
+                    ) : (
+                        <Index />
+                    )}
+                    {/* Route par défaut pour les URLs inconnues */}
+                    <Route component={Error404} />
+                </Switch>
+            </Suspense>
+        </div>
+    );
+}
+
+
 
 const mapStateToProps = (state) => {
     return {

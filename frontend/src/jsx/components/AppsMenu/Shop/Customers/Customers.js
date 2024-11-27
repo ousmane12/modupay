@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect } from "react";
-import PageTitle from "../../../../layouts/PageTitle";
 import { Link } from "react-router-dom";
 import { useTable, useGlobalFilter, useFilters, usePagination } from 'react-table';
 import { COLUMNS } from './Columns';
@@ -13,9 +12,10 @@ import './filtering.css';
 
 
 const Customers = () => {
-	const { users, errorMessage, successMessage, showLoading } = useSelector(
+	const { users, successMessage, showLoading } = useSelector(
 		(state) => state.users
 	  )
+	
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(getUsersAction())
@@ -51,7 +51,6 @@ const Customers = () => {
 	
 	return(
 		<>
-		<PageTitle activeMenu="Utilisateurs" motherMenu="Liste" />
 		<div className="card">
 			<div className="card-header">
 				<h4 className="card-title">Tous les utilisateurs</h4>

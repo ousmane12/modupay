@@ -1,17 +1,17 @@
 import axios from 'axios';
 import swal from "sweetalert";
-//import axiosInstance from '../services/AxiosInstance';
+
 import {
     loginConfirmedAction,
     logout,
 } from '../store/actions/AuthActions';
 
-export function signUp(firstName, lastName, login, role, phoneNumber, email, password) {
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+export function signUp(name, role, phoneNumber, email, password) {
     //axios call
     const postData = {
-        firstName, 
-        lastName, 
-        login, 
+        name, 
         role, 
         phoneNumber,
         email,
@@ -25,7 +25,7 @@ export function signUp(firstName, lastName, login, role, phoneNumber, email, pas
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `https://modoupay-api.onrender.com/api/users`,
+        `${API_BASE_URL}/users`,
         postData,
         { headers }
     );
@@ -33,12 +33,31 @@ export function signUp(firstName, lastName, login, role, phoneNumber, email, pas
 
 export function login(email, password) {
     const postData = {
-        "login": email,
+        "email": email,
         "password": password,
     };
-    console.log(postData);
     return axios.post(
-        `https://modoupay-api.onrender.com/api/users/login`,
+        `${API_BASE_URL}/users/login`,
+        postData,
+    );
+}
+
+export function forgotPassword(email) {
+    const postData = {
+        "email": email
+    };
+    return axios.post(
+        `${API_BASE_URL}/users/forgot-password`,
+        postData,
+    );
+}
+
+export function setPassword(token, email) {
+    const postData = {
+        "password": email
+    };
+    return axios.post(
+        `${API_BASE_URL}/users/reset-password/${token}`,
         postData,
     );
 }
@@ -81,8 +100,11 @@ export function runLogoutTimer(dispatch, timer, history) {
 export function checkAutoLogin(dispatch, history) {
     const tokenDetailsString = localStorage.getItem('userDetails');
     let tokenDetails = '';
+    const isResetTokenRoute = /^\/reset-password\/[^/]+$/.test(history.location.pathname);
     if (!tokenDetailsString) {
-        dispatch(logout(history));
+        if (!isResetTokenRoute) {
+            dispatch(logout(history));
+        }
         return;
     }
 
@@ -91,7 +113,9 @@ export function checkAutoLogin(dispatch, history) {
     let todaysDate = new Date();
 
     if (todaysDate > expireDate) {
-        dispatch(logout(history));
+        if (!isResetTokenRoute) {
+            dispatch(logout(history));
+        }
         return;
     }
     dispatch(loginConfirmedAction(tokenDetails));

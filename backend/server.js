@@ -1,10 +1,11 @@
 const path = require('path');
 const express = require('express');
 const colors = require('colors');
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const connectDB = require('./config/db');
 const cors = require('cors');
+dotenv.config();
 const port = process.env.PORT || 5000;
 
 connectDB();
@@ -18,6 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/countries', require('./routes/countryRoutes'));
+app.use('/api/agencies', require('./routes/agencyRoutes'));
+app.use('/api/investments', require('./routes/investmentRoutes'));
+app.use('/api/expenses', require('./routes/expenseRoutes'));
 
 // Serve frontend
 /* if (process.env.NODE_ENV === 'production') {

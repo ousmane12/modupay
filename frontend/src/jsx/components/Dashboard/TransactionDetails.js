@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {Dropdown} from 'react-bootstrap';
 
-import profile from './../../../images/profile/pic2.jpg';
 import wave from './../../../images/pattern/wave-dec.png';
 import circle from './../../../images/pattern/circle.png';
 import circle1 from './../../../images/pattern/circles1.png';
@@ -45,7 +44,7 @@ const TransactionDetails = ()=>{
 						</div>
 						<div className="card-body pb-3 transaction-details d-flex flex-wrap justify-content-between align-items-center">
 							<div className="user-bx-2 me-3 mb-3">
-								<img src={profile} className="rounded" alt="" />
+								<img src={null} className="rounded" alt="" />
 								<div>
 									<h3 className="fs-20 font-w700">Richard Michael</h3>
 									<span className="font-w400">@richardmichael</span>

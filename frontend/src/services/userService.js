@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 export function fetchUsers() {
     const userDetailsString = localStorage.getItem('userDetails');
     // Parse userDetails string to convert it into an object
@@ -8,20 +10,17 @@ export function fetchUsers() {
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.get(
-        `https://modoupay-api.onrender.com/api/users/all`,
+        `${API_BASE_URL}/users/all`,
         { headers }
     );
 }
 
-export function createUser(firstName, lastName, login, role, phoneNumber, email, password) {
+export function createUser(name, role, phoneNumber, email) {
     const postData = {
-        firstName, 
-        lastName, 
-        login, 
+        name,
         role, 
         phoneNumber,
         email,
-        password,
     };
     const userDetailsString = localStorage.getItem('userDetails');
     // Parse userDetails string to convert it into an object
@@ -30,29 +29,7 @@ export function createUser(firstName, lastName, login, role, phoneNumber, email,
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return axios.post(
-        `https://modoupay-api.onrender.com/api/users`,
-        postData,
-        { headers }
-    );
-}
-
-export function createClient(firstName, lastName, role, phoneNumber) {
-    const postData = {
-        "firstName": firstName, 
-        "lastName": lastName, 
-        "login": generateRandomPassword(6), 
-        "role": role, 
-        "phoneNumber": phoneNumber,
-        "password": generateRandomPassword(12),
-    };
-    const userDetailsString = localStorage.getItem('userDetails');
-    // Parse userDetails string to convert it into an object
-    const userDetails = JSON.parse(userDetailsString);
-    // Access the token property
-    const token = userDetails?.token;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.post(
-        `https://modoupay-api.onrender.com/api/users`,
+        `${API_BASE_URL}/users/`,
         postData,
         { headers }
     );
@@ -65,7 +42,7 @@ export function updateUser(post, postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.put(`https://modoupay-api.onrender.com/api/users/${postId}`, post, { headers });
+    return axios.put(`${API_BASE_URL}/users/${postId}`, post, { headers });
 }
 
 export function deleteUser(postId) {
@@ -75,7 +52,7 @@ export function deleteUser(postId) {
     // Access the token property
     const token = userDetails?.token;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.delete(`https://modoupay-api.onrender.com/api/users/${postId}`, { headers });
+    return axios.delete(`${API_BASE_URL}/users/${postId}`, { headers });
 }
 
 export function formatUsers(postsData) {
@@ -90,15 +67,3 @@ export function formatUsers(postsData) {
 export function formatError(errorResponse) {
     return errorResponse.message;
 }
-
-function generateRandomPassword(length) {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\:;?><,./-=';
-    let password = '';
-  
-    for (let i = 0; i < length; ++i) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset[randomIndex];
-    }
-  
-    return password;
-  }

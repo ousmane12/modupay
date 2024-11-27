@@ -6,7 +6,7 @@ import {
     getTransactionsAction,
 } from '../../../store/actions/transactionAction';
 
-import avt1 from './../../../images/avatar/1.jpg';
+import avt1 from './../../../images/avatar/1.png';
 
 const formatDate = (inputDate) =>{
 	const date = new Date(inputDate);
@@ -20,27 +20,17 @@ const formatDate = (inputDate) =>{
 	return formattedDate;
 }
 
-const formatMoney = (amount, currencyCode) => {
-    // Assuming amount is a number
-    return amount.toLocaleString('fr-FR', {
-      style: 'currency',
-      currency: currencyCode, // Use XOF or any other desired currency code
-      minimumFractionDigits: 2,
-    });
-  }
-
 const InvoicesList = () =>{
 	const { transactions } = useSelector(
 		(state) => state.transactions
 	  )
-	const [activePage, setActivePage] = useState(0);
+
 	const dispatch = useDispatch();
 	const [data, setData] = useState(
 		document.querySelectorAll('#invoices-data tbody tr')
 	)
 	const sort = 8
 	const activePag = useRef(0)
-	const [test, settest] = useState(0)
 
 	  // Active data
 	const chageData = (frist, sec) => {
@@ -57,7 +47,7 @@ const InvoicesList = () =>{
 		dispatch(getTransactionsAction())
 		setData(document.querySelectorAll('#invoices-data tbody tr'))
 		//chackboxFun()
-	}, [test, dispatch])
+	}, [dispatch])
 	// Active pagginarion
 		activePag.current === 0 && chageData(0, sort)
 	// paggination
@@ -66,12 +56,10 @@ const InvoicesList = () =>{
 			.map((_, i) => i + 1)
 	 // Active paggination & chage data
 	 const onClick = (i) => {
-		// Instead of modifying a ref, update a state variable
-		setActivePage(i);
+
 		chageData(i * sort, (i + 1) * sort);
 	  };
 	const pendingTransactions = transactions.filter(transaction => transaction.status === 'completed');
-	
 	return(
 		<>
 			<div className="d-flex mb-3">
@@ -94,10 +82,10 @@ const InvoicesList = () =>{
 							<thead>
 								<tr role='row'>
 									<th className="sorting_asc">Date</th>
-									<th className="sorting_asc">Emetteur</th>
+									<th className="sorting_asc">Type</th>
 									<th className="sorting_asc">Recepteur</th>
 									<th className="sorting_asc">Montant</th>
-									<th className="sorting_asc">Montant Converti</th>
+									<th className="sorting_asc">Montant Total</th>
 									<th className="sorting_asc">Status</th>
 									<th className="sorting_asc"></th>
 								</tr>
@@ -106,14 +94,12 @@ const InvoicesList = () =>{
 								{pendingTransactions.map((transaction, index) => (
 									<tr key={index} role='row'>
 									{/* Assuming 'id', 'date', 'receiver', 'amount', 'status' are properties of each transaction */}
-									<td><span className="text-black text-nowrap">{formatDate(transaction.createdAt)}</span></td>
+									<td><span className="text-black text-nowrap">{formatDate(transaction.initiatedAt)}</span></td>
 									<td>
 										<div className="d-flex align-items-center">
-										{/* Update this part based on your transaction structure */}
-										<img src={avt1} alt="" className="rounded me-3" width="50" />
 										<div>
-											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.sender.firstName}</h6>
-											<span className="fs-14">{transaction.sender.lastName}</span>
+											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.transferType}</h6>
+											<span className="fs-14">{transaction.sender?.name}</span>
 										</div>
 										</div>
 									</td>
@@ -122,13 +108,13 @@ const InvoicesList = () =>{
 										{/* Update this part based on your transaction structure */}
 										<img src={avt1} alt="" className="rounded me-3" width="50" />
 										<div>
-											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.receiver.firstName}</h6>
-											<span className="fs-14">{transaction.receiver.lastName}</span>
+											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.receiverName}</h6>
+											<span className="fs-14">{transaction.receiverPhone}</span>
 										</div>
 										</div>
 									</td>
-									<td><span className="text-black">{formatMoney(transaction.amount, "USD")}</span></td>
-									<td><span className="text-black">{formatMoney(transaction.amountConverted, "XOF")}</span></td>
+									<td><span className="text-black">{transaction.amount} FCFA</span></td>
+									<td><span className="text-black">{transaction.amountTotal} FCFA</span></td>
 									<td className="py-2 text-right">
 										<span className={`badge badge-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
 										{transaction.status}

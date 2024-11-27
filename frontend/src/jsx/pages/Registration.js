@@ -1,18 +1,20 @@
 import React,{useState} from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import swal from "sweetalert";
 import { connect, useDispatch } from 'react-redux';
 import {
     loadingToggleAction,
+    setPasswordAction,
 } from '../../store/actions/AuthActions';
 // image
-import logo from "../../images/logo-full.png";
+import logo from "../../images/logo.png";
 
-function Register(props) {
-    const [email, setEmail] = useState('');
-    let errorsObj = { email: '', password: '' };
+function PasswordReset(props) {
+    const [confirmP, setConfirmP] = useState('');
+    let errorsObj = { confirmP: '', password: '' };
     const [errors, setErrors] = useState(errorsObj);
     const [password, setPassword] = useState('');
+    const { token } = useParams(); // Récupère le token depuis les paramètres de l'URL
 
     const dispatch = useDispatch();
 
@@ -20,20 +22,28 @@ function Register(props) {
         e.preventDefault();
         let error = false;
         const errorObj = { ...errorsObj };
-        if (email === '') {
-            errorObj.email = 'Email is Required';
+        if (confirmP === '') {
+            errorObj.confirmP = 'La confirmation de mot de passe est requise';
             error = true;
-			swal('Oops', errorObj.email, "error");
+			      swal('Oops', errorObj.confirmP, "error");
         }
         if (password === '') {
-            errorObj.password = 'Password is Required';
+            errorObj.password = 'Le mot de passe est requis';
             error = true;
-			swal('Oops', errorObj.password, "error");
+			      swal('Oops', errorObj.password, "error");
+        }
+        if(password !== confirmP) {
+          swal('Oops', "Les deux mots de passe doivent correspondre", "error");
+          error = true;
+        }
+        if (password.trim().length < 12) {
+          swal('Oops', "La taille minimale du mot de passe est de 12 caractères", "error");
+          error = true;
         }
         setErrors(errorObj);
         if (error) return;
         dispatch(loadingToggleAction(true));
-        //dispatch(signupAction(email, password, props.history));
+        dispatch(setPasswordAction(token, password, props.history));
     }
   return (
     <div className="authincation h-100 p-meddle">
@@ -44,77 +54,58 @@ function Register(props) {
               <div className="row no-gutters">
                 <div className="col-xl-12">
                   <div className="auth-form">
-                    <div className="text-center mb-3">
-                      <Link to="/">
+                    <div className="text-center">
+                      <Link to="/login">
                         <img src={logo} alt="" />
                       </Link>
                     </div>
-                    <h4 className="text-center mb-4 ">Sign up your account</h4>
-					{props.errorMessage && (
-						<div className=''>
-							{props.errorMessage}
-						</div>
-					)}
-					{props.successMessage && (
-						<div className=''>
-							{props.successMessage}
-						</div>
-					)}
+                    <h4 className="text-center mb-4 ">Je crée mon mot de passe</h4>
+                    {props.errorMessage && (
+                      <div className=''>
+                        {props.errorMessage}
+                      </div>
+                    )}
                     <form onSubmit={onSignUp}>
                       <div className="form-group mb-3">
                         <label className="mb-1 ">
-                          <strong>Username</strong>
+                          <strong>Mot de passe</strong>
                         </label>
                         <input
-                          type="text"
+                          type="password"
                           className="form-control"
-                          placeholder="username"
+                          placeholder="Mot de passe"
+                          name="password"
+                          onChange={(e) =>
+                            setPassword(e.target.value)
+                          }
                         />
                       </div>
+                      
                       <div className="form-group mb-3">
                         <label className="mb-1 ">
-                          <strong>Email</strong>
+                          <strong>Confirmer Mot de passe</strong>
                         </label>
                         <input
-							defaultValue={email}
-							onChange={(e) => setEmail(e.target.value)}
-							className="form-control"
-							placeholder="email"
-                        />
-                      </div>
-					  {errors.email && <div>{errors.email}</div>}
-                      <div className="form-group mb-3">
-                        <label className="mb-1 ">
-                          <strong>Password</strong>
-                        </label>
-                        <input
-							defaultValue={password}
-							onChange={(e) =>
-								setPassword(e.target.value)
-							}
-							className="form-control"
-							placeholder="password"
+                          onChange={(e) =>
+                            setConfirmP(e.target.value)
+                          }
+                          className="form-control"
+                          placeholder="Confirmer mot de passe"
+                          name="confirmP"
+                          type="password"
                           //defaultValue="Password"
                         />
                       </div>
-					  {errors.password && <div>{errors.password}</div>}
+					            {errors.setConfirmP && <div>{errors.setConfirmP}</div>}
                       <div className="text-center mt-4">
                         <button
                           type="submit"
                           className="btn btn-primary btn-block"
                         >
-                          Sign me up
+                          Créer mon compte
                         </button>
                       </div>
                     </form>
-                    <div className="new-account mt-3">
-                      <p className="">
-                        Already have an account?{" "}
-                        <Link className="text-primary" to="/login">
-                          Sign in
-                        </Link>
-                      </p>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -134,5 +125,5 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(Register);
+export default connect(mapStateToProps)(PasswordReset);
 

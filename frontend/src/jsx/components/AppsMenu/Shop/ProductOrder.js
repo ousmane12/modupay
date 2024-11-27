@@ -1,22 +1,11 @@
 import React, { useEffect, } from "react";
-import PageTitle from "../../../layouts/PageTitle";
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getTransactionsAction, updateTransactionAction,
 } from '../../../../store/actions/transactionAction';
-import avt1 from './../../../../images/avatar/1.jpg';
+import avt1 from './../../../../images/avatar/1.png';
 import swal from "sweetalert";
 
-
-const formatDate = (inputDate) =>{
-	const date = new Date(inputDate);
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, '0');
-	const day = String(date.getDate()).padStart(2, '0');
-	const formattedDate = `${year}-${month}-${day}`;
-  
-	return formattedDate;
-}
 
 const ProductOrder = (props) => {
   const { transactions } = useSelector(
@@ -39,7 +28,7 @@ const ProductOrder = (props) => {
   useEffect(() => {
     dispatch(getTransactionsAction())
   }, [dispatch])
-  const pendingTransactions = transactions.filter(transaction => transaction.status === 'pending');
+  const pendingTransactions = transactions.filter(transaction => transaction.status === 'initiated');
   const handleDeleteClick = (transactionId) => {
     swal({
       title: "Etes-vous sûr?",
@@ -49,13 +38,24 @@ const ProductOrder = (props) => {
       dangerMode: true,
     }).then((willInitiate) => {
       if (willInitiate) {
-        console.log(`Deleting transaction with ID: ${transactionId}`);
         const formData = {"status": "cancelled", "completedBy": userId};
         dispatch(updateTransactionAction(formData, transactionId, props.history));
       } else {
         swal("Votre action est annulée!");
       }});
   };
+
+  const formatDate = (inputDate) =>{
+	const date = new Date(inputDate);
+	
+	// Extract year, month, and day
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+	const day = String(date.getDate()).padStart(2, '0');
+	const formattedDate = `${year}-${month}-${day}`;
+  
+	return formattedDate;
+}
   
   const handleValidateClick = (transactionId) => {
     swal({
@@ -66,7 +66,6 @@ const ProductOrder = (props) => {
       dangerMode: true,
     }).then((willInitiate) => {
       if (willInitiate) {
-      console.log(`Validating transaction with ID: ${transactionId}`);
       const formData = {"status": "completed", "completedBy": userId};
       dispatch(updateTransactionAction(formData, transactionId, props.history));
     } else {
@@ -77,7 +76,6 @@ const ProductOrder = (props) => {
 
   return (
     <div className="h-80">
-      <PageTitle activeMenu="Transactions" motherMenu="Valider" />
       <div className="row">
         <div className="col-lg-12">
           <div className="card">
@@ -88,14 +86,16 @@ const ProductOrder = (props) => {
                       </div>
               ) : (
               <div className="table-responsive">
-                <table className="table table-sm mb-0 table-responsive-lg ">
+                <table className="table table-sm mb-0 table-responsive-lg" key={"prevT"}>
                   <thead>
-                    <tr>
+                    <tr key={"hola"}>
                       <th className="align-middle">Date</th>
+                      <th className="align-middle pr-7">Type</th>
                       <th className="align-middle pr-7">Recepteur</th>
+                      <th className="align-middle pr-7">Agence</th>
                       <th className="align-middle minw200">Telephone</th>
                       <th className="align-middle text-right">Montant</th>
-                      <th className="align-middle text-right">Statut</th>
+                      <th className="align-middle text-right">Frais</th>
                       <th className="align-middle text-right">Actions</th>
                       <th className="no-sort" />
                     </tr>
@@ -104,7 +104,10 @@ const ProductOrder = (props) => {
                   {pendingTransactions.map((transaction) => (
                   <tr>
                     <td>
-                      <strong>{formatDate(transaction.createdAt)}</strong>
+                      <strong>{formatDate(transaction.initiatedAt)}</strong>
+                    </td>
+                    <td>
+                      <strong>{transaction.transferType}</strong>
                     </td>
                     <td>
                       <div className="d-flex align-items-center">
@@ -114,16 +117,14 @@ const ProductOrder = (props) => {
                           width="24"
                           alt=""
                         />{" "}
-                        <span className="w-space-no">{transaction.receiver.firstName} {transaction.receiver.lastName}</span>
+                        <span className="w-space-no">{transaction.receiverName}</span>
                       </div>
                     </td>
-                    <td>{transaction.receiver.phoneNumber}</td>
-                    <td>{formatMoney(transaction.amountConverted, "XOF")}</td>
+                    <td>{transaction.agency?.name}</td>
+                    <td>{transaction.receiverPhone}</td>
+                    <td>{transaction.amount}</td>
                     <td className="py-2 text-right">
-                            <span className={`badge badge-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
-                              {transaction.status}
-                              <span className="ms-1 fas fa-stream" />
-                            </span>
+                            {transaction.fee}
                       </td>
                     <td>
                       <div className="d-flex">

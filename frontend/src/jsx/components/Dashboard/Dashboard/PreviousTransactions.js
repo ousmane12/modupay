@@ -2,7 +2,8 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {Nav, Tab} from 'react-bootstrap';
 
-const PreviousTransactions = (transactions) =>{
+const PreviousTransactions = (transactions) => {
+	
 	const formatDate = (inputDate) =>{
 		const date = new Date(inputDate);
 		
@@ -13,14 +14,6 @@ const PreviousTransactions = (transactions) =>{
 		const formattedDate = `${year}-${month}-${day}`;
 	  
 		return formattedDate;
-	}
-	const formatMoney = (amount, currencyCode) => {
-		// Assuming amount is a number
-		return amount.toLocaleString('fr-FR', {
-			style: 'currency',
-			currency: currencyCode, // Use XOF or any other desired currency code
-			minimumFractionDigits: 2,
-		});
 	}
 
 	return(
@@ -38,7 +31,7 @@ const PreviousTransactions = (transactions) =>{
 						</Nav>
 					</div>
 				</div>
-				<Tab.Content className="card-body p-0">
+				<Tab.Content className="card-body p-0" key={"prevv-tabu"}>
 					<Tab.Pane className="tab-pane" eventKey="Today">
 						<div className="table-responsive">
 						{transactions.transactions.length === 0 ? (
@@ -46,7 +39,7 @@ const PreviousTransactions = (transactions) =>{
 							<p className="btn btn-outline-primary mb-3">Aucune transaction disponible.</p>
 							</div>
 							) : (
-							<table className="table table-responsive-md card-table transactions-table">
+							<table className="table table-responsive-md card-table transactions-table" key={"sub-tabr"}>
 								<tbody>
 								{transactions.transactions.map((transaction) => (
 									<tr>
@@ -62,14 +55,14 @@ const PreviousTransactions = (transactions) =>{
 											</svg>
 										</td>
 										<td>
-											<h6 className="fs-16 font-w600 mb-0"><Link to={"#"} className="text-black">Montant: {formatMoney(transaction.amount, "USD")}</Link></h6>
-											<span className="fs-14">Montant Converti: {formatMoney(transaction.amountConverted, "XOF")}</span>
+											<h6 className="fs-16 font-w600 mb-0"><Link to={"#"} className="text-black">Montant: {transaction.amount}</Link></h6>
+											<span className="fs-14">Montant Total: {transaction.amountTotal} FCFA</span>
 										</td>
 										<td>
 											<h6 className="fs-16 text-black font-w600 mb-0">{formatDate(transaction.createdAt)}</h6>
 											<span className="fs-14">{formatDate(transaction.updatedAt)}</span>
 										</td>
-										<td><span className="fs-16 text-black font-w600">Initié par: {transaction.initiatedBy.firstName} {transaction.initiatedBy.lastName}</span></td>
+										<td><span className="fs-16 text-black font-w600">Initié par: {transaction.sender? transaction.sender.name: 'Utilisateur'}</span></td>
 										<td>
 											<span
 												className={`fs-16 font-w500 text-end d-block ${

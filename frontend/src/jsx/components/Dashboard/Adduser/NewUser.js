@@ -1,6 +1,5 @@
 import React,{useState, Fragment} from "react";
-import PageTitle from "../../../layouts/PageTitle";
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import {
     loadingToggleAction,
     createAction,
@@ -8,28 +7,22 @@ import {
 
 
 function NewUser(props) {
-    let errorsObj = { firstName: '',
-    lastName: '',
-    login: '',
+    let errorsObj = { 
+    name: '',
     phoneNumber: '',
     email: '',
     password: '',
-    role: '',
-    password2: '', };
+    role: '' };
     const [errors, setErrors] = useState(errorsObj);
+    const user = useSelector(state => state.auth.auth);
 
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        login: '',
+        name: '',
         phoneNumber: '',
         email: '',
         role: '',
-        password: '',
-        password2: '',
-      })
-    
-    const { firstName, lastName, login, role, phoneNumber, email, password, password2 } = formData
+      });
+    const { name, role, phoneNumber, email, } = formData
 
     const dispatch = useDispatch();
 
@@ -44,20 +37,9 @@ function NewUser(props) {
         e.preventDefault();
         let error = false;
         const errorObj = { ...errorsObj };
-        if (login === '') {
-            errorObj.login = 'Le login est réquis';
-            error = true;
-        }
-        if (firstName === '') {
-            errorObj.firstName = 'Le nom est réquis';
-            error = true;
-        }
-        if (lastName === '') {
-            errorObj.lastName = 'Le prenom est réquis';
-            error = true;
-        }
-        if (password === '') {
-            errorObj.password = 'Le mot de passe est réquis';
+        
+        if (name === '') {
+            errorObj.name = 'Le nom est réquis';
             error = true;
         }
         if (phoneNumber === '') {
@@ -68,219 +50,137 @@ function NewUser(props) {
             errorObj.email = 'Le mail est réquis';
             error = true;
         }
-        if(password !== password2){
-            errorObj.password2 = 'Les mots de passe ne correspondent pas';
-            errorObj.password = 'Les mots de passe ne correspondent pas';
-            error = true;
-        }
         setErrors(errorObj);
         if (error) return;
         dispatch(loadingToggleAction(true));
-        dispatch(createAction(firstName, lastName, login, role, phoneNumber, email, password, props.history));
+        dispatch(createAction(name, role, phoneNumber, email, props.history));
+        setFormData({
+          name: '',
+          phoneNumber: '',
+          email: '',
+          role: '',
+        });
     }
+
+    const handleSelect = (field) => (value) => {
+      setFormData({ ...formData, [field]: value });
+    };
   return (
     <Fragment>
-         <PageTitle activeMenu="Utilisateur" motherMenu="Nouvel" />
-    <div className="card">
-      <div className="">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="authincation-content">
-              <div className="row no-gutters">
-                <div className="col-xl-12">
-                  <div className="auth-form">
-                    <h3 className="text-center mb-5">Veuillez saisir les informations de l'utilisateur</h3>
-					{props.errorMessage && (
-						<div className="text-danger fs-8 mb-4">
-							{props.errorMessage}
-						</div>
-					)}
-					{/* {props.successMessage && (
-						<div className=''>
-							{props.successMessage}
-						</div>
-					)} */}
-
-                    <form onSubmit={onSignUp}>
-                    <div className="row">
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Nom</strong>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id='firstName'
-                          name='firstName'
-                          value={firstName}
-                          onChange={onChange}
-                          placeholder="Veuillez saisir le nom de l'utilisateur"
-                        />
-                        {errors.firstName && <div className="text-danger fs-12">{errors.firstName}</div>}
-                      </div>
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Prenom</strong>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id='lastName'
-                          name='lastName'
-                          value={lastName}
-                          onChange={onChange}
-                          placeholder="Veuillez saisir le prenom de l'utilisateur"
-                        />
-                        {errors.lastName && <div className="text-danger fs-12">{errors.lastName}</div>}
-                      </div>
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Login</strong>
-                        </label>
-                        <input
-							id='login'
-                            name='login'
-                            value={login}
-                            onChange={onChange}
-							className="form-control"
-							placeholder="Veuillez saisir le login de l'utilisateur"
-                        />
-                        {errors.login && <div className="text-danger fs-12">{errors.login}</div>}
-                      </div>
-					  
-                      </div>
-                      <div className="row mt-4">
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Téléphone</strong>
-                        </label>
-                        <input
-							id='phoneNumber'
-                            name='phoneNumber'
-                            value={phoneNumber}
-                            onChange={onChange}
-							className="form-control"
-							placeholder="Veuillez saisir le numéro de l'utilisateur"
-                          //defaultValue="Password"
-                        />
-                        {errors.phoneNumber && <div className="text-danger fs-12">{errors.phoneNumber}</div>}
-                      </div>
-                      
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Mot de passe</strong>
-                        </label>
-                        <input
-							id='password'
-                            name='password'
-                            value={password}
-                            onChange={onChange}
-							className="form-control"
-                            type="password"
-							placeholder="Veuillez saisir le numéro de l'utilisateur"
-                          //defaultValue="Password"
-                        />
-                        {errors.password && <div className="text-danger fs-12">{errors.password}</div>}
-                      </div>
-					  
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Confirmer mot de passe</strong>
-                        </label>
-                        <input
-							id='password2'
-                            name='password2'
-                            value={password2}
-                            onChange={onChange}
-							className="form-control"
-                            type="password"
-							placeholder="Veuillez saisir le numéro de l'utilisateur"
-                          //defaultValue="Password"
-                        />
-                        {errors.password2 && <div className="text-danger fs-12">{errors.password2}</div>}
-                      </div>
-                      
-                      </div>
-                      <div className="row mt-4">
-                      <div className="form-group mb-2 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Email</strong>
-                        </label>
-                        <input
-							id='email'
-                            name='email'
-                            value={email}
-                            onChange={onChange}
-							className="form-control"
-							placeholder="Veuillez saisir l'email de l'utilisateur"
-                          //defaultValue="Password"
-                        />
-                        {errors.email && <div className="text-danger fs-12">{errors.email}</div>}
-                      </div>
-                      
-                      <div className="form-group mb-3 col-md-4">
-                        <fieldset className="form-group">
-                            <div className="form-group mb-3 col-md-4">
-                            <label className="mb-1">
-                            <strong>Rôle</strong>
-                            </label>
-                            <div className="col-sm-9">
-                                <div className="form-check">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id='roleAd'
-                                    name='role'
-                                    value="admin"
-                                    onChange={onChange}
-                                    defaultChecked={true}
-                                    checked={role === 'admin'}
-                                />
-                                <label className="form-check-label">
-                                    Administrateur
-                                </label>
-                                </div>
-                                <div className="form-check">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id='roleMan'
-                                    name='role'
-                                    value="manager"
-                                    onChange={onChange}
-                                    checked={role === 'manager'}
-                                />
-                                <label className="form-check-label">
-                                    Manager
-                                </label>
-                                </div>
-                            </div>
-                            </div>
-                        </fieldset>
-                        </div>
-                      </div>
-                      <div className="row">
-                      <div className="form-group mb-3 col-md-4">
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                        <button
-                          type="submit"
-                          className="btn btn-primary btn-block form-group mb-3 col-md-4"
-                        >
-                          Ajouter utilisateur
-                        </button>
-                        </div>
-                        <div className="form-group mb-3 col-md-4"></div>
-                      </div>
-                    </form>
-                  </div>
+      <div className="card">
+        <div className="authincation-content">
+          <div className="auth-form">
+            <h3 className="text-center mb-5">Veuillez saisir les informations de l'utilisateur</h3>
+            {props.errorMessage && (
+              <div className="text-danger fs-8 mb-4">{props.errorMessage}</div>
+            )}
+            <form onSubmit={onSignUp}>
+              <div className="row">
+                <div className="form-group mb-3 col-md-6">
+                  <label><strong>Nom Complet</strong></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    name="name"
+                    value={name}
+                    onChange={onChange}
+                    placeholder="Veuillez saisir le nom de l'utilisateur"
+                  />
+                  {errors.name && <div className="text-danger fs-12">{errors.name}</div>}
+                </div>
+                <div className="form-group mb-3 col-md-6">
+                  <label><strong>Téléphone</strong></label>
+                  <input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={phoneNumber}
+                    onChange={onChange}
+                    className="form-control"
+                    placeholder="Veuillez saisir le numéro de l'utilisateur"
+                  />
+                  {errors.phoneNumber && <div className="text-danger fs-12">{errors.phoneNumber}</div>}
                 </div>
               </div>
-            </div>
+              
+              <div className="row">
+              <div className="form-group mb-3 col-md-6">
+                <label><strong>Email</strong></label>
+                <input
+                  id="email"
+                  name="email"
+                  value={email}
+                  onChange={onChange}
+                  className="form-control"
+                  placeholder="Veuillez saisir l'email de l'utilisateur"
+                />
+                {errors.email && <div className="text-danger fs-12">{errors.email}</div>}
+              </div>
+              <div className="form-group mb-3 col-md-6">
+              <fieldset className="form-group">
+                <label><strong>Rôle</strong></label>
+                {user.role === "admin" && (
+                <>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="role"
+                          value="admin"
+                          onChange={onChange}
+                          checked={role === 'admin'} />
+                        <label className="form-check-label">Administrateur</label>
+                      </div>
+                      <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="role"
+                            value="country_manager"
+                            onChange={onChange}
+                            checked={role === 'country_manager'} />
+                          <label className="form-check-label">Manager Pays</label>
+                        </div>
+                  </>
+                )}
+              {user.role === "country_manager" && (
+                <>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="role"
+                    value="agency_manager"
+                    onChange={onChange}
+                    checked={role === 'agency_manager'}
+                  />
+                  <label className="form-check-label">Manageur Agence</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="role"
+                    value="agent"
+                    onChange={onChange}
+                    checked={role === 'agent'}
+                  />
+                  <label className="form-check-label">Agent</label>
+                </div></>)}
+              </fieldset>
+              </div>
+              </div>
+
+              <div className="form-group mb-3 col-md-4">
+              <button type="submit" className="btn btn-primary btn-block">
+                Ajouter utilisateur
+              </button>
+              </div>
+              
+            </form>
           </div>
         </div>
       </div>
-    </div>
     </Fragment>
   );
 };

@@ -1,141 +1,174 @@
 const asyncHandler = require('express-async-handler')
-const mongoose = require('mongoose');
 const Transaction = require('../models/transactionModel')
-const User = require('../models/userModel')
+const Country = require('../models/countryModel')
+const Agency = require('../models/agencyModel')
+const Investment = require('../models/investmentModel')
 
-// @desc    Get transactions
-// @route   GET /api/transactions
-// @access  Private
-const getTransactions = asyncHandler(async (req, res) => {
-  try {
-    // Fetch transactions with population
-    const transactions = await Transaction.find({ /* Your query criteria */ })
-      .populate('initiatedBy')  // Populate initiatedBy field with all fields
-      .populate('sender')       // Populate sender field with all fields
-      .populate('receiver')
-      .populate('completedBy') 
-
-    // Send the transactions as a response
-    res.json(transactions);
-  } catch (error) {
-    // Handle errors
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
-
-// @desc    Set transaction
+// @desc    Create a new transaction
 // @route   POST /api/transactions
 // @access  Private
-const setTransaction = asyncHandler(async (req, res) => {
+const createTransaction = asyncHandler(async (req, res) => {
+  const { receiverName, receiverPhone, country, agency, transferType, amount } = req.body;
+
+  // Vérifier si l'utilisateur est authentifié et a le droit d'initier une transaction
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  // Trouver les frais pour le pays du destinataire
+  const feeInfo = await Country.findById(country);
+
+  if (!feeInfo) {
+    return res.status(404).json({ message: 'Informations sur les frais pour ce pays introuvables' });
+  }
+
+  // Calcul des frais arrondis à deux chiffres après la virgule
+  const fee = transferType === "national"
+    ? Math.round(((feeInfo.localFeePercentage / 100) * amount) * 100) / 100
+    : Math.round(((feeInfo.intFeePercentage / 100) * amount) * 100) / 100;
+
+  // Calcul du montant total
+  const totalAmount = Number(amount) + fee;
+
+  // Création de la transaction
+  const transaction = new Transaction({
+    sender: req.user._id,
+    receiverName,
+    receiverPhone,
+    country,
+    agency,
+    transferType,
+    amount,
+    fee,
+    amountTotal: totalAmount,  // Le montant total est bien calculé ici
+  });
+  const createdTransaction = await transaction.save();
+
+  // Ajouter l'ID de la transaction aux champs `transactions` de Country et Agency
+  await Country.findByIdAndUpdate(country, {
+    $push: { transactions: createdTransaction._id }
+  });
+
+  await Agency.findByIdAndUpdate(agency, {
+    $push: { transactions: createdTransaction._id }
+  });
+
+  // Retourner la transaction créée
+  res.status(201).json(createdTransaction);
+});
+
+// @desc    Get transactions for a specific agency or country
+// @route   GET /api/transactions
+// @access  Private (Agency Manager or Country Manager)
+const getTransactions = asyncHandler(async (req, res) => {
   try {
-    if (!req.body.amount) {
-      res.status(400);
-      throw new Error('Please add the amount field');
+    let query = Transaction.find();
+
+    // Filtrer en fonction du rôle de l'utilisateur
+    switch (req.user.role) {
+      case 'admin':
+        // Admin : retourne toutes les transactions
+        break;
+      
+      case 'country_manager':
+        // Country Manager : retourne les transactions pour le pays de l'utilisateur
+        if (!req.user.country) {
+          return res.status(400).json({ message: "Pays non spécifié pour l'utilisateur." });
+        }
+        query = query.where('country').equals(req.user.country);
+        break;
+      
+      case 'agency_manager':
+        // Agency Manager : retourne les transactions pour l'agence de l'utilisateur
+        if (!req.user.agency) {
+          return res.status(400).json({ message: "Agence non spécifiée pour l'utilisateur." });
+        }
+        query = query.where('agency').equals(req.user.agency);
+        break;
+      
+      case 'agent':
+        // Agent : retourne uniquement les transactions où l'agent est le `sender`
+        query = query.where('sender').equals(req.user._id);
+        break;
+      
+      default:
+        return res.status(403).json({ message: 'Unauthorized access' });
     }
 
-    const transactionData = {
-      amount: req.body.amount,
-      amountConverted: req.body.amountConverted,
-      initiatedBy: req.user.id,
-    };
+    // Peupler les relations
+    const transactions = await query
+      .populate('country', 'name')
+      .populate('agency', 'name')
+      .populate('completedBy', 'name')
+      .populate('sender', 'name');
 
-    // Add sender and receiver only if they are provided and not empty
-    if (req.body.sender && req.body.sender !== '') {
-      transactionData.sender = new mongoose.Types.ObjectId(req.body.sender);
-    }
-
-    if (req.body.receiver && req.body.receiver !== '') {
-      transactionData.receiver = new mongoose.Types.ObjectId(req.body.receiver);
-    }
-
-    const transaction = await Transaction.create(transactionData);
-
-    res.status(200).json(transaction);
+    res.status(200).json(transactions);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: 'Erreur lors de la récupération des transactions' });
   }
 });
 
-
-
-
-// @desc    Update transaction
-// @route   PUT /api/transactions/:id
-// @access  Private
-const updateTransaction = asyncHandler(async (req, res) => {
+// @desc    Complete a transaction
+// @route   PUT /api/transactions/:id/complete
+// @access  Private (Agency Manager)
+const completeTransaction = asyncHandler(async (req, res) => {
   const transaction = await Transaction.findById(req.params.id);
 
   if (!transaction) {
-    res.status(400);
-    throw new Error('Transaction not found');
+    return res.status(404).json({ message: 'Transaction not found' });
   }
 
-  // Check for user
-  if (!req.user) {
-    res.status(401);
-    throw new Error('User not found');
-  }
-
-  // Make sure the logged-in user matches the transaction user
-  /* if (
-    transaction.initiatedBy.toString() !== req.user.id ||
-    transaction.completedBy.toString() !== req.user.id
-  ) {
-    res.status(401);
-    throw new Error('User not authorized');
-  } */
-
-  // Extract the status from req.body
   const { status } = req.body;
-
-  // Check if status is provided in the request body
   if (status === undefined) {
     res.status(400);
-    throw new Error('Status is required for update');
+    throw new Error('Le statut est requis pour la mise à jour');
   }
 
-  // Update only the status field
   transaction.status = status;
+  transaction.completedBy = req.body.completedBy;
+  transaction.completedAt = Date.now();
 
-  // Save the updated transaction
   const updatedTransaction = await transaction.save();
 
   res.status(200).json(updatedTransaction);
 });
 
-// @desc    Delete transaction
-// @route   DELETE /api/transactions/:id
-// @access  Private
-const deleteTransaction = asyncHandler(async (req, res) => {
-  const transaction = await Transaction.findById(req.params.id)
+const completeTransactions = asyncHandler(async (req, res) => {
+    const transaction = await Transaction.findById(req.params.id)
+        .populate('country')
+        .populate('agency');
+    if(!transaction) {
+        throw new Error('Transaction introuvable');
+    }
+    if (transaction.status === 'completed') {
+        throw new Error('Transaction déjà complétée');
+    }
+    const { status } = req.body;
+    
+    transaction.status = status;
+    transaction.completedAt = new Date();
+    transaction.completedBy = req.body.completedBy;
+    await transaction.save();
 
-  if (!transaction) {
-    res.status(400)
-    throw new Error('Transaction not found')
-  }
+    // Calculer les intérêts pour chaque partenaire
+    if(status === 'completed') {
+      const investments = await Investment.find({ country: transaction.country._id });
 
-  // Check for user
-  if (!req.user) {
-    res.status(401)
-    throw new Error('User not found')
-  }
+      for (const investment of investments) {
+          const interest = (transaction.amount * investment.interestPercentage) / 100;
+          investment.totalInterestEarned += interest;
+          await investment.save();
+      }
+    }
 
-  // Make sure the logged in user matches the transaction user
-  if (transaction.user.toString() !== req.user.id) {
-    res.status(401)
-    throw new Error('User not authorized')
-  }
+    res.status(200).json(transaction);
+});
 
-  await transaction.remove()
-
-  res.status(200).json({ id: req.params.id })
-})
 
 module.exports = {
   getTransactions,
-  setTransaction,
-  updateTransaction,
-  deleteTransaction,
+  createTransaction,
+  completeTransaction,
+  completeTransactions,
 }

@@ -1,4 +1,4 @@
-import pic1 from "../../../images/profile/small/pic1.jpg";
+
 import avatar1 from "../../../images/avatar/5.png";
 import avatar2 from "../../../images/avatar/1.png";
 
@@ -83,7 +83,7 @@ const jobsTable = {
 const profileTable = {
    data: [
       [
-         pic1,
+         null,
          "Paul Byrd",
          "Chief Financial Officer (CFO)",
          "Male",
@@ -94,7 +94,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Gloria Little",
          "Systems Administrator",
          "Male",
@@ -105,7 +105,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Bradley Greer",
          "Software Engineer",
          "Male",
@@ -116,7 +116,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Dai Rios",
          "Personnel Lead",
          "Male",
@@ -127,7 +127,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Jenette Caldwell",
          "Development Lead",
          "Male",
@@ -138,7 +138,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Yuri Berry",
          "Chief Marketing Officer (CMO)",
          "Male",
@@ -149,7 +149,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Caesar Vance",
          "Pre-Sales Support",
          "Male",
@@ -160,7 +160,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Doris Wilder",
          "Sales Assistant",
          "Male",
@@ -171,7 +171,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Angelica Ramos",
          "Chief Executive Officer (CEO)",
          "Male",
@@ -182,7 +182,7 @@ const profileTable = {
          "",
       ],
       [
-         pic1,
+         null,
          "Gavin Joyce",
          "Developer",
          "Male",

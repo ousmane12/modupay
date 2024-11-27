@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import swal from "sweetalert";
 
 const handleValidateClick = (transactionId) => {
-    console.log(`Validating transaction with ID: ${transactionId}`);
 	swal({
 		title: "Etes-vous sûr?",
 		text:
@@ -26,12 +25,7 @@ export const COLUMNS = [
 	{
 		Header : 'Nom',
 		Footer : 'Nom',
-		accessor: 'firstName',
-	},
-	{
-		Header : 'Prenom',
-		Footer : 'Prenom',
-		accessor: 'lastName',
+		accessor: 'name',
 	},
 	{
 		Header : 'Téléphone',
@@ -63,6 +57,83 @@ export const COLUMNS = [
 			  </button>
 			</div>
 		),
+	},
+]
+
+export const PARTNERS_COLUMNS = [
+	{
+		Header : 'Nom Partenaire',
+		Footer : 'Nom',
+		accessor: row => row.partner?.name || 'Utilisateur',
+	},
+	{
+		Header : 'Montant Investi',
+		Footer : 'Montant Investi',
+		accessor: 'amountInvested',
+	},
+	{
+		Header : 'Interet',
+		Footer : 'Interet',
+		accessor: 'interestPercentage',
+	},
+	{
+		Header : 'Gain',
+		Footer : 'Gain',
+		accessor: 'totalInterestEarned',
+	},
+	{
+		Header : 'Actions',
+		Footer : 'Actions',
+		accessor: '_id',
+		Cell: ({ row }) => (
+			<div className="d-flex">
+			  <Link to={{
+					pathname: `/partner/${row.original?._id}`,
+					state: { investment: row.original },
+				}} className="btn btn-primary shadow btn-xs sharp me-2">
+				<FaEye />
+			  </Link>
+			  <Link to={{
+					pathname: `/editer-partner/${row.original?._id}`,
+					state: { investment: row.original },
+				}} className="btn btn-secondary	 shadow btn-xs sharp me-2">
+				<FaEdit />
+			  </Link>
+			  <button className="btn btn-danger shadow btn-xs sharp"
+			  onClick={() => handleValidateClick(row.original._id)
+			  }>
+				<FaTrash />
+			  </button>
+			</div>
+		),
+	},
+]
+
+export const INVESTMENTS_COLUMNS = [
+	{
+		Header : 'Pays',
+		Footer : 'Pays',
+		accessor: 'country.name' || 'Utilisateur',
+	},
+	{
+		Header : 'Montant Investi',
+		Footer : 'Montant Investi',
+		accessor: 'amountInvested',
+	},
+	{
+		Header : 'Interet',
+		Footer : 'Interet',
+		accessor: 'interestPercentage',
+	},
+	{
+		Header : 'Gain',
+		Footer : 'Gain',
+		accessor: 'totalInterestEarned',
+	},
+	{
+		Header : 'Date',
+		Footer : 'Date',
+		accessor: 'createdAt',
 	},
 ]
 

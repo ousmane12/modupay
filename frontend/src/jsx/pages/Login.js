@@ -5,17 +5,16 @@ import { loadingToggleAction, loginAction,
 } from '../../store/actions/AuthActions';
 
 // image
-import logo from "../../images/logo-white.png";
-import logoWhite from "../../images/logo-whiite-text.png";
-import loginbg from "../../images/bg-login.jpg";
+import logo from "../../images/logo-whiite-text.png";
+import logoWhite from "../../images/logo.png";
 
 function Login (props) {
-
-    let errorsObj = { login: '', password: '' };
+    let d = new Date();
+    let errorsObj = { email: '', password: '' };
     const [errors, setErrors] = useState(errorsObj);
 
     const [formData, setFormData] = useState({
-      login: '',
+      email: '',
       password: '',
     })
     const { email, password } = formData
@@ -50,23 +49,21 @@ function Login (props) {
     }
 
   return (
-		<div className="login-main-page" style={{backgroundImage:"url("+ loginbg +")"}}>
+		<div className="login-main-page" >
             <div className="login-wrapper">
                 <div className="login-aside-left" >
-                    <Link to={"#"} className="login-logo">
-                        <img src={logo} alt="" width="50px"/>
-                        <img src={logoWhite} alt="" className="ms-3"/>
-                      </Link>
                     <div className="login-description">
-                        <h2 className="main-title mb-2">Bienvenue sur ModuPay</h2>
-                        <p className="">Votre plateforme de suivi de vos transferts</p>
+                    
+                        <img src={logoWhite} alt="" width="400px"/>
+                    
+                        <p className="text-center">Votre plateforme de suivi de vos transferts</p>
                         <ul className="social-icons mt-4">
                             <li><Link to={"#"}><i className="fab fa-facebook-f"></i></Link></li>
                             <li><Link to={"#"}><i className="fab fa-twitter"></i></Link></li>
                             <li><Link to={"#"}><i className="fab fa-linkedin-in"></i></Link></li>
                         </ul>
                         <div className="mt-5 bottom-privacy">
-                            <Link to={"#"} className="">© 2024 besstech</Link>
+                            <Link to={"#"} className="">© {d.getFullYear()} bibaexpress</Link>
                         </div>
                     </div>
                 </div>
@@ -82,31 +79,26 @@ function Login (props) {
                                     <p className="">Veuillez fournir vos informations d'Authentification</p>
                                 </div>
                                 {props.errorMessage && (
-                                    <div className='bg-red-300 text-red-900 border border-red-900 p-1 my-2'>
-                                        {props.errorMessage}
-                                    </div>
-                                )}
-                                {props.successMessage && (
-                                    <div className='bg-green-300 text-green-900 border border-green-900 p-1 my-2'>
-                                        {props.successMessage}
+                                    <div className='bg-red-300 text-red-900 p-1 my-2'>
+                                        <h2 className="text-danger text-center text-red-900 fs-12">{props.errorMessage}</h2>
                                     </div>
                                 )}
                                 <form onSubmit={onLogin}>
                                     <div className="form-group">
-                                        <label className="mb-2 ">
-                                          <strong>Login</strong>
+                                        <label className="mb-2">
+                                          <strong>Email</strong>
                                         </label>
                                         <input type="text" className="form-control"
                                           id='email'
                                           name='email'
                                           value={email}
                                           onChange={onChange}
-										   placeholder="Veuillez saisir votre login"
+										                      placeholder="Veuillez saisir votre login"
                                         />
                                       {errors.email && <div className="text-danger fs-12">{errors.email}</div>}
                                     </div>
                                     <div className="form-group">
-                                        <label className="mb-2 "><strong>Mot de Passe</strong></label>
+                                        <label className="mb-2"><strong>Mot de Passe</strong></label>
                                         <input
                                           type="password"
                                           className="form-control"
@@ -133,7 +125,7 @@ function Login (props) {
                                 <div className="new-account mt-2">
                                   <p className="">
                                     Mot de passe oublié ?{" "}
-                                    <Link className="text-primary" to="./page-register">
+                                    <Link className="text-primary" to="/forgot-password">
                                       Reinitialiser
                                     </Link>
                                   </p>
