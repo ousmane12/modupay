@@ -25,7 +25,7 @@ app.use('/api/investments', require('./routes/investmentRoutes'));
 app.use('/api/expenses', require('./routes/expenseRoutes'));
 
 // Serve frontend
-/* if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/build')));
 
   app.get('*', (req, res) =>
@@ -35,7 +35,7 @@ app.use('/api/expenses', require('./routes/expenseRoutes'));
   );
 } else {
   app.get('/', (req, res) => res.send('Please set to production'));
-} */
+}
 
 app.use(errorHandler);
 
