@@ -6,7 +6,7 @@ import {
     logout,
 } from '../store/actions/AuthActions';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = "https://biba-4c47ebf435ea.herokuapp.com/api";
 
 export function signUp(name, role, phoneNumber, email, password) {
     //axios call
