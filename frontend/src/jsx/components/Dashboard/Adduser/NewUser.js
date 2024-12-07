@@ -140,7 +140,18 @@ function NewUser(props) {
                             onChange={onChange}
                             checked={role === 'country_manager'} />
                           <label className="form-check-label">Manager Pays</label>
-                        </div>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="role"
+                          value="agency_manager"
+                          onChange={onChange}
+                          checked={role === 'agency_manager'}
+                        />
+                        <label className="form-check-label">Manageur Agence</label>
+                      </div>
                   </>
                 )}
               {user.role === "country_manager" && (
