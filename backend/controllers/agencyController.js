@@ -25,11 +25,11 @@ const createAgency = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Manager non trouvé.' });
       }
 
-      if (user.role !== 'agency_manager') {
+      /* if (user.role !== 'agency_manager') {
         return res.status(400).json({
           message: 'Le manager spécifié doit avoir le rôle "agency_manager".',
         });
-      }
+      } */
     }
 
     // Définir le champ `country` en fonction du rôle de l'utilisateur

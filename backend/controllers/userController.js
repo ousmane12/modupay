@@ -44,9 +44,12 @@ const createUser = asyncHandler(async (req, res) => {
     password: defaultPassword,
   };
 
-  // Ajouter `country` ou `agency` en fonction du rôle de l'utilisateur connecté
+    // Ajouter `country` en fonction du rôle de l'utilisateur connecté ou de l'input pour les cas spéciaux
   if (req.user.role === 'country_manager' && role === 'agency_manager') {
     userData.country = req.user.country;
+  } else if (req.user.role === 'admin' && role === 'agency_manager') {
+    // Laisser l'admin spécifier ou non le pays
+    userData.country = req.body.country || 'Global'; // 'Global' ou une autre valeur par défaut si aucun pays n'est fourni
   } else if (req.user.role === 'agency_manager' && role === 'agent') {
     userData.country = req.user.country;
     userData.agency = req.user.agency;
