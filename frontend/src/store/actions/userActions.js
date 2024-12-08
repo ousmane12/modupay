@@ -18,9 +18,9 @@ export const USER_CREATED_ACTION = '[Add action] add action';
 export const LOADING_TOGGLE_ACTION = '[Loading action] toggle loading';
 export const FETCH_USER_DATA_ACTION = '[Fetch action] fetch action';
 
-export function createAction(name, role, phoneNumber, email, history) {
+export function createAction(name, role, phoneNumber, email, country, history) {
     return (dispatch) => {
-        createUser(name, role, phoneNumber, email)
+        createUser(name, role, phoneNumber, email, country)
         .then((response) => {
             if (response.status === 201) {
                 history.push('/utilisateurs');

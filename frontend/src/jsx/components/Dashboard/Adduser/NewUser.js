@@ -1,9 +1,11 @@
-import React,{useState, Fragment} from "react";
+import React,{useState, Fragment, useEffect} from "react";
 import { connect, useDispatch, useSelector } from 'react-redux';
 import {
     loadingToggleAction,
     createAction,
 } from '../../../../store/actions/userActions';
+import CustomSelectCountry from "../Agencies/CustomSelectCountry";
+import { fetchCountries } from "../../../../services/countryService";
 
 
 function NewUser(props) {
@@ -12,26 +14,58 @@ function NewUser(props) {
     phoneNumber: '',
     email: '',
     password: '',
-    role: '' };
+    role: '',
+    country: '' };
     const [errors, setErrors] = useState(errorsObj);
     const user = useSelector(state => state.auth.auth);
+    const [countries, setCountries] = useState([]);
 
     const [formData, setFormData] = useState({
         name: '',
         phoneNumber: '',
         email: '',
         role: '',
+        country: '',
       });
-    const { name, role, phoneNumber, email, } = formData
+    const { name, role, phoneNumber, email, country} = formData;
+
+    useEffect(() => {
+      let isMounted = true;
+  
+      const fetchInitialData = async () => {
+        try {
+          const countryResponse = await fetchCountries();
+          if(isMounted && user.role === 'admin') {
+            setCountries(countryResponse.data);
+          }
+        } catch (error) {
+          console.error('Erreur lors du chargement des données initiales', error);
+        }
+      };
+  
+      fetchInitialData();
+  
+      return () => {
+        isMounted = false; // Marqueur pour annuler les mises à jour
+      };
+    }, [user.role]);
 
     const dispatch = useDispatch();
 
     const onChange = (e) => {
-        setFormData((prevState) => ({
+      setFormData((prevState) => ({
           ...prevState,
           [e.target.name]: e.target.value,
-        }))
+      }));
+  
+      // Ajouter le champ Pays seulement si l'utilisateur est un admin et que le rôle agency_manager est sélectionné
+      if (e.target.name === 'role' && e.target.value === 'agency_manager' && user.role === 'admin') {
+          setFormData(prevState => ({ ...prevState, country: '' })); // Préparer le champ pays
+      } else if (e.target.name === 'role' && user.role === 'admin') {
+          setFormData(prevState => ({ ...prevState, country: undefined })); // Enlever le champ pays si un autre rôle est sélectionné
       }
+  };
+  
 
     function onSignUp(e) {
         e.preventDefault();
@@ -53,12 +87,13 @@ function NewUser(props) {
         setErrors(errorObj);
         if (error) return;
         dispatch(loadingToggleAction(true));
-        dispatch(createAction(name, role, phoneNumber, email, props.history));
+        dispatch(createAction(name, role, phoneNumber, email, country, props.history));
         setFormData({
           name: '',
           phoneNumber: '',
           email: '',
           role: '',
+          country: '',
         });
     }
 
@@ -154,6 +189,20 @@ function NewUser(props) {
                       </div>
                   </>
                 )}
+                <div className="form-group mb-3 col-md-6">
+                  {role === 'agency_manager' && user.role === 'admin' && (
+                      <div className="form-group col-12">
+                      <label>
+                        <strong>Pays</strong>
+                      </label>
+                      <CustomSelectCountry
+                        options={countries}
+                        onSelect={handleSelect('country')}
+                      />
+                      {errors.country && <div className="text-danger fs-12">{errors.country}</div>}
+                    </div>
+                  )}
+                </div>
               {user.role === "country_manager" && (
                 <>
                 <div className="form-check">

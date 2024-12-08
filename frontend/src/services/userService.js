@@ -15,12 +15,13 @@ export function fetchUsers() {
     );
 }
 
-export function createUser(name, role, phoneNumber, email) {
+export function createUser(name, role, phoneNumber, email, country) {
     const postData = {
         name,
         role, 
         phoneNumber,
         email,
+        country
     };
     const userDetailsString = localStorage.getItem('userDetails');
     // Parse userDetails string to convert it into an object
