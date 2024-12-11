@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const Transaction = require('../models/transactionModel')
 const Country = require('../models/countryModel')
+const User = require('../models/userModel')
 const Agency = require('../models/agencyModel')
 const Investment = require('../models/investmentModel')
 
@@ -53,8 +54,38 @@ const createTransaction = asyncHandler(async (req, res) => {
     $push: { transactions: createdTransaction._id }
   });
 
-  // Retourner la transaction créée
-  res.status(201).json(createdTransaction);
+  // Récupérer les utilisateurs concernés
+  const admins = await User.find({ role: 'admin' });
+  const countryManagers = await User.find({ role: 'country_manager', country });
+  const agencyManagers = await User.find({ role: 'agency_manager', agency });
+
+  const emails = [
+    ...admins.map(user => user.email),
+    ...countryManagers.map(user => user.email),
+    ...agencyManagers.map(user => user.email),
+  ];
+
+  try {
+    const sendEmail = require('../utils/sendEmail');
+    await sendEmail({
+      to: emails,
+      subject: 'Nouvelle transaction créée',
+      text: `Une nouvelle transaction a été créée :
+          - Nom du destinataire : ${receiverName}
+          - Téléphone du destinataire : ${receiverPhone}
+          - Montant : ${amount} (Total avec frais : ${totalAmount})
+          - Type de transfert : ${transferType}
+          - Agence : ${agency}
+          - Pays : ${country}
+
+          Consultez l'application pour plus de détails.`,
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+    
+  } finally {
+    res.status(201).json(createdTransaction);
+  }
 });
 
 // @desc    Get transactions for a specific agency or country
