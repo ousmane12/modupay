@@ -38,7 +38,7 @@ const ProductOrder = (props) => {
       dangerMode: true,
     }).then((willInitiate) => {
       if (willInitiate) {
-        const formData = {"status": "cancelled", "completedBy": userId};
+        const formData = {"status": "canceled", "completedBy": userId};
         dispatch(updateTransactionAction(formData, transactionId, props.history));
       } else {
         swal("Votre action est annulée!");
