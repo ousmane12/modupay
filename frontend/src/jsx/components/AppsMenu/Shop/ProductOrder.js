@@ -44,6 +44,9 @@ const ProductOrder = (props) => {
         swal("Votre action est annulée!");
       }});
   };
+  const handleViewTransaction = (transactionId) => {
+    props.history.push(`/detail-transaction/${transactionId}`);
+  };
 
   const formatDate = (inputDate) =>{
 	const date = new Date(inputDate);
@@ -128,6 +131,13 @@ const ProductOrder = (props) => {
                       </td>
                     <td>
                       <div className="d-flex">
+                        <button
+                            onClick={() => {
+                              handleViewTransaction(transaction._id)}}
+                            className="btn btn-primary shadow btn-xs sharp me-1"
+                          >
+                          <i className="fas fa-eye"></i>
+                        </button>
                         <button
                           onClick={() => {
                             handleValidateClick(transaction._id)}}

@@ -67,7 +67,6 @@ const InvoicesList = () =>{
 					<h4 className="fs-24 font-w800">Historique des transactions</h4>
 					{/* <span className="fs-12">Lorem ipsum dolor sit amet, consectetur</span> */}
 				</div>
-				<Link to={"#"} className="btn btn-outline-primary mb-3"><i className="fa fa-calendar me-3 scale3"></i>Filtrer Date<i className="fas fa-caret-down ms-2"></i></Link>
 			</div>
 			<div className="row">
 				<div className="col-xl-12">

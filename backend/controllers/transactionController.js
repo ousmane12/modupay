@@ -54,6 +54,12 @@ const createTransaction = asyncHandler(async (req, res) => {
     $push: { transactions: createdTransaction._id }
   });
 
+  const populatedTransaction = await Transaction.findById(createdTransaction._id)
+    .populate('country', 'name') // Peupler le champ 'country' avec son 'name'
+    .populate('agency', 'name') // Peupler le champ 'agency' avec son 'name'
+    .populate('completedBy', 'name') // Peupler 'completedBy' si défini
+    .populate('sender', 'name');
+
   // Récupérer les utilisateurs concernés
   const admins = await User.find({ role: 'admin' });
   const countryManagers = await User.find({ role: 'country_manager', country });
@@ -88,6 +94,10 @@ const createTransaction = asyncHandler(async (req, res) => {
           <td style="border: 1px solid #ddd; padding: 8px;">${feeInfo.name}</td>
         </tr>
         <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Agence</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${populatedTransaction.agency.name}</td>
+        </tr>
+        <tr>
           <td style="border: 1px solid #ddd; padding: 8px;">Type de Transfert</td>
           <td style="border: 1px solid #ddd; padding: 8px;">${transferType}</td>
         </tr>
@@ -112,7 +122,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
     
   } finally {
-    res.status(201).json(createdTransaction);
+    res.status(201).json(populatedTransaction);
   }
 });
 
