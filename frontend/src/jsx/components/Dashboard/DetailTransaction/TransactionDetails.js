@@ -51,7 +51,7 @@ const TransactionsDetails = () => {
                       Transaction du <strong>{formatDate(transaction.createdAt)}</strong> <br/> 
                       Initié par: <strong>{transaction.sender? transaction.sender.name: 'Utilisateur'}</strong> <br/>
                       <span className="float-right">
-                      Validé par: <strong>{transaction.completedBy?.name}</strong> 
+                      Validé par: <strong>{transaction.completedBy? transaction.completedBy.name : 'En cours'}</strong> 
                       </span>
                     </div>
                   </div>

@@ -41,7 +41,10 @@ export function createTransactionAction(formData, history) {
                 swal("Transaction enregistré avec succès!", {
                     icon: "success",
                 });
-                history.push(`/detail-transaction/${response.data?._id}`);
+                history.push({
+                    pathname: `/detail-transaction/${response.data._id}`,
+                    state: { data: response.data },
+                  });
             }else{
                 dispatch(failedCreateAction(response.data.message));
                 swal(response.data.message, {
@@ -180,7 +183,10 @@ export function updateTransactionAction(transaction, transaction_id, history) {
                 swal("Transaction modifiée avec succès!", {
                     icon: "success",
                 });
-                history.push(`/detail-transaction/${response.data?._id}`);
+                history.push({
+                    pathname: `/detail-transaction/${response.data._id}`,
+                    state: { data: response.data },
+                  });
             }
             dispatch(failedFetchAction(response.message));
         }).catch((err) => {

@@ -8,6 +8,7 @@ import swal from "sweetalert";
 
 
 const ProductOrder = (props) => {
+
   const { transactions } = useSelector(
 		(state) => state.transactions
 	  )
@@ -44,8 +45,11 @@ const ProductOrder = (props) => {
         swal("Votre action est annulée!");
       }});
   };
-  const handleViewTransaction = (transactionId) => {
-    props.history.push(`/detail-transaction/${transactionId}`);
+  const handleViewTransaction = (transactionId, transaction) => {
+    props.history.push({
+      pathname: `/detail-transaction/${transactionId}`,
+      state: { data: transaction },
+    });
   };
 
   const formatDate = (inputDate) =>{
@@ -133,8 +137,8 @@ const ProductOrder = (props) => {
                       <div className="d-flex">
                         <button
                             onClick={() => {
-                              handleViewTransaction(transaction._id)}}
-                            className="btn btn-primary shadow btn-xs sharp me-1"
+                              handleViewTransaction(transaction._id, transaction)}}
+                            className="btn btn-dark shadow btn-xs sharp me-1"
                           >
                           <i className="fas fa-eye"></i>
                         </button>
