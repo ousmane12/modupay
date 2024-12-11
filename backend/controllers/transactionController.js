@@ -65,18 +65,48 @@ const createTransaction = asyncHandler(async (req, res) => {
     ...agencyManagers.map(user => user.email),
   ];
 
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <h2 style="background-color: #4CAF50; color: white; padding: 10px; text-align: center;">Nouvelle Transaction Créée</h2>
+      <p>Bonjour,</p>
+      <p>Une nouvelle transaction a été créée avec les détails suivants :</p>
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <tr style="background-color: #f2f2f2;">
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Champ</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Valeur</th>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Nom du Destinataire</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${receiverName}</td>
+        </tr>
+        <tr style="background-color: #f2f2f2;">
+          <td style="border: 1px solid #ddd; padding: 8px;">Téléphone du Destinataire</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${receiverPhone}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Pays</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${feeInfo.name}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Type de Transfert</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${transferType}</td>
+        </tr>
+        <tr style="background-color: #f2f2f2;">
+          <td style="border: 1px solid #ddd; padding: 8px;">Montant</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${amount} (Total : ${totalAmount})</td>
+        </tr>
+      </table>
+      <p>Veuillez consulter l'application pour plus de détails.</p>
+      <p style="color: #555;">Cordialement,<br>L'équipe de gestion</p>
+    </div>
+  `;
+
   try {
-    const sendEmail = require('../utils/sendEmail');
+    const sendEmail = require('../utils/sendHtmlEmail');
     await sendEmail({
       to: emails,
       subject: 'Nouvelle transaction créée',
-      text: `Une nouvelle transaction a été créée :
-          - Nom du destinataire : ${receiverName}
-          - Téléphone du destinataire : ${receiverPhone}
-          - Montant : ${amount} (Total avec frais : ${totalAmount})
-          - Pays : ${feeInfo.name}
-
-          Consultez l'application pour plus de détails.`,
+      html: htmlContent,
     });
   } catch (error) {
     console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
