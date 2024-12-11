@@ -7,12 +7,16 @@ class ChartBarApex extends React.Component {
 	  this.state = {
 		series: [
 		  {
-			name: 'Transactions',
-			data: [0, 0, 0, 0, 0, 0, 0], // Initialisation avec des valeurs par défaut
+			name: 'Completed',
+			data: [0, 0, 0, 0, 0, 0, 0], // Données pour les transactions "completed"
 		  },
 		  {
-			name: 'Dépenses',
-			data: [0, 0, 0, 0, 0, 0, 0], // Initialisation avec des valeurs par défaut
+			name: 'Initiated',
+			data: [0, 0, 0, 0, 0, 0, 0], // Données pour les transactions "initiated"
+		  },
+		  {
+			name: 'Canceled',
+			data: [0, 0, 0, 0, 0, 0, 0], // Données pour les transactions "canceled"
 		  },
 		],
 		options: {
@@ -32,10 +36,9 @@ class ChartBarApex extends React.Component {
 		  xaxis: {
 			categories: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
 		  },
-		  colors: ['#f9b70e', '#FD5353'], // Couleurs des courbes
+		  colors: ['#4CAF50', '#FFA500', '#FF0000'], // Vert, orange, rouge
 		  fill: {
 			opacity: 1,
-			
 		  },
 		  tooltip: {
 			y: {
@@ -49,39 +52,34 @@ class ChartBarApex extends React.Component {
 	}
   
 	componentDidUpdate(prevProps) {
-	  // Vérifier si les transactions ou les dépenses ont changé et mettre à jour les données
-	  if (prevProps.transactions !== this.props.transactions || prevProps.expenses !== this.props.expenses) {
-		this.updateChartData(this.props.transactions, this.props.expenses);
+	  if (prevProps.transactions !== this.props.transactions) {
+		this.updateChartData(this.props.transactions);
 	  }
 	}
   
-	// Fonction pour calculer la somme des transactions et des dépenses pour chaque jour de la semaine
-	updateChartData(transactions, expenses) {
-	  const weekSumsTransactions = Array(7).fill(0); // Sommes des transactions
-	  const weekSumsExpenses = Array(7).fill(0); // Sommes des dépenses
+	// Fonction pour calculer les sommes des transactions par statut pour chaque jour de la semaine
+	updateChartData(transactions) {
+	  const weekSumsCompleted = Array(7).fill(0); // Transactions "completed"
+	  const weekSumsInitiated = Array(7).fill(0); // Transactions "initiated"
+	  const weekSumsCanceled = Array(7).fill(0); // Transactions "canceled"
   
 	  const currentDate = new Date();
 	  const currentDay = currentDate.getDay(); // Le jour actuel de la semaine (0 = dimanche, 6 = samedi)
   
-	  // Calcul des sommes pour les transactions
 	  transactions.forEach((transaction) => {
 		const transactionDate = new Date(transaction.createdAt);
 		const diffInTime = currentDate - transactionDate;
 		const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
   
 		if (diffInDays >= 0 && diffInDays < 7) {
-		  weekSumsTransactions[(currentDay - diffInDays + 7) % 7] += Number(transaction.amountTotal || 0);
-		}
-	  });
-  
-	  // Calcul des sommes pour les dépenses
-	  expenses.forEach((expense) => {
-		const expenseDate = new Date(expense.createdAt);
-		const diffInTime = currentDate - expenseDate;
-		const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
-  
-		if (diffInDays >= 0 && diffInDays < 7) {
-		  weekSumsExpenses[(currentDay - diffInDays + 7) % 7] += Number(expense.amount || 0);
+		  const dayIndex = (currentDay - diffInDays + 7) % 7;
+		  if (transaction.status === 'completed') {
+			weekSumsCompleted[dayIndex] += Number(transaction.amountTotal || 0);
+		  } else if (transaction.status === 'initiated') {
+			weekSumsInitiated[dayIndex] += Number(transaction.amountTotal || 0);
+		  } else if (transaction.status === 'canceled') {
+			weekSumsCanceled[dayIndex] += Number(transaction.amountTotal || 0);
+		  }
 		}
 	  });
   
@@ -89,28 +87,33 @@ class ChartBarApex extends React.Component {
 	  this.setState({
 		series: [
 		  {
-			name: 'Transactions',
-			data: weekSumsTransactions,
+			name: 'Completed',
+			data: weekSumsCompleted,
 		  },
 		  {
-			name: 'Dépenses',
-			data: weekSumsExpenses,
+			name: 'Initiated',
+			data: weekSumsInitiated,
+		  },
+		  {
+			name: 'Canceled',
+			data: weekSumsCanceled,
 		  },
 		],
 	  });
 	}
+  
 	render() {
-		return (
-			<div id="chart" >
-				<ReactApexChart
-				  options={this.state.options}
-				  series={this.state.series}
-				  type="bar"
-				  height={370} 
-				/>
-			</div>
-		);
+	  return (
+		<div id="chart">
+		  <ReactApexChart
+			options={this.state.options}
+			series={this.state.series}
+			type="bar"
+			height={370}
+		  />
+		</div>
+	  );
 	}
-}
+  }  
 
 export default ChartBarApex;

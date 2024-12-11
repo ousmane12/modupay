@@ -64,15 +64,20 @@ const PreviousTransactions = (transactions) => {
 										</td>
 										<td><span className="fs-16 text-black font-w600">Initié par: {transaction.sender? transaction.sender.name: 'Utilisateur'}</span></td>
 										<td>
-											<span
+												<span
 												className={`fs-16 font-w500 text-end d-block ${
-												transaction.status === 'pending' || transaction.status === 'cancelled'
-													? 'text-light'
-													: 'text-success'
+													transaction.status === 'completed'
+													? 'text-success' // Vert pour "completed"
+													: transaction.status === 'initiated'
+													? 'text-warning' // Orange pour "initiated"
+													: transaction.status === 'canceled'
+													? 'text-danger' // Rouge pour "canceled"
+													: 'text-light' // Par défaut, une couleur neutre
 												}`}
-											>
+												>
 												{transaction.status}
-											</span>
+												</span>
+
 											</td>
 									</tr>
 									))}

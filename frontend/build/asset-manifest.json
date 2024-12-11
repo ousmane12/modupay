@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/static/css/main.eee36523.css",
-    "main.js": "/static/js/main.eb8bdf3f.js",
+    "main.js": "/static/js/main.1ec33ca7.js",
     "static/js/318.4d7b5bcc.chunk.js": "/static/js/318.4d7b5bcc.chunk.js",
     "static/js/153.34aa711e.chunk.js": "/static/js/153.34aa711e.chunk.js",
     "static/js/923.db34a675.chunk.js": "/static/js/923.db34a675.chunk.js",
     "static/js/422.00433bbc.chunk.js": "/static/js/422.00433bbc.chunk.js",
-    "static/js/625.e5c018b4.chunk.js": "/static/js/625.e5c018b4.chunk.js",
+    "static/js/625.d2b9642a.chunk.js": "/static/js/625.d2b9642a.chunk.js",
     "static/js/787.1078f763.chunk.js": "/static/js/787.1078f763.chunk.js",
     "static/media/materialdesignicons-webfont.svg?v=2.4.85": "/static/media/materialdesignicons-webfont.6285372902a5d4634762.svg",
     "static/media/la-brands-400.svg": "/static/media/la-brands-400.928495fae14841a0d610.svg",
@@ -89,16 +89,16 @@
     "index.html": "/index.html",
     "static/media/check.svg": "/static/media/check.00b7ce7137636f3f980c.svg",
     "main.eee36523.css.map": "/static/css/main.eee36523.css.map",
-    "main.eb8bdf3f.js.map": "/static/js/main.eb8bdf3f.js.map",
+    "main.1ec33ca7.js.map": "/static/js/main.1ec33ca7.js.map",
     "318.4d7b5bcc.chunk.js.map": "/static/js/318.4d7b5bcc.chunk.js.map",
     "153.34aa711e.chunk.js.map": "/static/js/153.34aa711e.chunk.js.map",
     "923.db34a675.chunk.js.map": "/static/js/923.db34a675.chunk.js.map",
     "422.00433bbc.chunk.js.map": "/static/js/422.00433bbc.chunk.js.map",
-    "625.e5c018b4.chunk.js.map": "/static/js/625.e5c018b4.chunk.js.map",
+    "625.d2b9642a.chunk.js.map": "/static/js/625.d2b9642a.chunk.js.map",
     "787.1078f763.chunk.js.map": "/static/js/787.1078f763.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.eee36523.css",
-    "static/js/main.eb8bdf3f.js"
+    "static/js/main.1ec33ca7.js"
   ]
 }
