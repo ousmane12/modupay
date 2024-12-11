@@ -74,9 +74,7 @@ const createTransaction = asyncHandler(async (req, res) => {
           - Nom du destinataire : ${receiverName}
           - Téléphone du destinataire : ${receiverPhone}
           - Montant : ${amount} (Total avec frais : ${totalAmount})
-          - Type de transfert : ${transferType}
-          - Agence : ${agency}
-          - Pays : ${country}
+          - Pays : ${feeInfo.name}
 
           Consultez l'application pour plus de détails.`,
     });
