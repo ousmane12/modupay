@@ -334,7 +334,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   // Crée le lien de réinitialisation
-  const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
+  const resetUrl = `${process.env.RESET_PASS_URL}/${user.resetPasswordToken}`;
   // Envoie l'email
   try {
     const sendEmail = require('../utils/sendEmail');
