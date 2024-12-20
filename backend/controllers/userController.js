@@ -341,7 +341,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Demande de changement de Mot de passe',
-      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${user.resetPasswordToken}\n\nCe lien expirera dans 1 heure.`,
+      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${resetUrl}\n\nCe lien expirera dans 1 heure.`,
     });
     res.status(201).json({ message: 'Le lien de changement de mot de passe est envoyé par mail' });
   } catch (error) {
