@@ -1,8 +1,11 @@
 import {
+    forgotPassword,
     formatError,
     login,
     saveTokenInLocalStorage,
+    setPassword,
 } from '../../services/AuthService';
+import swal from "sweetalert";
 
 
 export const SIGNUP_CONFIRMED_ACTION = '[signup action] confirmed signup';
@@ -38,6 +41,53 @@ export function loginAction(email, password, history) {
             .catch((error) => {
 				console.log(error);
                 const errorMessage = formatError(error.response?.data);
+                swal(errorMessage, {
+                    icon: "error",
+                })
+                dispatch(loginFailedAction(errorMessage));
+            });
+    };
+}
+
+export function forgotPasswordAction(email, history) {
+    return (dispatch) => {
+        forgotPassword(email)
+            .then((response) => {
+                if(response.data?.status !== 200){
+                    swal(response.data.message, {
+                        icon: "success",
+                    })
+                    dispatch(loginFailedAction(response.data.message));
+                }
+                dispatch(loginConfirmedAction(response.data));                               
+            })
+            .catch((error) => {
+				console.log(error);
+                const errorMessage = formatError(error.response?.data);
+                swal(errorMessage, {
+                    icon: "error",
+                })
+                dispatch(loginFailedAction(errorMessage));
+            });
+    };
+}
+
+export function setPasswordAction(token, email, history) {
+    return (dispatch) => {
+        setPassword(token, email)
+            .then((response) => {
+                swal(response.data.message, {
+                    icon: "success",
+                })
+                dispatch(loginConfirmedAction(response.data));
+                history.push('/login');                    
+            })
+            .catch((error) => {
+				console.log(error);
+                const errorMessage = formatError(error.response?.data);
+                swal(errorMessage, {
+                    icon: "error",
+                })
                 dispatch(loginFailedAction(errorMessage));
             });
     };

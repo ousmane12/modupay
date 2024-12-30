@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react';
+import React,{ useEffect, useState } from 'react';
 import loadable from "@loadable/component";
 import pMinDelay from "p-min-delay";
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,8 +6,10 @@ import { ToastContainer } from "react-toastify";
 import {
     getTransactionsAction,
 } from '../../../store/actions/transactionAction';
-
 import PreviousTransactions from './Dashboard/PreviousTransactions';
+import CardSlider from './Card/CardSlider';
+import { fetchInvestments } from '../../../services/investmentService';
+import { getExpenses } from '../../../services/transactionService';
 
 const TotalInvoices = loadable(() =>
 	pMinDelay(import("./Dashboard/TotalInvoices"), 1000)
@@ -22,16 +24,34 @@ const Totalinvoicessent = loadable(() =>
 	pMinDelay(import("./Dashboard/Totalinvoicessent"), 1000)
 );
 
+const ChartBarApex = loadable(() =>
+	pMinDelay(import("./../Dashboard/Dashboard/ChartBarApex"), 1000)
+);
+
 
 const Home = () => {
+	//const { user } = useSelector(state => state.auth.auth);
+	const user = useSelector(state => state.auth.auth);
 	const dispatch = useDispatch();
 	const { transactions } = useSelector(
 		(state) => state.transactions
 	)
-	  useEffect(() => {
-		dispatch(getTransactionsAction())
+	const [investments, setInvestments] = useState([]);
+	const [expenses, setExpenses] = useState([]);
+
+	useEffect(() => {
+		if(user.role !== 'partner') {
+			dispatch(getTransactionsAction())
+			getExpenses().then((response) => {
+				setExpenses(response.data);
+			});
+		} else {
+			fetchInvestments().then((response) => {
+				setInvestments(response.data);
+			});
+		}
 		//chackboxFun()
-	}, [dispatch])
+	}, [dispatch, user])
 
 	const filterTransactionsByStatus = (targetStatus) =>{
 		return transactions.filter(transaction => transaction.status === targetStatus).length;
@@ -39,7 +59,7 @@ const Home = () => {
 	return(
 		<>
 			<div className="row">
-				<div className="col-xl-12">
+			{user.role !== 'partner' && <><div className="col-xl-12">
 					<div className="row">
 						<div className="col-xl-3 col-sm-6">
 							<div className="card overflow-hidden">
@@ -99,8 +119,8 @@ const Home = () => {
 
 										</span>
 										<div className="invoices">
-											<h4>{filterTransactionsByStatus("cancelled")}</h4>
-											<span>Annulées</span>
+											<h4>{expenses.length}</h4>
+											<span>Dépenses</span>
 										</div>
 									</div>
 								</div>
@@ -123,7 +143,7 @@ const Home = () => {
 											</svg>
 										</span>
 										<div className="invoices">
-											<h4>{filterTransactionsByStatus("pending")}</h4>
+											<h4>{filterTransactionsByStatus("initiated")}</h4>
 											<span>En attente</span>
 										</div>
 									</div>
@@ -138,13 +158,34 @@ const Home = () => {
 					</div>
 				</div>
 				<div className="col-xl-12">
-					<div className="row">
-						<div className="col-xl-12">
-							<PreviousTransactions transactions={transactions}/>
+				<div className="card">
+					<div className="card-header d-sm-flex d-block border-0 pb-0">
+						<div className="pe-3 me-auto mb-sm-0 mb-3">
+							<h4 className="fs-20 text-black mb-1 font-w700">Vue Transactions</h4>
+							<span className="fs-12">Stats des transactions</span>
+						</div>
+					</div>
+					<div className="card-body">
+						<div id="chartBar" className="chartBar">
+							<ChartBarApex transactions={transactions} expenses={expenses} />
 						</div>
 					</div>
 				</div>
-				
+			</div> </>
+				}
+				<div className="col-xl-12">
+					<div className="row">
+						<div className="col-xl-12">
+							{transactions.length > 0?<PreviousTransactions transactions={transactions.reverse()}/>:''}
+						</div>
+					</div>
+				</div>
+				{user.role === 'partner' &&
+				<div className="col-xl-12">
+					<div className="col-xl-12">
+					<CardSlider investments={investments}/>
+				</div>
+				</div>}
 			</div>
 			<ToastContainer
                   position="bottom-right"

@@ -13,6 +13,7 @@ import {
     FAILED_CREATE_TRANSACTION_ACTION,
 } from './TransactionTypes';
 import { failedFetchAction } from './userActions';
+import swal from "sweetalert";
 
 export function deleteTransactionAction(postId, history) {
     return (dispatch) => {
@@ -31,18 +32,33 @@ export function confirmedDeleteTransactionAction(postId) {
     };
 }
 
-export function createTransactionAction(sender, receiver, amount, amountConverted, history) {
+export function createTransactionAction(formData, history) {
    
 	return (dispatch) => {
-        createTransaction(sender, receiver, amount, amountConverted).then((response) => {
-            if (response.status === 200) {
+        createTransaction(formData).then((response) => {
+            if (response.status === 201) {
                 dispatch(confirmedCreateTransactionAction(response.data));
+                swal("Transaction enregistré avec succès!", {
+                    icon: "success",
+                });
+                history.push({
+                    pathname: `/detail-transaction/${response.data._id}`,
+                    state: { data: response.data },
+                  });
             }else{
                 dispatch(failedCreateAction(response.data.message));
+                swal(response.data.message, {
+                    icon: "warning",
+                    dangerMode: true,
+                });
             }
         }).catch((error) => {
             console.error(error);
             dispatch(failedCreateAction(error.message));
+            swal(error.message, {
+                icon: "warning",
+                dangerMode: true,
+            });
         });
     };
 }
@@ -60,19 +76,70 @@ export function getTransactionsInventaireAction(start, endDate, history) {
     return (dispatch) => {
         getTransactions().then((response) => {
             let transactions = formatTransactions(response.data);
-            let newTransactions = filterTransactionsByDate(transactions, start, endDate);
+            let newTransactions = filterTransactions(transactions, start, endDate);
             if(newTransactions.length > 0) {
                 dispatch(confirmedGetTransactionsAction(newTransactions));
                 const dataToPass = {
                     startDate: start,
                     endDate: endDate,
                 };
-                  
                 history.push({
                 pathname: '/facture',
                 state: { data: dataToPass },
                 });
-            } 
+            } else {
+                swal("Aucune transaction enregistée entre ces dates!", {
+                    icon: "warning",
+                });
+            }
+        });
+    };
+}
+
+export function getTransactionsInventaireByCountryAction(start, endDate, country, history) {
+    return (dispatch) => {
+        getTransactions().then((response) => {
+            let transactions = formatTransactions(response.data);
+            let newTransactions = filterTransactionsP(transactions, start, endDate, null, country);
+            if(newTransactions.length > 0) {
+                dispatch(confirmedGetTransactionsAction(newTransactions));
+                const dataToPass = {
+                    startDate: start,
+                    endDate: endDate,
+                };
+                history.push({
+                pathname: '/facture',
+                state: { data: dataToPass },
+                });
+            } else {
+                swal("Aucune transaction enregistée entre ces dates!", {
+                    icon: "warning",
+                });
+            }
+        });
+    };
+}
+
+export function getTransactionsInventaireByAgencyAction(start, endDate, country, history) {
+    return (dispatch) => {
+        getTransactions().then((response) => {
+            let transactions = formatTransactions(response.data);
+            let newTransactions = filterTransactionsS(transactions, start, endDate, country);
+            if(newTransactions.length > 0) {
+                dispatch(confirmedGetTransactionsAction(newTransactions));
+                const dataToPass = {
+                    startDate: start,
+                    endDate: endDate,
+                };
+                history.push({
+                pathname: '/facture',
+                state: { data: dataToPass },
+                });
+            } else {
+                swal("Aucune transaction enregistée entre ces dates!", {
+                    icon: "warning",
+                });
+            }
         });
     };
 }
@@ -111,31 +178,79 @@ export function confirmedUpdateTransactionAction(transaction) {
 export function updateTransactionAction(transaction, transaction_id, history) {
     return (dispatch) => {
         updateTransaction(transaction, transaction_id).then((response) => {
-            dispatch(confirmedUpdateTransactionAction(response.data));
-            history.push('/liste-transactions');
+            if(response.status === 200) {
+                dispatch(confirmedUpdateTransactionAction(response.data));
+                swal("Transaction modifiée avec succès!", {
+                    icon: "success",
+                });
+                history.push({
+                    pathname: `/detail-transaction/${response.data._id}`,
+                    state: { data: response.data },
+                  });
+            }
+            dispatch(failedFetchAction(response.message));
         }).catch((err) => {
             console.error(err);
             dispatch(failedFetchAction(err.message));
+            swal(err.message, {
+                icon: "warning",
+                dangerMode: true,
+            });
         });
 			
     };
 }
 
 
-function filterTransactionsByDate(transactions, startDate, endDate) {
+function filterTransactions(transactions, startDate, endDate, country = null, agency = null) {
     // Convert start and end dates to Date objects
     const start = new Date(startDate);
     const end = new Date(endDate);
-  
+
     const filteredTransactions = transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.createdAt);
-    
-        return (
-          transactionDate >= start &&
-          transactionDate <= end &&
-          transaction.status === "completed"
-        );
-      });
-  
+        // Filtrer par date, statut, pays et agence si fournis
+        const isDateInRange = transactionDate >= start && transactionDate <= end;
+        const isStatusCompleted = transaction.status === "completed";
+        const isCountryMatch = country ? transaction.country === country : true;
+        const isAgencyMatch = agency ? transaction.agency === agency : true;
+        
+        return isDateInRange && isStatusCompleted && isCountryMatch && isAgencyMatch;
+    });
+
     return filteredTransactions;
-  }  
+}
+
+function filterTransactionsS(transactions, startDate, endDate, agency) {
+    // Convert start and end dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    const filteredTransactions = transactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.createdAt);
+        // Filtrer par date, statut, pays et agence si fournis
+        const isDateInRange = transactionDate >= start && transactionDate <= end;
+        const isStatusCompleted = transaction.status === "completed";
+        
+        return isDateInRange && isStatusCompleted && transaction.agency?.name === agency;
+    });
+
+    return filteredTransactions;
+}
+ 
+function filterTransactionsP(transactions, startDate, endDate, country) {
+    // Convert start and end dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    const filteredTransactions = transactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.createdAt);
+        // Filtrer par date, statut, pays et agence si fournis
+        const isDateInRange = transactionDate >= start && transactionDate <= end;
+        const isStatusCompleted = transaction.status === "completed";
+        
+        return isDateInRange && isStatusCompleted && transaction.country?.name === country;
+    });
+
+    return filteredTransactions;
+}

@@ -3,24 +3,22 @@ import PageTitle from "../../../layouts/PageTitle";
 import { connect, useDispatch } from 'react-redux';
 import {
     loadingToggleAction,
-    createClientAction,
+    createAction,
 } from '../../../../store/actions/userActions';
 
 
 function AddClient(props) {
-    let errorsObj = { firstName: '',
-    lastName: '',
+    let errorsObj = { name: '',
     phoneNumber: '', };
     const [errors, setErrors] = useState(errorsObj);
 
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        name: '',
         phoneNumber: '',
         role: 'user',
       })
     
-    const { firstName, lastName, role, phoneNumber } = formData
+    const { name, role, phoneNumber } = formData
 
     const dispatch = useDispatch();
 
@@ -35,12 +33,8 @@ function AddClient(props) {
         e.preventDefault();
         let error = false;
         const errorObj = { ...errorsObj };
-        if (firstName === '') {
-            errorObj.firstName = 'Le nom est réquis';
-            error = true;
-        }
-        if (lastName === '') {
-            errorObj.lastName = 'Le prenom est réquis';
+        if (name === '') {
+            errorObj.name = 'Le nom est réquis';
             error = true;
         }
         if (phoneNumber === '') {
@@ -50,7 +44,7 @@ function AddClient(props) {
         setErrors(errorObj);
         if (error) return;
         dispatch(loadingToggleAction(true));
-        dispatch(createClientAction(firstName, lastName, role, phoneNumber, props.history));
+        dispatch(createAction(name, role, "", "", phoneNumber, props.history));
     }
   return (
     <Fragment>
@@ -84,29 +78,15 @@ function AddClient(props) {
                         <input
                           type="text"
                           className="form-control"
-                          id='firstName'
-                          name='firstName'
-                          value={firstName}
+                          id='name'
+                          name='name'
+                          value={name}
                           onChange={onChange}
                           placeholder="Veuillez saisir le nom de l'utilisateur"
                         />
-                        {errors.firstName && <div className="text-danger fs-12">{errors.firstName}</div>}
+                        {errors.name && <div className="text-danger fs-12">{errors.name}</div>}
                       </div>
-                      <div className="form-group mb-3 col-md-4">
-                        <label className="mb-1 ">
-                          <strong>Prenom</strong>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id='lastName'
-                          name='lastName'
-                          value={lastName}
-                          onChange={onChange}
-                          placeholder="Veuillez saisir le prenom de l'utilisateur"
-                        />
-                        {errors.lastName && <div className="text-danger fs-12">{errors.lastName}</div>}
-                      </div>
+                      
                       <div className="form-group mb-3 col-md-4">
                         <label className="mb-1 ">
                           <strong>Téléphone</strong>

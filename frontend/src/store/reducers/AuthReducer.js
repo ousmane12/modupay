@@ -10,8 +10,7 @@ import {
 const initialState = {
     auth: {
         _id: '',
-        firstName: '',
-        lastName: '',
+        name: '',
         phoneNumber: '',
         email: '',
         token: '',

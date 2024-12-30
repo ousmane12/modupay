@@ -90,7 +90,7 @@ const Checkout = () => {
                                     <input
                                        type="text"
                                        className="form-control"
-                                       id="firstName"
+                                       id="name"
                                        placeholder=""
                                        required
                                     />

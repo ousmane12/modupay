@@ -1,80 +1,174 @@
+const asyncHandler = require('express-async-handler')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const asyncHandler = require('express-async-handler')
-const User = require('../models/userModel')
+const User = require('../models/userModel');
+const Country = require('../models/countryModel');
+const Agency = require('../models/agencyModel');
+const Investment = require('../models/investmentModel');
+const permissionsConfig = require('../config/roles');
 
-// @desc    Register new user
+// @desc    Create user
 // @route   POST /api/users
-// @access  Public
-const registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, login, phoneNumber, role, email, password } = req.body
+// @access  Private
+const createUser = asyncHandler(async (req, res) => {
+  console.log('creating:', req.body);
+  const { name, phoneNumber, email, role } = req.body;
 
-  if (!firstName || !lastName || !login || !password) {
-    res.status(400)
-    throw new Error('Please add all fields')
+  // Vérification des champs requis
+  if (!name || !email || !phoneNumber || !role) {
+    res.status(400);
+    throw new Error('Veuillez fournir tous les champs requis');
   }
 
-  // Check if user exists
-  const userExists = await User.findOne({ phoneNumber })
+  // Vérifier si le rôle est valide
+  if (!permissionsConfig[role]) {
+    return res.status(400).json({ message: 'Rôle invalide.' });
+  }
 
+  // Vérifier si l'utilisateur existe déjà
+  const userExists = await User.findOne({ email });
   if (userExists) {
-    res.status(400)
-    throw new Error('User already exists')
+    res.status(400);
+    throw new Error('Un utilisateur existe déjà avec cet email');
   }
 
-  // Hash password
-  const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
+  // Génération d'un mot de passe par défaut
+  const defaultPassword = Math.random().toString(36).slice(-8);
 
-  // Create user
-  const user = await User.create({
-    firstName,
-    lastName,
-    login,
-    phoneNumber,
-    role,
+  // Création de l'utilisateur
+  const userData = {
+    name,
     email,
-    password: hashedPassword,
-  })
+    role,
+    phoneNumber,
+    password: defaultPassword,
+  };
 
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
-    })
-  } else {
-    res.status(400)
-    throw new Error('Invalid user data')
+    // Ajouter `country` en fonction du rôle de l'utilisateur connecté ou de l'input pour les cas spéciaux
+  if (req.user.role === 'country_manager' && role === 'agency_manager') {
+    userData.country = req.user.country;
+  } else if (req.user.role === 'admin' && role === 'agency_manager') {
+    // Laisser l'admin spécifier ou non le pays
+    userData.country = req.body.country || 'Global'; // 'Global' ou une autre valeur par défaut si aucun pays n'est fourni
+  } else if (req.user.role === 'agency_manager' && role === 'agent') {
+    userData.country = req.user.country;
+    userData.agency = req.user.agency;
   }
-})
+
+  const user = new User(userData);
+
+  // Génération du reset token
+  const resetToken = user.getResetPasswordToken();
+  const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
+
+  console.log('resetUrl:', resetUrl);
+
+  // Sauvegarder l'utilisateur avec le token généré
+  await user.save();
+
+  // Envoi de l'e-mail
+  try {
+    const sendEmail = require('../utils/sendEmail');
+    await sendEmail({
+      to: email,
+      subject: 'Création de Compte BIBA',
+      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe :\n\n${resetUrl}\n\nCe lien expire dans 15 minutes.`,
+    });
+
+    res.status(201).json({
+      message: 'Utilisateur créé avec succès et e-mail envoyé',
+      createdUser: user,
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+
+    // Supprimer les champs liés au token en cas d'échec
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(500);
+    throw new Error(
+      "Utilisateur non créé, échec de l'envoi de l'e-mail. Veuillez réessayer plus tard."
+    );
+  }
+});
+
+
+// Enregistrer un partenaire
+const registerPartner = asyncHandler(async (req, res) => {
+    try {
+        const { name, email, phoneNumber, investments } = req.body;
+
+        // Créer l'utilisateur avec le rôle `partner`
+        const partner = await User.create({
+            name,
+            email,
+            phoneNumber,
+            password,
+            role: 'partner',
+        });
+
+        // Enregistrer les investissements si fournis
+        if (investments && investments.length > 0) {
+            for (const inv of investments) {
+                const country = await Country.findById(inv.countryId); // Vérifie si le pays existe
+                if (!country) {
+                    return res.status(400).json({ message: `Pays avec l'ID ${inv.countryId} introuvable` });
+                }
+
+                await Investment.create({
+                    partner: partner._id,
+                    country: inv.countryId,
+                    amountInvested: inv.amountInvested,
+                    interestPercentage: inv.interestPercentage,
+                });
+            }
+        }
+
+        res.status(201).json({
+            message: 'Partenaire enregistré avec succès',
+            partner,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de l’enregistrement du partenaire' });
+    }
+});
 
 // @desc    Authenticate a user
 // @route   POST /api/users/login
 // @access  Public
+
 const loginUser = asyncHandler(async (req, res) => {
-  const { login, password } = req.body
+  const { email, password } = req.body;
 
   // Check for user email
-  const user = await User.findOne({ login })
+  const user = await User.findOne({ email });
 
+  // Vérifier si l'utilisateur existe et si le mot de passe correspond
+  // && (await bcrypt.compare(password, user.password))
   if (user && (await bcrypt.compare(password, user.password))) {
+    // Obtenir les permissions à partir du rôle
+    const permissions = permissionsConfig[user.role] || [];
+
     res.json({
       _id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      name: user.name,
+      country: user.country,
+      agency: user.agency,
       phoneNumber: user.phoneNumber,
       role: user.role,
       email: user.email,
       token: generateToken(user._id),
-    })
+      permissions,
+    });
   } else {
-    res.status(400)
-    throw new Error('Invalid credentials')
+    res.status(400);
+    throw new Error('Identifiants invalides');
   }
-})
+});
+
 
 // @desc    Get user data
 // @route   GET /api/users/me
@@ -83,64 +177,205 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user)
 })
 
-// @desc    Get user data
-// @route   GET /api/users/all
-// @access  Private
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find();
-  res.status(200).json(users)
-})
+  try {
+    let query = {};
 
-// @desc    Update user data
-// @route   PUT /api/users/:id
-// @access  Private
-const updateUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
-  const { firstName, lastName, login, phoneNumber, email, role } = req.body;
+    // Définir le filtre en fonction du rôle de l'utilisateur
+    if (req.user.role === 'country_manager') {
+      query = { country: req.user.country }; // Utilisateurs du même pays
+    } else if (req.user.role === 'agency_manager') {
+      query = { agency: req.user.agency }; // Utilisateurs de la même agence
+    }
 
-  // Check if the user exists
-  const user = await User.findById(userId);
+    // Ajouter une condition pour exclure l'utilisateur actuellement connecté
+    query._id = { $ne: req.user._id }; // Exclut l'utilisateur connecté
+
+    // Récupérer les utilisateurs avec les relations peuplées
+    const users = await User.find(query)
+      .populate({
+        path: 'investments',
+        select: 'country amountInvested interestPercentage totalInterestEarned', // Sélectionne les champs des investissements
+        populate: [
+          { path: 'country', select: 'name' } // Remplit les détails du pays dans les investissements
+        ]
+      })
+      .populate('country', 'name') // Remplit les détails du pays
+      .populate('agency', 'name'); // Remplit les détails de l'agence
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
+  }
+});
+
+// @desc    Get user by ID
+// @route   GET /api/users/:id
+// @access  Private/Admin
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id)
+  .populate('country', 'name')
+  .populate('agency', 'name')
+  .populate({
+    path: 'investments',
+    select: 'country amountInvested interestPercentage totalInterestEarned', // Sélectionne les champs des transactions
+    populate: [
+      { path: 'country', select: 'name'}
+    ]
+  });
 
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
 
-  // Update user fields
-  user.firstName = firstName || user.firstName;
-  user.lastName = lastName || user.lastName;
-  user.login = login || user.login;
-  user.phoneNumber = phoneNumber || user.phoneNumber;
-  user.email = email || user.email;
-  user.role = role || user.role;
+  res.status(200).json(user);
+});
 
-  // Save the updated user
-  const updatedUser = await user.save();
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
 
-  res.json(updatedUser);
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+  res.status(200).json(updatedUser);
 });
 
 // @desc    Delete user
 // @route   DELETE /api/users/:id
-// @access  Private
+// @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id)
+  const user = await User.findById(req.params.id);
 
   if (!user) {
-    res.status(400)
-    throw new Error('User not found')
+    res.status(404);
+    throw new Error('User not found');
   }
 
-  // Check for user
-  if (!req.user) {
-    res.status(401)
-    throw new Error('User not found')
+  if (user.role === 'country_manager') {
+    // Suppression des Country associés
+    const country = await Country.findOne({ manager: user._id });
+    if (country) {
+      // Suppression des agences dans ce pays
+      await Agency.deleteMany({ country: country._id });
+      // Suppression des utilisateurs liés à ce pays
+      await User.deleteMany({ country: country._id });
+      // Suppression du pays lui-même
+      await country.deleteOne();
+    }
+  } else if (user.role === 'agency_manager') {
+    // Suppression de l'agence associée
+    const agency = await Agency.findOne({ manager: user._id });
+    if (agency) {
+      // Suppression des agents associés à cette agence
+      await User.deleteMany({ agency: agency._id });
+      // Suppression de l'agence elle-même
+      await agency.deleteOne();
+    }
   }
 
-  await user.remove()
+  // Suppression de l'utilisateur (gestionnaire pays ou agence)
+  await user.deleteOne();
 
-  res.status(200).json({ id: req.params.id })
-})
+  res.status(200).json({ message: 'Utilisateur et entités associées supprimés', id: req.params.id });
+});
+
+
+// @desc    Auth user & get token
+// @route   POST /api/users/login
+// @access  Public
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '30d',
+    });
+    res.json({ _id: user._id, name: user.name, email: user.email, role: user.role, token });
+  } else {
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+});
+
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select('-password');
+  res.json(user);
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  // Vérifie si un utilisateur avec cet email existe
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: 'L\'utilisateur avec cet e-mail n\'existe pas' });
+  }
+
+  // Hash le token et configure une expiration
+  user.resetPasswordToken = user.getResetPasswordToken();
+  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+
+  await user.save();
+
+  // Crée le lien de réinitialisation
+  const resetUrl = `${process.env.RESET_PASS_URL}/${user.resetPasswordToken}`;
+  // Envoie l'email
+  try {
+    const sendEmail = require('../utils/sendEmail');
+    await sendEmail({
+      to: email,
+      subject: 'Demande de changement de Mot de passe',
+      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${resetUrl}\n\nCe lien expirera dans 1 heure.`,
+    });
+    res.status(201).json({ message: 'Le lien de changement de mot de passe est envoyé par mail' });
+  } catch (error) {
+    // Nettoie les champs en cas d'erreur d'envoi
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail. Veuillez réessayer plus tard' });
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  
+  // Trouve l'utilisateur correspondant
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() }, // Vérifie que le token n'est pas expiré
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: 'Jeton invalide ou expiré' });
+  }
+
+  // Met à jour le mot de passe
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+  res.status(200).json({ message: 'Mot de passe mis à jour avec succès' });
+});
+
 
 // Generate JWT
 const generateToken = (id) => {
@@ -150,10 +385,15 @@ const generateToken = (id) => {
 }
 
 module.exports = {
-  registerUser,
+  createUser,
   loginUser,
   getMe,
   getUsers,
+  getUser,
+  getUserProfile,
   deleteUser,
   updateUser,
+  registerPartner,
+  resetPassword,
+  forgotPassword
 }

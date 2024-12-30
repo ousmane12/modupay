@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 // images
 import logo from "../../../../images/logo.png";
 //import logoText from "../../../../..//images/logo-text.png";
-import PageTitle from "../../../layouts/PageTitle";
 import { useLocation } from 'react-router-dom';
 
 
@@ -29,28 +28,32 @@ const TransactionsDetails = () => {
       minimumFractionDigits: 2,
     });
   }
+
+  const handlePrint = () => {
+  };
   
   return (
     <Fragment>
-      <PageTitle activeMenu="Bordereau" motherMenu="Transactions" />
+      <button onClick={handlePrint} className="btn btn-primary light me-3 mb-4">
+        <i className="las la-print me-3 scale5"></i>Imprimer
+      </button>
       <div className="row">
         <div className="col-lg-12">
           <div className="card">
-            <div className="card-header">
-              {" "}
-              Transaction du <strong>{formatDate(transaction.createdAt)}</strong> initié par: <strong>{transaction.initiatedBy.firstName} {transaction.initiatedBy.lastName}</strong>{" "}
-              <span className="float-right">
-                <strong>Status:</strong> {transaction.status}
-              </span>{" "}
-            </div>
             <div className="card-body">
               <div className="row mb-5">
                 <div className="mt-4 col-xl-3 col-lg-6 col-md-6 col-sm-6">
                   <div>
-                    <div className="brand-logo mb-3">
-                        <img className="logo-abbr me-2" src={logo} alt="" style={{width:'50px'}}  />
-                      </div>
-                      <strong>ModuPay</strong>{" "}
+                    <div className="brand-logo">
+                        <img className="logo-abbr me-2" src={logo} alt="" style={{width:'150px'}}  />
+                    </div>
+                    <div className="">
+                      Transaction du <strong>{formatDate(transaction.createdAt)}</strong> <br/> 
+                      Initié par: <strong>{transaction.sender? transaction.sender.name: 'Utilisateur'}</strong> <br/>
+                      <span className="float-right">
+                      Validé par: <strong>{transaction.completedBy? transaction.completedBy.name : 'En cours'}</strong> 
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -58,22 +61,22 @@ const TransactionsDetails = () => {
                 <table className="table table-striped">
                   <thead>
                     <tr>
-                      <th className="center">Date</th>
-                      <th>Emetteur</th>
                       <th>Recepteur</th>
+                      <th>Telephone</th>
+                      <th className="right">Type</th>
+                      <th className="right">Agence</th>
                       <th className="right">Montant</th>
-                      <th className="center">Montant Converti</th>
-                      <th className="center">Validation</th>
+                      <th className="right">Frais</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="center">{formatDate(transaction.updatedAt)}</td>
-                      <td className="left strong">{transaction.sender.firstName} {transaction.sender.lastName}</td>
-                      <td className="left">{transaction.receiver.firstName} {transaction.receiver.firstName}</td>
-                      <td className="right">{formatMoney(transaction.amount, "USD")}</td>
-                      <td className="center">{formatMoney(transaction.amountConverted, "XOF")}</td>
-                      <td className="center">{transaction.completedBy?.firstName} {transaction.completedBy?.lastName}</td>
+                      <td className="left">{transaction.receiverName}</td>
+                      <td className="left strong">{transaction.receiverPhone}</td>
+                      <td className="left strong">{transaction.transferType}</td>
+                      <td className="left strong">{transaction.agency.name}</td>
+                      <td className="right">{transaction.amount} FCFA</td>
+                      <td className="right">{transaction.fee} FCFA</td>
                     </tr>
                   </tbody>
                 </table>
@@ -87,14 +90,20 @@ const TransactionsDetails = () => {
                         <td className="left">
                           <strong>Total</strong>
                         </td>
-                        <td className="right">{formatMoney(transaction.amount, "USD")}</td>
+                        <td className="right">{transaction.amount} FCFA</td>
                       </tr>
                       <tr>
                         <td className="left">
-                          <strong>Total Converti</strong>
+                          <strong>Frais</strong>
+                        </td>
+                        <td className="right">{transaction.fee} FCFA</td>
+                      </tr>
+                      <tr>
+                        <td className="left">
+                          <strong>Total TTC</strong>
                         </td>
                         <td className="right">
-                          <strong>{formatMoney(transaction.amountConverted, "XOF")}</strong>
+                          <strong>{transaction.amountTotal} FCFA</strong>
                         </td>
                       </tr>
                     </tbody>

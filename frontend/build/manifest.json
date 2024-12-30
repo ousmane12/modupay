@@ -1,6 +1,6 @@
 {
-  "short_name": "ModuPay",
-  "name": "ModuPay - Admin Dashboard ",
+  "short_name": "Biba Express",
+  "name": "Biba Express - Admin Dashboard",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,7 +8,7 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },

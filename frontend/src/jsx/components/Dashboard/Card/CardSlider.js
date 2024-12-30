@@ -9,7 +9,41 @@ import wave4 from './../../../../images/pattern/wave4.png';
 import circle from './../../../../images/pattern/circle.png';
 
 
-const CardSlider = () =>{
+const CardSlider = (investments) => {
+	const calculateInvestmentSums = (investments) => {
+		
+		// Initialisation des sommes
+		let totalAmountInvested = 0;
+		let totalInterestEarned = 0;
+		let totalEarned = 0;
+
+		if (!Array.isArray(investments.investments)) {
+			console.error("Investments should be an array");
+			return {
+			  totalAmountInvested: 0,
+			  totalInterestEarned: 0,
+			  totalEarned: 0,
+			};
+		  }
+	  
+		// Calcul des totaux
+		investments.investments.forEach(investment => {
+		  totalAmountInvested += investment?.amountInvested || 0;
+		  totalInterestEarned += investment?.totalInterestEarned || 0;
+		});
+	  
+		// Calcul du montant total gagné (investissement + intérêts)
+		totalEarned = totalAmountInvested + totalInterestEarned;
+	  
+		// Retourne les résultats
+		return {
+		  totalAmountInvested,
+		  totalInterestEarned,
+		  totalEarned,
+		  investedPlusInterest: totalEarned,
+		};
+	  }	  
+	const { totalAmountInvested, totalInterestEarned, totalEarned } = calculateInvestmentSums(investments);
 	const settings = {
 		dots: false,
 		infinite: true,
@@ -50,20 +84,12 @@ const CardSlider = () =>{
 						<div className="card-info text-white">
 							<div className="d-flex align-items-center">
 								<div className="me-auto">
-									<p className="mb-1 fs-18 font-w700">Main Balance</p>
-									<h2 className="fs-32 font-w800  text-white mb-5">$673,412.66</h2>
+									<p className="mb-1 fs-18 font-w700">Investissement</p>
+									<h2 className="fs-24 font-w800  text-white mb-5">{totalAmountInvested.toLocaleString()} FCFA</h2>
 								</div>
 								<img src={circle} className="mb-4" alt="" />
 							</div>
 							<div className="d-flex">
-								<div className="me-sm-5 me-3">
-									<p className="fs-14 mb-1">VALID THRU</p>
-									<span>08/21</span>
-								</div>
-								<div>
-									<p className="fs-14 mb-1">CARD HOLDER</p>
-									<span>Franklin Jr.</span>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -74,20 +100,10 @@ const CardSlider = () =>{
 						<div className="card-info text-white">
 							<div className="d-flex align-items-center">
 								<div className="me-auto">
-									<p className="mb-1 fs-18 font-w700">Main Balance</p>
-									<h2 className="fs-32 font-w800  text-white mb-5">$673,412.66</h2>
+									<p className="mb-1 fs-18 font-w700">Intérêts Gagnés</p>
+									<h2 className="fs-24 font-w800  text-white mb-5">{totalInterestEarned.toLocaleString()} FCFA</h2>
 								</div>
 								<img src={circle} className="mb-4" alt="" />
-							</div>
-							<div className="d-flex">
-								<div className="me-sm-5 me-3">
-									<p className="fs-14 mb-1">VALID THRU</p>
-									<span>08/21</span>
-								</div>
-								<div>
-									<p className="fs-14 mb-1">CARD HOLDER</p>
-									<span>Franklin Jr.</span>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -98,20 +114,10 @@ const CardSlider = () =>{
 						<div className="card-info text-white">
 							<div className="d-flex align-items-center">
 								<div className="me-auto">
-									<p className="mb-1 fs-18 font-w700">Main Balance</p>
-									<h2 className="fs-32 font-w800  text-white mb-5">$673,412.66</h2>
+									<p className="mb-1 fs-18 font-w700">Total Gagné</p>
+									<h2 className="fs-24 font-w800  text-white mb-5">{totalEarned.toLocaleString()} FCFA</h2>
 								</div>
 								<img src={circle} className="mb-4" alt="" />
-							</div>
-							<div className="d-flex">
-								<div className="me-5">
-									<p className="fs-14 mb-1">VALID THRU</p>
-									<span>08/21</span>
-								</div>
-								<div>
-									<p className="fs-14 mb-1">CARD HOLDER</p>
-									<span>Franklin Jr.</span>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -122,47 +128,16 @@ const CardSlider = () =>{
 						<div className="card-info text-white">
 							<div className="d-flex align-items-center">
 								<div className="me-auto">
-									<p className="mb-1 fs-18 font-w700">Main Balance</p>
-									<h2 className="fs-32 font-w800  text-white mb-5">$673,412.66</h2>
+									<p className="mb-1 fs-18 font-w700">Total</p>
+									<h2 className="fs-24 font-w800  text-white mb-5">{totalEarned.toLocaleString()} FCFA</h2>
 								</div>
 								<img src={circle} className="mb-4" alt="" />
-							</div>
-							<div className="d-flex">
-								<div className="me-5">
-									<p className="fs-14 mb-1">VALID THRU</p>
-									<span>08/21</span>
-								</div>
-								<div>
-									<p className="fs-14 mb-1">CARD HOLDER</p>
-									<span>Franklin Jr.</span>
-								</div>
 							</div>
 						</div>
 					</div>
 				</div>	
 				<div className="items">
-					<div className="card-bx bg-orange">
-						<img className="pattern-img" src={wave2} alt="" />
-						<div className="card-info text-white">
-							<div className="d-flex align-items-center">
-								<div className="me-auto">
-									<p className="mb-1 fs-18 font-w700">Main Balance</p>
-									<h2 className="fs-32 font-w800  text-white mb-5">$673,412.66</h2>
-								</div>
-								<img src={circle} className="mb-4" alt="" />
-							</div>
-							<div className="d-flex">
-								<div className="me-sm-5 me-3">
-									<p className="fs-14 mb-1">VALID THRU</p>
-									<span>08/21</span>
-								</div>
-								<div>
-									<p className="fs-14 mb-1">CARD HOLDER</p>
-									<span>Franklin Jr.</span>
-								</div>
-							</div>
-						</div>
-					</div>
+					
 				</div>
 			</Slider>
 		</>

@@ -3,9 +3,9 @@ import {
     fetchUsers,
     createUser,
     updateUser,
-    createClient,
     deleteUser,
 } from '../../services/userService';
+import swal from "sweetalert";
 
 
 export const USER_CREATE_FAILED_ACTION = '[add action] failed add';
@@ -16,43 +16,29 @@ export const USER_EDIT_ACTION = '[Edit action] edit action';
 export const USER_EDIT_FAILED_ACTION = '[Edit action] edit failed';
 export const USER_CREATED_ACTION = '[Add action] add action';
 export const LOADING_TOGGLE_ACTION = '[Loading action] toggle loading';
-export const FETCH_DATA_ACTION = '[Fetch action] fetch action';
+export const FETCH_USER_DATA_ACTION = '[Fetch action] fetch action';
 
-export function createAction(firstName, lastName, login, role, phoneNumber, email, password, history) {
+export function createAction(name, role, phoneNumber, email, country, history) {
     return (dispatch) => {
-        createUser(firstName, lastName, login, role, phoneNumber, email, password)
+        createUser(name, role, phoneNumber, email, country)
         .then((response) => {
             if (response.status === 201) {
-                dispatch(confirmedCreateAction(response.data));
                 history.push('/utilisateurs');
-              } 
-                // Treat other status codes as errors
-                const errorMessage = formatError(response.data);
-                dispatch(failedCreateAction(errorMessage));
-        })
-        .catch((error) => {
-            console.log(error);
-            const errorMessage = formatError(error);
-            dispatch(failedCreateAction(errorMessage));
-        });
-    };
-}
-
-export function createClientAction(firstName, lastName, role, phoneNumber, history) {
-    return (dispatch) => {
-        createClient(firstName, lastName, role, phoneNumber)
-        .then((response) => {
-            if (response.status === 201) {
                 dispatch(confirmedCreateAction(response.data));
-                history.push('/clients');
-              } else {
-                // Treat other status codes as errors
-                const errorMessage = formatError(response.data);
-                dispatch(failedCreateAction(errorMessage));
+                swal(response.data?.message, {
+                    icon: "success",
+                });
               } 
+            // Treat other status codes as errors
+            const errorMessage = formatError(response.data);
+            dispatch(failedCreateAction(errorMessage));
         })
         .catch((error) => {
             console.log(error);
+            swal(error.message, {
+                icon: "warning",
+                dangerMode: true,
+            });
             const errorMessage = formatError(error);
             dispatch(failedCreateAction(errorMessage));
         });
@@ -64,7 +50,7 @@ export function getUsersAction() {
       try {
         dispatch(loadingToggleAction(true));
         const response = await fetchUsers();
-        const clients = response.data.filter(user => user.role !== 'user');
+        const clients = response.data;
         dispatch(fetchDataAction(clients));
       } catch (error) {
         console.log(error);
@@ -94,14 +80,38 @@ return async (dispatch) => {
 }
 
 export function deleteUserAction(postId, history) {
-    return (dispatch) => {
-        deleteUser(postId).then((response) => {
-            dispatch(confirmedDeleteUserAction(response.data));
-            history.push('/liste-utilisateurs');
-        }).catch((error) => {
-            console.log(error);
-            dispatch(failedFetchAction(error.message));
-        });
+    return (dispatch, getState) => {
+        deleteUser(postId)
+            .then((response) => {
+                // Dispatch l'action pour indiquer que la suppression a réussi
+                dispatch(confirmedDeleteUserAction(response.data));
+
+                // Récupérer la liste actuelle des utilisateurs dans le state
+                const currentState = getState();
+                const updatedUserList = currentState.users.filter(user => user.id !== postId);
+
+                // Mettre à jour le state avec la liste mise à jour
+                dispatch(updateUserListAction(updatedUserList));
+
+                // Notifier l'utilisateur
+                swal("Utilisateur supprimé avec succès!", {
+                    icon: "success",
+                });
+                // Rediriger après suppression
+                history.push('/utilisateurs');
+            })
+            .catch((error) => {
+                console.error(error);
+
+                // Notification d'erreur
+                swal("Erreur lors de la suppression de l'utilisateur!", {
+                    icon: "warning",
+                    dangerMode: true,
+                });
+
+                // Dispatch l'action d'échec
+                dispatch(failedFetchAction(error.message));
+            });
     };
 }
   
@@ -111,11 +121,18 @@ export function updateUserAction(user, userId, history) {
         dispatch(loadingToggleAction(true));
         const response = await updateUser(user, userId);
         dispatch(updateAction(userId, response.data));
+        swal("Utilisateur modifié avec succès!", {
+            icon: "success",
+        });
         history.push('/utilisateurs');
       } catch (error) {
         console.log(error);
         const errorMessage = formatError(error);
         dispatch(failedFetchAction(errorMessage));
+        swal("Erreur de modification de l'utilisateur!", {
+            icon: "warning",
+            dangerMode: true,
+        });
       } finally {
         dispatch(loadingToggleAction(false));
       }
@@ -131,7 +148,7 @@ export function confirmedCreateAction(payload) {
 
 export function fetchDataAction(payload) {
     return {
-        type: FETCH_DATA_ACTION,
+        type: FETCH_USER_DATA_ACTION,
         payload,
     };
 }
@@ -168,5 +185,12 @@ export function confirmedDeleteUserAction(postId) {
     return {
         type: USER_DELETE_SUCCESS_ACTION,
         payload: postId,
+    };
+}
+
+export function updateUserListAction(updatedUserList) {
+    return {
+        type: 'UPDATE_USER_LIST',
+        payload: updatedUserList,
     };
 }
