@@ -33,7 +33,7 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   // Génération d'un mot de passe par défaut
-  const defaultPassword = Math.random().toString(36).slice(-8);
+  const defaultPassword = process.env.DEFAULT_PASSWORD;
 
   // Création de l'utilisateur
   const userData = {
@@ -72,7 +72,7 @@ const createUser = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Création de Compte BIBA',
-      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe :\n\n${resetUrl}\n\nCe lien expire dans 15 minutes.`,
+      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe :\n\n${resetUrl}\n\nCe lien expire dans 5 minutes.`,
     });
 
     res.status(201).json({
