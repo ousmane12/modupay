@@ -61,8 +61,6 @@ const createUser = asyncHandler(async (req, res) => {
   const resetToken = user.getResetPasswordToken();
   const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
 
-  console.log('resetUrl:', resetUrl);
-
   // Sauvegarder l'utilisateur avec le token généré
   await user.save();
 

@@ -22,6 +22,7 @@ const CreateInvoices = (props) => {
 	const [agencies, setAgencies] = useState([]);
 	const [selectedCountry, setSelectedCountry] = useState('');
     const [filteredAgencies, setFilteredAgencies] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 	
 	const { user, errorMessage} = useSelector(state => state.auth.auth);
 	const [amountTotal, setAmountTotal] = useState(0);
@@ -149,23 +150,28 @@ const CreateInvoices = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-	const {receiverName, receiverPhone, country, agency, transferType, amount} = formData;
-	dispatch(createTransactionAction({receiverName, receiverPhone, country, agency, transferType, amount}, props.history));
-    if (errorMessage) {
-      swal("Erreur lors de l'initiation de la transaction", {
-        icon: "error",
-      });
-    } else {
+	if (!formData.receiverName || !formData.receiverPhone || !formData.amount || !formData.agency) {
+		swal("Veuillez remplir tous les champs requis", { icon: "error" });
+		return;
+	  }
+	try {
+		setIsLoading(true); // Activer le spinner
+		const { receiverName, receiverPhone, country, agency, transferType, amount } = formData;
+		dispatch(createTransactionAction({receiverName, receiverPhone, country, agency, transferType, amount}, props.history));
 		setFormData({
-			receiverName: '',
-			receiverPhone: '',
-			country: '',
-			agency: '',
-			transferType: '',
-			amount: 0,
-			amountTotal: 0,
+		  receiverName: "",
+		  receiverPhone: "",
+		  country: "",
+		  agency: "",
+		  transferType: "",
+		  amount: 0,
+		  amountTotal: 0,
 		});
-	}
+	  } catch (error) {
+		swal("Erreur lors de l'initiation de la transaction", { icon: "error" });
+	  } finally {
+		setIsLoading(false); // Désactiver le spinner
+	  }
   };
 
 	return (
@@ -255,9 +261,13 @@ const CreateInvoices = (props) => {
 			  />
 			</div>
 		  </div>
-		  <button type="submit" className="btn btn-primary">
-			Initier la Transaction
-		  </button>
+		  <button type="submit" className="btn btn-primary" disabled={isLoading}>
+			{isLoading ? (
+				<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			) : (
+				"Initier la Transaction"
+			)}
+        </button>
 		</form>
 	  </div>
 	);

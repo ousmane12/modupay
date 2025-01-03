@@ -103,7 +103,11 @@ const createTransaction = asyncHandler(async (req, res) => {
         </tr>
         <tr style="background-color: #f2f2f2;">
           <td style="border: 1px solid #ddd; padding: 8px;">Montant</td>
-          <td style="border: 1px solid #ddd; padding: 8px;">${amount} (Total : ${totalAmount})</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${amount} FCFA</td>
+        </tr>
+        <tr style="background-color: #f2f2f2;">
+          <td style="border: 1px solid #ddd; padding: 8px;">Montant Total</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${totalAmount} FCFA</td>
         </tr>
       </table>
       <p>Veuillez consulter l'application pour plus de détails.</p>

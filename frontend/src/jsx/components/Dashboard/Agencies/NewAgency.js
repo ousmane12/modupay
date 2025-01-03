@@ -25,6 +25,7 @@ function NewAgency(props) {
   const [countries, setCountries] = useState([]);
   const [users, setUsers] = useState([]);
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const { name, country, manager } = formData;
   const errorMessage = useSelector((state) => state.agencies.errorMessage);
@@ -95,14 +96,15 @@ function NewAgency(props) {
 
   const onSubmit = (e) => {
     
-    
     e.preventDefault();
     if (!validateFields()) return;
+    setIsLoading(true);
     if (user.role === 'admin') {
       dispatch(createAction(name, country, manager, props.history));
     } else {
       dispatch(createAction(name, user.country, manager, props.history));
     }
+    setIsLoading(false);
     setFormData({ name: '', country: '', manager: '' });
   };
 
@@ -149,9 +151,20 @@ function NewAgency(props) {
                 </label>
                 <CustomSelect options={users} onSelect={handleSelect('manager')} />
               </div>
-              <button type="submit" className="btn btn-primary btn-block">
-                {id ? 'Mettre à jour' : 'Ajouter Agence'}
-              </button>
+              {isLoading ? (
+                <button className="btn btn-primary btn-block" disabled>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>{" "}
+                  Chargement...
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary btn-block">
+                  {id ? "Mettre à jour" : "Ajouter Agence"}
+                </button>
+              )}
             </form>
           </div>
         </div>

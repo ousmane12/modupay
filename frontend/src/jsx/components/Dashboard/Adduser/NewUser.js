@@ -19,6 +19,7 @@ function NewUser(props) {
     const [errors, setErrors] = useState(errorsObj);
     const user = useSelector(state => state.auth.auth);
     const [countries, setCountries] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -86,15 +87,24 @@ function NewUser(props) {
         }
         setErrors(errorObj);
         if (error) return;
+        setIsLoading(true);
         dispatch(loadingToggleAction(true));
-        dispatch(createAction(name, role, phoneNumber, email, country, props.history));
-        setFormData({
-          name: '',
-          phoneNumber: '',
-          email: '',
-          role: '',
-          country: '',
-        });
+        try {
+          dispatch(
+            createAction(name, role, phoneNumber, email, country, props.history)
+          );
+          setFormData({
+            name: "",
+            phoneNumber: "",
+            email: "",
+            role: "",
+            country: "",
+          });
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false); // Désactiver le spinner
+        }
     }
 
     const handleSelect = (field) => (value) => {
@@ -232,9 +242,15 @@ function NewUser(props) {
               </div>
 
               <div className="form-group mb-3 col-md-4">
-              <button type="submit" className="btn btn-primary btn-block">
-                Ajouter utilisateur
-              </button>
+                {isLoading ? (
+                  <button className="btn btn-primary btn-block" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...
+                  </button>
+                ) : (
+                  <button type="submit" className="btn btn-primary btn-block">
+                    Ajouter utilisateur
+                  </button>
+                )}
               </div>
               
             </form>

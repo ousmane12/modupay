@@ -73,6 +73,13 @@ const SideBar = () => {
       { path: "/investments", icon: "fas fa-wallet", label: "Mes Placements", permissions: ["view_my_placements"] },
     ],
   };
+
+  const handleMenuClick = () => {
+    const wrapper = document.querySelector("#main-wrapper");
+    if (wrapper.classList.contains("menu-toggle")) {
+      wrapper.classList.remove("menu-toggle");
+    }
+  };
   
   const user = useSelector((state) => state.auth.auth); // Récupération des informations utilisateur
 
@@ -162,7 +169,7 @@ const SideBar = () => {
         <MM className="metismenu" id="menu">
           {filteredMenus.map((menu) => (
             <li key={menu.path} className={`${path === menu.path ? "mm-active" : ""}`}>
-              <Link to={menu.path}>
+              <Link to={menu.path} onClick={handleMenuClick}>
                 <i className={menu.icon}></i>
                 <span className="nav-text">{menu.label}</span>
               </Link>
@@ -175,7 +182,7 @@ const SideBar = () => {
             <strong>Biba Express Admin</strong> © {d.getFullYear()} Tous droits réservés
           </p>
           <p className="fs-12">
-            Made with <span className="heart"></span> by bibatech
+            Made with <span className="heart"></span> by ousmane
           </p>
         </div>
       </PerfectScrollbar>
