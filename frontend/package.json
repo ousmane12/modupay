@@ -1,7 +1,7 @@
 {
   "name": "modupay",
   "version": "0.1.0",
-  "homepage": "http://localhost:3000",
+  "homepage": "http://biba-backoffice.com",
   "private": true,
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",
