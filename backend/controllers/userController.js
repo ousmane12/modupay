@@ -58,8 +58,8 @@ const createUser = asyncHandler(async (req, res) => {
   const user = new User(userData);
 
   // Génération du reset token
-  const resetToken = user.getResetPasswordToken();
-  const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
+  //const resetToken = user.getResetPasswordToken();
+  //const resetUrl = `${process.env.RESET_PASS_URL}/${resetToken}`;
 
   // Sauvegarder l'utilisateur avec le token généré
   await user.save();
@@ -70,7 +70,7 @@ const createUser = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Création de Compte BIBA',
-      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez utiliser le lien ci-dessous pour définir un nouveau mot de passe :\n\n${resetUrl}\n\nCe lien expire dans 5 minutes.`,
+      text: `Bonjour ${name},\n\nUn compte a été créé pour vous.\n\nIdentifiants :\nLogin: ${email}\nMot de passe: ${defaultPassword}\n\nVeuillez vous connecter et changer votre mot de passe sur votre profil.\n\n`,
     });
 
     res.status(201).json({
@@ -326,26 +326,27 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 
   // Hash le token et configure une expiration
-  user.resetPasswordToken = user.getResetPasswordToken();
-  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
-
-  await user.save();
+  //user.resetPasswordToken = user.getResetPasswordToken();
+  //user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+  const defaultPassword = process.env.DEFAULT_PASSWORD;
 
   // Crée le lien de réinitialisation
   const resetUrl = `${process.env.RESET_PASS_URL}/${user.resetPasswordToken}`;
   // Envoie l'email
   try {
+    user.password = defaultPassword;
+    await user.save();
     const sendEmail = require('../utils/sendEmail');
     await sendEmail({
       to: email,
       subject: 'Demande de changement de Mot de passe',
-      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser le lien suivant pour réinitialiser votre mot de passe: ${resetUrl}\n\nCe lien expirera dans 1 heure.`,
+      text: `Vous avez demandé une réinitialisation du mot de passe.\n\nVeuillez utiliser ce mot de passe pour vous connecter et ensuite changer avec un autre à l'authentification. Mot de passe: ${defaultPassword}\n\nL'équipe Biba.`,
     });
     res.status(201).json({ message: 'Le lien de changement de mot de passe est envoyé par mail' });
   } catch (error) {
     // Nettoie les champs en cas d'erreur d'envoi
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+    //user.resetPasswordToken = undefined;
+    //user.resetPasswordExpires = undefined;
     await user.save();
     res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail. Veuillez réessayer plus tard' });
   }
@@ -356,10 +357,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   const { password } = req.body;
   
   // Trouve l'utilisateur correspondant
-  const user = await User.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() }, // Vérifie que le token n'est pas expiré
-  });
+  const user = await User.findOne({ id: token});
 
   if (!user) {
     return res.status(400).json({ message: 'Jeton invalide ou expiré' });

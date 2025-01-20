@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from "react";
-import { Tab, Nav } from "react-bootstrap";
+import { Tab, Nav, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 //** Import Image */
 import profile from "../../../../images/avatar/1.png";
 import { updateUserAction } from "../../../../store/actions/userActions";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 
 const AppProfile = (props) => {
@@ -63,6 +64,9 @@ const AppProfile = (props) => {
 						<p>{user.role}</p>
 					  </div>
 					)}
+				  </div>
+				  <div className="col-lg-4">
+				  	<Link to={`/reset-password/${user._id}`} className="btn btn-danger mb-1 ms-1">Changer Mot de passe</Link>
 				  </div>
 				</div>
 			  </div>
