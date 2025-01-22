@@ -29,7 +29,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     : Math.round(((feeInfo.intFeePercentage / 100) * amount) * 100) / 100;
 
   // Calcul du montant total
-  const totalAmount = Number(amount) + fee;
+  const totalAmount = Number(amount) - fee;
 
   // Création de la transaction
   const transaction = new Transaction({
@@ -106,7 +106,7 @@ const createTransaction = asyncHandler(async (req, res) => {
           <td style="border: 1px solid #ddd; padding: 8px;">${amount} FCFA</td>
         </tr>
         <tr style="background-color: #f2f2f2;">
-          <td style="border: 1px solid #ddd; padding: 8px;">Montant Total</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">Montant à récevoir</td>
           <td style="border: 1px solid #ddd; padding: 8px;">${totalAmount} FCFA</td>
         </tr>
       </table>
