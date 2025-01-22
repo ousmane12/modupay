@@ -68,7 +68,7 @@ const CreateInvoices = (props) => {
           ? selectedCountryData.localFeePercentage
           : selectedCountryData.intFeePercentage;
 
-      const calculatedTotal = formData.amount * (1 + feePercentage / 100);
+      const calculatedTotal = formData.amount * (1 - feePercentage / 100);
       setAmountTotal(calculatedTotal); // Mettre à jour amountTotal sans mettre à jour formData
     } else {
       setAmountTotal(0); // Réinitialiser si pas de montant ou de pays sélectionné
