@@ -79,18 +79,6 @@ const getAgencies = asyncHandler(async (req, res) => {
   try {
     let query = {};
 
-    // Vérifier le rôle de l'utilisateur et ajuster la requête en conséquence
-    if (req.user.role === 'admin') {
-      // Si l'utilisateur est un admin, il peut voir toutes les agences
-      query = {}; // Pas de filtre, retourne toutes les agences
-    } else if (req.user.role === 'country_manager') {
-      // Si l'utilisateur est un country_manager, on retourne les agences de son pays
-      query = { country: req.user.country }; // Assurez-vous que `req.user.country` contient l'ID du pays
-    } else if (req.user.role === 'agency_manager' || req.user.role === 'agent') {
-      // Si l'utilisateur est un agency_manager ou agent, on retourne uniquement son agence
-      query = { _id: req.user.agency }; // Assurez-vous que `req.user.agency` contient l'ID de son agence
-    }
-
     const agencies = await Agency.find(query)
       .populate('country') // Remplit les détails du pays
       .populate('manager', 'name email') // Remplit les détails du manager
