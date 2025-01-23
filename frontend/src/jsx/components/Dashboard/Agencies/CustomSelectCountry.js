@@ -12,7 +12,7 @@ const CustomSelectCountry = ({ options, onSelect }) => {
   };
 
   return (
-    <div style={{ minHeight: "90px" }} className="form-group">
+    <div style={{ minHeight: "60px" }} className="form-group">
       <Select
         options={formattedOptions}
         onChange={handleChange}

@@ -89,7 +89,6 @@ function NewCountry(props) {
 
   return (
     <Fragment>
-      <PageTitle activeMenu="Pays" motherMenu={id ? "Modifier" : "Nouveau"} />
       <div className="card">
         <div className="">
           <div className="row">

@@ -12,7 +12,7 @@ const AgencySelect = ({ options, onSelect }) => {
   };
 
   return (
-    <div style={{ minHeight: "80px" }}>
+    <div style={{ minHeight: "60px" }}>
       <Select
         options={formattedOptions}
         onChange={handleChange}

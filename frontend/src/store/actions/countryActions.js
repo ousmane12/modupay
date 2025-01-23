@@ -29,10 +29,10 @@ export function createAction(name, manager, localFeePercentage, intFeePercentage
                 swal("Pays enregistré avec succès!", {
                   icon: "success",
                 });
-                history.push("/pays");
-              } 
-            const errorMessage = formatError(response.data);
-            dispatch(failedCreateAction(errorMessage));
+              } else {
+                const errorMessage = formatError(response.data);
+                dispatch(failedCreateAction(errorMessage));
+              }
         })
         .catch((error) => {
             const errorMessage = formatError(error);

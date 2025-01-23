@@ -177,97 +177,117 @@ const CreateInvoices = (props) => {
 	return (
 		<div className='authincation-content no-gutters auth-form'>
 		<h3>Nouvelle Transaction</h3>
-		<form onSubmit={onSubmitAlert}>
-		  <div className="row">
-			<div className="form-group col-md-4">
-			  <label>Nom Complet Bénéficiaire</label>
-			  <input
-				type="text"
-				className="form-control"
-				name="receiverName"
-				value={formData.receiverName}
-				onChange={onChange}
-				placeholder="Nom du Bénéficiaire"
-			  />
-			</div>
-			<div className="form-group col-md-4">
-			  <label>Téléphone Bénéficiaire</label>
-			  <input
-				type="text"
-				className="form-control"
-				name="receiverPhone"
-				value={formData.receiverPhone}
-				onChange={onChange}
-				placeholder="Téléphone du Bénéficiaire"
-			  />
-			</div>
-			<div className="form-group col-md-4">
-			  <label>Type de Transfert</label>
-			  <select
-				className="form-control"
-				name="transferType"
-				value={formData.transferType}
-				onChange={(e) => handleTransferTypeChange(e.target.value)}
-			  >
-				<option value="">Sélectionner...</option>
-				<option value="international">International</option>
-			  </select>
-			</div>
-		  </div>
-		  <div className="row">
-			{/* Afficher le champ "Pays Destination" seulement si transferType == "international" */}
-			{formData.transferType === "international" && (
-			  <div className="form-group col-md-6 mt-4">
-				<label>Pays Destination</label>
-				<CustomSelectCountry
-				  options={uniqueCountries}
-				  onSelect={handleCountrySelect}
-				  selectedValue={formData.country}
+		<form onSubmit={onSubmitAlert} className="p-3 rounded">
+			<div className="row mt-4 mb-4">
+				<div className="form-group col-md-4">
+				<label className="form-label mt-2"><strong>Nom Complet Bénéficiaire</strong></label>
+				<input
+					type="text"
+					className="form-control"
+					name="receiverName"
+					value={formData.receiverName}
+					onChange={onChange}
+					placeholder="Nom du Bénéficiaire"
+					required
 				/>
-			  </div>
-			)}
-			{(formData.transferType === "national" || formData.transferType === "international") && (
-			<div className="form-group col-md-6 mt-4">
-			<label>Agence</label>
-			<AgencySelect
-				options={filteredAgencies}
-				onSelect={handleAgencySelect}
-				selectedValue={formData.agency}
-			/>
-			</div>)}
-		  </div>
-		  <div className="row mb-4 mt-2">
-			<div className="form-group col-6">
-			  <label>Montant</label>
-			  <input
-				type="number"
-				className="form-control"
-				name="amount"
-				value={formData.amount}
-				onChange={onChange}
-				placeholder="Montant"
-			  />
+				</div>
+				<div className="form-group col-md-4">
+				<label className="form-label mt-4"><strong>Téléphone Bénéficiaire</strong></label>
+				<input
+					type="text"
+					className="form-control"
+					name="receiverPhone"
+					value={formData.receiverPhone}
+					onChange={onChange}
+					placeholder="Téléphone du Bénéficiaire"
+					required
+				/>
+				</div>
+				<div className="form-group col-md-4">
+				<label className="form-label mt-4"><strong>Type de Transfert</strong></label>
+				<select
+					className="form-select"
+					name="transferType"
+					value={formData.transferType}
+					onChange={(e) => handleTransferTypeChange(e.target.value)}
+					required
+				>
+					<option value="">Sélectionner...</option>
+					<option value="international">International</option>
+				</select>
+				</div>
 			</div>
-			<div className="form-group col-6">
-			  <label>Montant Total à Recevoir</label>
-			  <input
-				type="number"
-				className="form-control"
-				name="amountTotal"
-				value={amountTotal}
-				onChange={onChange}
-				placeholder="Montant Total"
-				disabled
-			  />
+
+			<div className="row">
+				{/* Afficher "Pays Destination" seulement si transferType == "international" */}
+				{formData.transferType === "international" && (
+				<div className="form-group col-md-6">
+					<label className="form-label"><strong>Pays Destination</strong></label>
+					<CustomSelectCountry
+					options={uniqueCountries}
+					onSelect={handleCountrySelect}
+					selectedValue={formData.country}
+					/>
+				</div>
+				)}
+
+				{/* Afficher "Agence" si transferType est défini */}
+				{(formData.transferType === "national" || formData.transferType === "international") && (
+				<div className="form-group col-md-6 mt-0">
+					<label className="form-label mt-0"><strong>Agence</strong></label>
+					<AgencySelect
+					options={filteredAgencies}
+					onSelect={handleAgencySelect}
+					selectedValue={formData.agency}
+					/>
+				</div>
+				)}
 			</div>
-		  </div>
-		  <button type="submit" className="btn btn-primary" disabled={isLoading}>
-			{isLoading ? (
-				<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-			) : (
-				"Initier la Transaction"
-			)}
-        </button>
+
+			<div className="row">
+				<div className="form-group col-md-6">
+				<label className="form-label"><strong>Montant</strong></label>
+				<input
+					type="number"
+					className="form-control"
+					name="amount"
+					value={formData.amount}
+					onChange={onChange}
+					placeholder="Montant"
+					required
+				/>
+				</div>
+				<div className="form-group col-md-6">
+				<label className="form-label"><strong>Montant Total à Recevoir</strong></label>
+				<input
+					type="number"
+					className="form-control"
+					name="amountTotal"
+					value={amountTotal}
+					onChange={onChange}
+					placeholder="Montant Total"
+					disabled
+				/>
+				</div>
+			</div>
+
+			<div className="d-flex justify-content-center mt-4">
+				<button
+				type="submit"
+				className="btn btn-primary w-50"
+				disabled={isLoading}
+				>
+				{isLoading ? (
+					<span
+					className="spinner-border spinner-border-sm"
+					role="status"
+					aria-hidden="true"
+					></span>
+				) : (
+					"Initier la Transaction"
+				)}
+				</button>
+			</div>
 		</form>
 	  </div>
 	);
