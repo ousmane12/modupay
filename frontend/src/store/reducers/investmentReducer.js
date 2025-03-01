@@ -16,7 +16,7 @@ export function InvestmentReducer(state = initialStateInv, action) {
     if (action.type === INVESTMENT_CREATED_ACTION) {
         return {
             ...state,
-            users: [...state.users, action.payload],
+            users: action.payload,
             errorMessage: '',
             successMessage: 'Created Successfully an invesment',
             showLoading: false,

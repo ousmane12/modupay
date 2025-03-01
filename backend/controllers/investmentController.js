@@ -34,7 +34,7 @@ const createInvestment = asyncHandler(async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Bienvenue en tant que partenaire',
-      text: `Bonjour ${name},\n\nVotre compte partenaire a été créé avec succès. Voici vos informations de connexion :\n\nEmail: ${email}\nMot de passe temporaire: ${temporaryPassword}\n\nVeuillez changer votre mot de passe dès votre première connexion.\n\nMerci !`,
+      text: `Bonjour ${name},\n\nVotre compte partenaire a été créé avec succès. Voici vos informations de connexion :\n\nEmail: ${email}\nMot de passe temporaire: ${defaultPassword}\n\nVeuillez changer votre mot de passe dès votre première connexion.\n\nMerci !`,
     });
   } catch (error) {
     // Supprimer l'utilisateur si l'envoi d'e-mail échoue
