@@ -16,14 +16,14 @@ const createInvestment = asyncHandler(async (req, res) => {
   }
 
   // Générer un mot de passe temporaire
-  const temporaryPassword = Math.random().toString(36).slice(-8);
+  const defaultPassword = process.env.DEFAULT_PASSWORD;
 
   // Créer un utilisateur avec le rôle 'partner'
   const user = await User.create({
     name,
     email,
     phoneNumber,
-    password: temporaryPassword, // Stocker un mot de passe temporaire (à hacher dans un hook ou middleware)
+    password: defaultPassword, // Stocker un mot de passe temporaire (à hacher dans un hook ou middleware)
     role: 'partner',
     investments: [], // Initialiser un tableau vide pour les investissements
   });
