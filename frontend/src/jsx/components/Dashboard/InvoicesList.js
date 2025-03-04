@@ -82,7 +82,6 @@ const InvoicesList = () =>{
 							<thead>
 								<tr role='row'>
 									<th className="sorting_asc">Date</th>
-									<th className="sorting_asc">Type</th>
 									<th className="sorting_asc">Recepteur</th>
 									<th className="sorting_asc">Montant</th>
 									<th className="sorting_asc">Montant Total</th>
@@ -98,7 +97,6 @@ const InvoicesList = () =>{
 									<td>
 										<div className="d-flex align-items-center">
 										<div>
-											<h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.transferType}</h6>
 											<span className="fs-14">{transaction.sender?.name}</span>
 										</div>
 										</div>

@@ -99,7 +99,6 @@ const InventaireFacture = () => {
                   <thead>
                     <tr>
                       <th className="center">Date</th>
-                      <th className="center">Type</th>
                       <th>Emetteur</th>
                       <th>Recepteur</th>
                       <th>Traité</th>
@@ -112,7 +111,6 @@ const InventaireFacture = () => {
                   {transactions.map((transaction, index) => (
                     <tr>
                       <td className="center">{formatDate(transaction.updatedAt)}</td>
-                      <td className="left strong">{transaction.transferType}</td>
                       <td className="left strong">{transaction.sender? transaction.sender.name: 'Utilisateur'}</td>
                       <td>
                         <div className="d-flex align-items-center">

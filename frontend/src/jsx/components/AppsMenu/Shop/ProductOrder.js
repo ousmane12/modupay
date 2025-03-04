@@ -97,7 +97,6 @@ const ProductOrder = (props) => {
                   <thead>
                     <tr key={"hola"}>
                       <th className="align-middle">Date</th>
-                      <th className="align-middle pr-7">Type</th>
                       <th className="align-middle pr-7">Recepteur</th>
                       <th className="align-middle pr-7">Agence</th>
                       <th className="align-middle minw200">Telephone</th>
@@ -112,9 +111,6 @@ const ProductOrder = (props) => {
                   <tr>
                     <td>
                       <strong>{formatDate(transaction.initiatedAt)}</strong>
-                    </td>
-                    <td>
-                      <strong>{transaction.transferType}</strong>
                     </td>
                     <td>
                       <div className="d-flex align-items-center">

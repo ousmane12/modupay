@@ -69,7 +69,6 @@ const TransactionsDetails = () => {
                     <tr>
                       <th>Recepteur</th>
                       <th>Telephone</th>
-                      <th className="right">Type</th>
                       <th className="right">Agence</th>
                       <th className="right">Montant</th>
                       <th className="right">Frais</th>
@@ -79,7 +78,6 @@ const TransactionsDetails = () => {
                     <tr>
                       <td className="left">{transaction.receiverName}</td>
                       <td className="left strong">{transaction.receiverPhone}</td>
-                      <td className="left strong">{transaction.transferType}</td>
                       <td className="left strong">{transaction.agency?.name ?? 'Non défini'}</td>
                       <td className="right">{transaction.amount} FCFA</td>
                       <td className="right">{transaction.fee} FCFA</td>

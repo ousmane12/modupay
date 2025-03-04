@@ -15,7 +15,7 @@ const CreateInvoices = (props) => {
 		receiverPhone: '',
 		country: '',
 		agency: '',
-		transferType: '',
+		transferType: 'international',
 		amount: 0,
 		amountTotal: 0,
 	});
@@ -73,7 +73,7 @@ const CreateInvoices = (props) => {
     } else {
       setAmountTotal(0); // Réinitialiser si pas de montant ou de pays sélectionné
     }
-  }, [formData.amount, formData.transferType, selectedCountry, uniqueCountries]);
+  }, [formData.amount, selectedCountry, formData.transferType, uniqueCountries]);
 
   // Gérer la sélection des pays et des agences
   const handleCountrySelect = (value) => {
@@ -163,7 +163,7 @@ const CreateInvoices = (props) => {
 		  receiverPhone: "",
 		  country: "",
 		  agency: "",
-		  transferType: "",
+		  transferType: "international",
 		  amount: 0,
 		  amountTotal: 0,
 		});
@@ -179,8 +179,8 @@ const CreateInvoices = (props) => {
 		<h3>Nouvelle Transaction</h3>
 		<form onSubmit={onSubmitAlert} className="p-3 rounded">
 			<div className="row mt-4 mb-4">
-				<div className="form-group col-md-4">
-				<label className="form-label mt-2"><strong>Nom Complet Bénéficiaire</strong></label>
+				<div className="form-group col-md-6">
+				<label className="form-label"><strong>Nom Complet Bénéficiaire</strong></label>
 				<input
 					type="text"
 					className="form-control"
@@ -191,8 +191,8 @@ const CreateInvoices = (props) => {
 					required
 				/>
 				</div>
-				<div className="form-group col-md-4">
-				<label className="form-label mt-4"><strong>Téléphone Bénéficiaire</strong></label>
+				<div className="form-group col-md-6">
+				<label className="form-label"><strong>Téléphone Bénéficiaire</strong></label>
 				<input
 					type="text"
 					className="form-control"
@@ -203,24 +203,10 @@ const CreateInvoices = (props) => {
 					required
 				/>
 				</div>
-				<div className="form-group col-md-4">
-				<label className="form-label mt-4"><strong>Type de Transfert</strong></label>
-				<select
-					className="form-select"
-					name="transferType"
-					value={formData.transferType}
-					onChange={(e) => handleTransferTypeChange(e.target.value)}
-					required
-				>
-					<option value="">Sélectionner...</option>
-					<option value="international">International</option>
-				</select>
-				</div>
 			</div>
 
 			<div className="row">
 				{/* Afficher "Pays Destination" seulement si transferType == "international" */}
-				{formData.transferType === "international" && (
 				<div className="form-group col-md-6">
 					<label className="form-label"><strong>Pays Destination</strong></label>
 					<CustomSelectCountry
@@ -229,10 +215,9 @@ const CreateInvoices = (props) => {
 					selectedValue={formData.country}
 					/>
 				</div>
-				)}
 
 				{/* Afficher "Agence" si transferType est défini */}
-				{(formData.transferType === "national" || formData.transferType === "international") && (
+				
 				<div className="form-group col-md-6 mt-0">
 					<label className="form-label mt-0"><strong>Agence</strong></label>
 					<AgencySelect
@@ -241,7 +226,7 @@ const CreateInvoices = (props) => {
 					selectedValue={formData.agency}
 					/>
 				</div>
-				)}
+
 			</div>
 
 			<div className="row">
