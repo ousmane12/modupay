@@ -6,8 +6,22 @@ import { useLocation } from 'react-router-dom';
 
 
 const TransactionsDetails = () => {
+
+  const defaultTransaction = {
+    createdAt: '',
+    sender: 'Utilisateur',
+    completedBy: { name: 'En cours' },
+    receiverName: '',
+    receiverPhone: '',
+    transferType: '',
+    agency: { name: 'Non défini' },
+    amount: 0,
+    fee: 0,
+    amountTotal: 0,
+  };
+
   const location = useLocation();
-  const transaction = location.state?.data || {};
+  const transaction = location.state?.data || defaultTransaction;
   
   const formatDate = (inputDate) =>{
     const date = new Date(inputDate);
@@ -19,17 +33,9 @@ const TransactionsDetails = () => {
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
   }
-  
-  const formatMoney = (amount, currencyCode) => {
-    // Assuming amount is a number
-    return amount.toLocaleString('fr-FR', {
-      style: 'currency',
-      currency: currencyCode, // Use XOF or any other desired currency code
-      minimumFractionDigits: 2,
-    });
-  }
 
   const handlePrint = () => {
+    alert('Aucune imprimante connectée...');
   };
   
   return (
@@ -49,9 +55,9 @@ const TransactionsDetails = () => {
                     </div>
                     <div className="">
                       Transaction du <strong>{formatDate(transaction.createdAt)}</strong> <br/> 
-                      Initié par: <strong>{transaction.sender? transaction.sender.name: 'Utilisateur'}</strong> <br/>
+                      Initié par: <strong>{transaction.sender? transaction.sender.name : 'Utilisateur'}</strong> <br/>
                       <span className="float-right">
-                      Validé par: <strong>{transaction.completedBy? transaction.completedBy.name : 'En cours'}</strong> 
+                      Validé par: <strong>{transaction.completedBy?.name ?? 'En cours'}</strong>
                       </span>
                     </div>
                   </div>
@@ -74,7 +80,7 @@ const TransactionsDetails = () => {
                       <td className="left">{transaction.receiverName}</td>
                       <td className="left strong">{transaction.receiverPhone}</td>
                       <td className="left strong">{transaction.transferType}</td>
-                      <td className="left strong">{transaction.agency.name}</td>
+                      <td className="left strong">{transaction.agency?.name ?? 'Non défini'}</td>
                       <td className="right">{transaction.amount} FCFA</td>
                       <td className="right">{transaction.fee} FCFA</td>
                     </tr>

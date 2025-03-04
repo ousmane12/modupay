@@ -41,7 +41,7 @@ const PreviousTransactions = (transactions) => {
 							) : (
 							<table className="table table-responsive-md card-table transactions-table" key={"sub-tabr"}>
 								<tbody>
-								{transactions.transactions.map((transaction) => (
+								{transactions.transactions.slice().reverse().map((transaction) => (
 									<tr>
 										<td>
 											<svg width="63" height="63" viewBox="0 0 63 63" fill="none" xmlns="http://www.w3.org/2000/svg">

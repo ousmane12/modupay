@@ -60,6 +60,7 @@ const InvoicesList = () =>{
 		chageData(i * sort, (i + 1) * sort);
 	  };
 	const pendingTransactions = transactions.filter(transaction => transaction.status === 'completed');
+	const reversedTrans = pendingTransactions.reverse();
 	return(
 		<>
 			<div className="d-flex mb-3">
@@ -90,7 +91,7 @@ const InvoicesList = () =>{
 								</tr>
 							</thead>					
 							<tbody>
-								{pendingTransactions.map((transaction, index) => (
+								{reversedTrans.map((transaction, index) => (
 									<tr key={index} role='row'>
 									{/* Assuming 'id', 'date', 'receiver', 'amount', 'status' are properties of each transaction */}
 									<td><span className="text-black text-nowrap">{formatDate(transaction.initiatedAt)}</span></td>

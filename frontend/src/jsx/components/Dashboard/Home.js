@@ -161,7 +161,7 @@ const Home = () => {
 				<div className="card">
 					<div className="card-header d-sm-flex d-block border-0 pb-0">
 						<div className="pe-3 me-auto mb-sm-0 mb-3">
-							<h4 className="fs-20 text-black mb-1 font-w700">Vue Transactions</h4>
+							<h4 className="fs-20 text-black mb-1 font-w700">Vue des transactions</h4>
 							<span className="fs-12">Stats des transactions</span>
 						</div>
 					</div>
@@ -176,7 +176,7 @@ const Home = () => {
 				<div className="col-xl-12">
 					<div className="row">
 						<div className="col-xl-12">
-							{transactions.length > 0?<PreviousTransactions transactions={transactions.reverse()}/>:''}
+							<PreviousTransactions transactions={transactions}/>
 						</div>
 					</div>
 				</div>

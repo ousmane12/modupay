@@ -108,8 +108,8 @@ class ChartBarApex extends React.Component {
 		  <ReactApexChart
 			options={this.state.options}
 			series={this.state.series}
-			type="bar"
-			height={370}
+			type="line"
+			height={360}
 		  />
 		</div>
 	  );
