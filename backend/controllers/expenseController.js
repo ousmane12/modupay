@@ -7,34 +7,66 @@ const Agency = require('../models/agencyModel');
 // @route   POST /api/transactions
 // @access  Private
 const createExpense = asyncHandler(async (req, res) => {
-  const { label, amount } = req.body;
+  const { label, amount, country, agency } = req.body;
 
-  // Vérifier si l'utilisateur est authentifié et a le droit d'initier une transaction
+  // Vérifier si l'utilisateur est authentifié
   if (!req.user) {
     return res.status(401).json({ message: 'Not authorized' });
   }
+
+  // Si l'utilisateur est admin, il peut spécifier country et agency dans le body
+  if (req.user.role === 'admin') {
+    if (!country || !agency) {
+      return res.status(400).json({ message: 'Un admin doit choisir le pays et une agence' });
+    }
+    const expense = new Expense({
+      spender: req.user._id,
+      label,
+      amount,
+      country,
+      agency,
+    });
   
-  // Création de la transaction
-  const expense = new Expense({
-    spender: req.user._id,
-    label,
-    amount,
-    country: req.user.country,
-    agency: req.user.agency,
-  });
-  const createdExpense = await expense.save();
-
-  // Ajouter l'ID de la transaction aux champs `transactions` de Country et Agency
-  await Country.findByIdAndUpdate(country, {
-    $push: { expenses: createdExpense._id }
-  });
-
-  await Agency.findByIdAndUpdate(agency, {
-    $push: { expenses: createdExpense._id }
-  });
-
-  // Retourner la transaction créée
-  res.status(201).json(createdExpense);
+    const createdExpense = await expense.save();
+  
+    // Ajouter l'ID de la transaction aux champs `expenses` de Country et Agency
+    await Country.findByIdAndUpdate(expenseCountry, {
+      $push: { expenses: createdExpense._id },
+    });
+  
+    await Agency.findByIdAndUpdate(expenseAgency, {
+      $push: { expenses: createdExpense._id },
+    });
+  
+    // Retourner la transaction créée
+    res.status(201).json(createdExpense);
+  } else {
+    // Pour les autres utilisateurs, on récupère ces informations depuis leur profil
+    if (!req.user.country || !req.user.agency) {
+      return res.status(400).json({ message: 'Vous devez appartenir a une agence ou un pays' });
+    }
+    const expense = new Expense({
+      spender: req.user._id,
+      label,
+      amount,
+      country: req.user.country,
+      agency: req.user.agency,
+    });
+  
+    const createdExpense = await expense.save();
+  
+    // Ajouter l'ID de la transaction aux champs `expenses` de Country et Agency
+    await Country.findByIdAndUpdate(expenseCountry, {
+      $push: { expenses: createdExpense._id },
+    });
+  
+    await Agency.findByIdAndUpdate(expenseAgency, {
+      $push: { expenses: createdExpense._id },
+    });
+  
+    // Retourner la transaction créée
+    res.status(201).json(createdExpense);
+  }
 });
 
 // @desc    Get transactions for a specific agency or country
