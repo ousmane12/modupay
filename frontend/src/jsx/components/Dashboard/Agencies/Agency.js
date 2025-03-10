@@ -8,17 +8,23 @@ const Agency = () => {
   const location = useLocation();
   const country = location.state?.agency || {};
 
-  const formatDate = (inputDate) =>{
-	const date = new Date(inputDate);
-	
-	// Extract year, month, and day
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-	const day = String(date.getDate()).padStart(2, '0');
-	const formattedDate = `${year}-${month}-${day}`;
+  console.log('country', country.transactions);
   
-	return formattedDate;
-  }
+
+  const formatDate = (inputDate) => {
+    if (!inputDate) return "Date inconnue";
+
+    const date = new Date(inputDate);
+    if (isNaN(date.getTime())) return "Date inconnue"; // Vérifie si la date est invalide
+
+    // Extract year, month, and day
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    
+    return `${year}-${month}-${day}`;
+};
+
 
   return (
     <Fragment>
@@ -49,7 +55,7 @@ const Agency = () => {
                                             {country && (
 											<div className="form-group mb-3">
 												<label className="form-label">Pays</label>
-												<input type="text" readOnly value={country.country.name} className="form-control"/>
+												<input type="text" readOnly value={country.country?.name} className="form-control"/>
 											</div>
                                             )}
 
@@ -77,7 +83,7 @@ const Agency = () => {
 																	<tbody>
 																	{country.agents.map((transaction) => (
 																		<tr>
-																			<td>- <span className="fs-16 text-black font-w600">{transaction.name}</span></td>
+																			<td>- <span className="fs-16 text-black font-w600">{transaction?.name}</span></td>
 																		</tr>
 																		))}
 																	</tbody>
@@ -118,8 +124,8 @@ const Agency = () => {
 									{country.transactions?.map((transaction) => (
 									<tr>
 										<td>
-											<h6 className="fs-16 font-w600 mb-0">Opérateur: {transaction.sender? transaction.sender.name: 'Utilisateur'}</h6>
-											<span className="fs-14">Date: {formatDate(transaction.initiatedAt)}</span>
+										<h6 className="fs-16 font-w600 mb-0">Opérateur: {transaction.sender ? transaction.sender.name : 'Utilisateur Supprimé'}</h6>
+											<span className="fs-14">Date: {transaction.initiatedAt ? formatDate(transaction.initiatedAt) : 'Date inconnue'}</span>
 										</td>
 										<td>
 											<h6 className="fs-16 font-w600 mb-0">Recepteur: {transaction.receiverName}</h6>
@@ -130,8 +136,8 @@ const Agency = () => {
 											<span className="fs-14">Montant Total: {transaction.amountTotal}</span>
 										</td>
 										<td>
-											<h6 className="fs-16 text-black font-w600 mb-0">Validation: {transaction.completedBy.name}</h6>
-											<span className="fs-14">Date: {formatDate(transaction.completedAt)}</span>
+										<h6 className="fs-16 text-black font-w600 mb-0">Validation: {transaction.completedBy ? transaction.completedBy.name : 'Utilisateur Supprimé'}</h6>
+											<span className="fs-14">Date: {transaction.completedAt ? formatDate(transaction.completedAt) : 'Date inconnue'}</span>
 										</td>
 									</tr>
 									))}
