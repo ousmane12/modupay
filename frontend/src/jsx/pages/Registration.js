@@ -36,8 +36,8 @@ function PasswordReset(props) {
           swal('Oops', "Les deux mots de passe doivent correspondre", "error");
           error = true;
         }
-        if (password.trim().length < 12) {
-          swal('Oops', "La taille minimale du mot de passe est de 12 caractères", "error");
+        if (password.trim().length < 8) {
+          swal('Oops', "La taille minimale du mot de passe est de 8 caractères", "error");
           error = true;
         }
         setErrors(errorObj);

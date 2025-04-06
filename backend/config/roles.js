@@ -7,4 +7,4 @@ const permissions = {
     controller: ["view_dashboard",  "view_inventory", "view_transactions", "view_expenses"],
   };
   
-  module.exports = permissions;  
+  module.exports = permissions;
