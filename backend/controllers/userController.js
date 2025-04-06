@@ -353,18 +353,23 @@ const forgotPassword = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const { token } = req.params;
+  const { id } = req.params;
   const { password } = req.body;
   
+  // Validation de l'ID
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'ID utilisateur invalide' });
+  }
+  
   // Trouve l'utilisateur correspondant
-  const user = await User.findOne({ id: token});
+  const user = await User.findById(id);
 
   if (!user) {
-    return res.status(400).json({ message: 'Jeton invalide ou expiré' });
+    return res.status(400).json({ message: 'Aucun utilisateur trouvé' });
   }
 
   // Met à jour le mot de passe
-  user.password = password;
+  user.password = password; // Le hachage devrait idéalement être géré par un middleware
   user.resetPasswordToken = undefined;
   user.resetPasswordExpires = undefined;
 

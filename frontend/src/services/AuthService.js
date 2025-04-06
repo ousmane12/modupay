@@ -52,12 +52,12 @@ export function forgotPassword(email) {
     );
 }
 
-export function setPassword(token, email) {
+export function setPassword(id, email) {
     const postData = {
         "password": email
     };
     return axios.post(
-        `${API_BASE_URL}/users/reset-password/${token}`,
+        `${API_BASE_URL}/users/reset-password/${id}`,
         postData,
     );
 }

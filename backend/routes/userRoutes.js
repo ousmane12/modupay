@@ -19,6 +19,6 @@ router.get('/me', protect, getMe)
 router.get('/all', protect, getUsers)
 router.route('/:id').delete(protect, deleteUser).put(protect, updateUser)
 router.post('/forgot-password', forgotPassword)
-router.post('/reset-password/:token', resetPassword);
+router.post('/reset-password/:id', resetPassword);
 
 module.exports = router

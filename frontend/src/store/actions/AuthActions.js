@@ -72,9 +72,9 @@ export function forgotPasswordAction(email, history) {
     };
 }
 
-export function setPasswordAction(token, email, history) {
+export function setPasswordAction(id, email, history) {
     return (dispatch) => {
-        setPassword(token, email)
+        setPassword(id, email)
             .then((response) => {
                 swal(response.data.message, {
                     icon: "success",
