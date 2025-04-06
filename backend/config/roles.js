@@ -4,6 +4,7 @@ const permissions = {
     agent: ["view_dashboard", "manage_transactions", "validate_transactions"],
     agency_manager: ["view_dashboard", "manage_transactions", "validate_transactions", "view_inventory", "manage_users", "view_transactions", "view_expenses"],
     partner: ["view_dashboard", "view_my_placements"],
+    controller: ["view_dashboard", "view_transactions"],
   };
   
   module.exports = permissions;  

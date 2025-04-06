@@ -20,6 +20,17 @@ const InventaireFacture = () => {
     return sum;
   }
 
+  const calculateTransactionAmountSumFees = (transactions) =>{
+    // Use the reduce function to sum the amounts
+    const sum = transactions.reduce((total, transaction) => {
+      // Ensure transaction.amount is a valid number before adding to the total
+      const transactionAmount = typeof transaction.fee === 'number' ? transaction.fee : 0;
+      return total + transactionAmount;
+    }, 0);
+  
+    return sum;
+  }
+
   const calculateTransactionAmountSumConverted = (transactions) => {
     const sum = transactions.reduce((total, transaction) => {
       // Conversion du montant en nombre et addition au total
@@ -194,7 +205,7 @@ const InventaireFacture = () => {
                     <tbody>
                       <tr>
                         <td className="left">
-                          <strong>Total   </strong>
+                          <strong>Total Dépenses</strong>
                         </td>
                         <td className="right">
                           <strong>{calculateTransactionAmountSum(expenses)} FCFA</strong>
@@ -211,7 +222,24 @@ const InventaireFacture = () => {
                     <tbody>
                       <tr>
                         <td className="left">
-                          <strong>Bilan</strong>
+                          <strong>Total Frais</strong>
+                        </td>
+                        <td className="right">
+                          <strong>{calculateTransactionAmountSumFees(transactions)} FCFA</strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-lg-4 col-sm-5"> </div>
+                <div className="col-lg-4 col-sm-5 ms-auto">
+                  <table className="table table-clear">
+                    <tbody>
+                      <tr>
+                        <td className="left">
+                          <strong>Bilan (Transactions + Dépenses)</strong>
                         </td>
                         <td className="right">
                           <strong>{calculateTransactionAmountSumWithExpenses(transactions, expenses)} FCFA</strong>

@@ -81,6 +81,9 @@ const getExpenses = asyncHandler(async (req, res) => {
       case 'admin':
         // Admin : retourne toutes les transactions
         break;
+      case 'controller':
+        // Admin : retourne toutes les transactions
+        break;
       
       case 'country_manager':
         // Country Manager : retourne les transactions pour le pays de l'utilisateur

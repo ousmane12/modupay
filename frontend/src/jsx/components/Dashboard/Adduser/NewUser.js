@@ -197,6 +197,16 @@ function NewUser(props) {
                         />
                         <label className="form-check-label">Manageur Agence</label>
                       </div>
+                      <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="role"
+                            value="controller"
+                            onChange={onChange}
+                            checked={role === 'controller'} />
+                          <label className="form-check-label">Controlleur</label>
+                      </div>
                   </>
                 )}
                 <div className="form-group mb-3 col-md-6">
