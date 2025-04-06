@@ -49,6 +49,12 @@ const SideBar = () => {
       { path: "/pays", icon: "fab fa-chrome", label: "Pays", permissions: ["view_countries"] },
       { path: "/partners", icon: "fas fa-address-book", label: "Partenaires", permissions: ["view_partners"] },
     ],
+    controller: [
+      { path: "/dashboard", icon: "fas fa-home", label: "Dashboard", permissions: ["view_dashboard"] },
+      { path: "/liste-transactions", icon: "fas fa-book", label: "Transactions", permissions: ["view_transactions"] },
+      { path: "/liste-depenses", icon: "fas fa-book-open", label: "Dépenses", permissions: ["view_transactions"] },
+      { path: "/inventaire", icon: "fas fa-atlas", label: "Inventaire", permissions: ["view_inventory"] },
+    ],
     country_manager: [
       { path: "/dashboard", icon: "fas fa-home", label: "Dashboard", permissions: ["view_dashboard"] },
       { path: "/nouvelle-transaction", icon: "fas fa-plus-circle", label: "Nouvelle Transaction", permissions: ["manage_transactions"] },
