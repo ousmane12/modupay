@@ -16,11 +16,6 @@ export const COLUMNS = [
 		accessor: 'name',
 	},
 	{
-		Header : 'Email',
-		Footer : 'Email',
-		accessor: 'email',
-	},
-	{
 		Header : 'Téléphone',
 		Footer : 'Phone',
 		accessor: 'phoneNumber',

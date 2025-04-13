@@ -5,11 +5,10 @@ import { useHistory, useParams } from 'react-router-dom';
 import {
   loadingToggleAction,
   createAction,
-  updateAction,
+  updateCountryAction,
   getCountryByIdAction
 } from '../../../../store/actions/countryActions';
 import { getUsersAction } from '../../../../store/actions/userActions';
-import { toast } from 'react-toastify';
 
 function NewCountry(props) {
   const { id } = useParams();
@@ -78,8 +77,13 @@ function NewCountry(props) {
     dispatch(loadingToggleAction(true));
 
     if (id) {
-      dispatch(updateAction(id, name, manager, localFeePercentage, intFeePercentage, history));
-      toast.success('Le pays a été mis à jour avec succès!');
+      const countryData = {
+        name,
+        manager,
+        localFeePercentage,
+        intFeePercentage
+      };
+      dispatch(updateCountryAction(id, countryData, history));
     } else {
       dispatch(createAction(name, manager, localFeePercentage, intFeePercentage, history));
       setFormData(initialFormData);

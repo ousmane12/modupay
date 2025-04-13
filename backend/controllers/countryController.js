@@ -128,13 +128,16 @@ const updateCountry = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Country not found' });
   }
 
-  if (req.user.role !== 'admin') {
+  // Either remove this check or ensure your user has admin role
+  if (req.user.role !== 'admin' && req.user.role !== 'country_manager') {
     return res.status(403).json({ message: 'Not authorized to update this country' });
   }
 
-  // Mettre à jour le pays
+  // Update all fields from the request
   country.name = req.body.name || country.name;
-  country.code = req.body.code || country.code;
+  country.manager = req.body.manager || country.manager;
+  country.localFeePercentage = req.body.localFeePercentage || country.localFeePercentage;
+  country.intFeePercentage = req.body.intFeePercentage || country.intFeePercentage;
 
   const updatedCountry = await country.save();
 

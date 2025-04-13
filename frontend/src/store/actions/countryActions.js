@@ -98,28 +98,28 @@ export function deleteCountryAction(postId, history) {
     };
 }
   
-export function updateCountryAction(user, userId, history) {
-    return async (dispatch) => {
-      try {
-        dispatch(loadingToggleAction(true));
-        const response = await updateCountry(user, userId);
-        dispatch(updateAction(userId, response.data));
-        swal("Pays mis à jour avec succès!", {
-          icon: "success",
-        });
-        history.push('/pays');
-      } catch (error) {
-        console.log(error);
-        const errorMessage = formatError(error);
-        dispatch(failedFetchAction(errorMessage));
-        swal(errorMessage, {
-          icon: "warning",
-          dangerMode: true,
+export function updateCountryAction(id, countryData, history) {
+  return async (dispatch) => {
+    try {
+      dispatch(loadingToggleAction(true));
+      const response = await updateCountry(countryData, id);
+      dispatch(updateAction(id, response.data));
+      swal("Pays mis à jour avec succès!", {
+        icon: "success",
       });
-      } finally {
-        dispatch(loadingToggleAction(false));
-      }
-    };
+      history.push('/pays');
+    } catch (error) {
+      console.log(error);
+      const errorMessage = formatError(error);
+      dispatch(failedFetchAction(errorMessage));
+      swal(errorMessage, {
+        icon: "warning",
+        dangerMode: true,
+      });
+    } finally {
+      dispatch(loadingToggleAction(false));
+    }
+  };
 }
 
 export function confirmedCreateAction(payload) {
