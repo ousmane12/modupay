@@ -110,11 +110,6 @@ const getCountryById = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Country not found' });
   }
 
-  // Vérifie si l'utilisateur a le rôle adéquat
-  if (req.user.role !== 'country_manager' || req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Not authorized to view this country' });
-  }
-
   res.json(country);
 });
 
