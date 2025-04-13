@@ -128,8 +128,15 @@ const updateCountry = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Country not found' });
   }
 
-  // Either remove this check or ensure your user has admin role
-  if (req.user.role !== 'admin' && req.user.role !== 'country_manager') {
+  // Get the authenticated user by ID from the request
+  const user = await User.findById(req.user.id);
+  
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  // Check if user has permission based on role
+  if (user.role !== 'admin' && user.role !== 'country_manager') {
     return res.status(403).json({ message: 'Not authorized to update this country' });
   }
 
