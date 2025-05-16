@@ -11,6 +11,10 @@ const expenseSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
     country: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Country',
