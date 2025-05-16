@@ -112,24 +112,38 @@ const getAgencies = asyncHandler(async (req, res) => {
 // @desc    Get an agency by ID
 // @route   GET /api/agencies/:id
 // @access  Private (Country Manager and Agency Manager)
+
 const getAgencyById = asyncHandler(async (req, res) => {
-    const agency = await Agency.findById(req.params.id);
+  // Approche alternative en utilisant Mongoose populate
+  const agency = await Agency.findById(req.params.id);
+
+  if (!agency) {
+    return res.status(404).json({ message: 'Agency not found' });
+  }
+
+  // Vérifier si l'utilisateur est autorisé à voir cette agence
+  if (req.user.role === 'country_manager' && agency.country.toString() !== req.user.country.toString()) {
+    return res.status(403).json({ message: 'Not authorized to view this agency' });
+  }
+
+  if (req.user.role === 'agency_manager' && agency._id.toString() !== req.user.agency.toString()) {
+    return res.status(403).json({ message: 'Not authorized to view this agency' });
+  }
+
+  // Trouver le manager de l'agence avec populate
+  const agencyWithManager = await Agency.findById(req.params.id).lean();
   
-    if (!agency) {
-      return res.status(404).json({ message: 'Agency not found' });
-    }
-  
-    // Vérifier si l'utilisateur est autorisé à voir cette agence
-    if (req.user.role === 'country_manager' && agency.country.toString() !== req.user.country.toString()) {
-      return res.status(403).json({ message: 'Not authorized to view this agency' });
-    }
-  
-    if (req.user.role === 'agency_manager' && agency._id.toString() !== req.user.agency.toString()) {
-      return res.status(403).json({ message: 'Not authorized to view this agency' });
-    }
-  
-    res.json(agency);
-  });
+  // Recherche du manager associé
+  const manager = await User.findOne(
+    { role: 'agency_manager', agency: agency._id },
+    'name phoneNumber email'  // Vous pouvez ajouter d'autres champs si nécessaire
+  ).lean();
+
+  // Ajouter le manager à l'objet agence
+  agencyWithManager.manager = manager || null;
+
+  res.json(agencyWithManager);
+});
 
 // @desc    Update an agency
 // @route   PUT /api/agencies/:id

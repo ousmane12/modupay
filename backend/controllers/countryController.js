@@ -137,6 +137,7 @@ const updateCountry = asyncHandler(async (req, res) => {
 // @desc    Delete a country
 // @route   DELETE /api/countries/:id
 // @access  Private (Admin only)
+// Version alternative avec vérification que le country_manager est bien mis à jour
 const deleteCountry = asyncHandler(async (req, res) => {
   const country = await Country.findById(req.params.id);
 
@@ -149,27 +150,68 @@ const deleteCountry = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: 'Not authorized to delete this country' });
   }
 
-  // Supprimer le `country_manager` associé à ce pays, s'il existe
+  // Trouver le `country_manager` associé à ce pays, s'il existe
   const countryManager = await User.findOne({ role: 'country_manager', country: country._id });
+  
   if (countryManager) {
-    // Supprimer les `agency_manager` et les `agents` associés à ce `country_manager`
-    const agencies = await Agency.find({ country: country._id });
-    for (const agency of agencies) {
-      // Supprimer tous les agents associés à cette agence
-      await User.deleteMany({ agency: agency._id });
+    try {
+      // Mettre à jour le country_manager en définissant son champ country à null
+      const updatedManager = await User.findByIdAndUpdate(
+        countryManager._id, 
+        { country: null },
+        { new: true } // Pour retourner le document mis à jour
+      );
+      
+      if (!updatedManager || updatedManager.country !== null) {
+        return res.status(500).json({ 
+          message: 'Failed to update country manager',
+          error: 'Country manager update failed'
+        });
+      }
+      
+      // Journaliser l'action de mise à jour du country manager
+      console.log(`Country manager ${countryManager._id} updated: country set to null`);
+      
+    } catch (error) {
+      return res.status(500).json({ 
+        message: 'Error updating country manager',
+        error: error.message
+      });
     }
+    
+    // Supprimer les `agency_manager` et les `agents` associés à ce pays
+    try {
+      const agencies = await Agency.find({ country: country._id });
+      for (const agency of agencies) {
+        // Supprimer tous les agents associés à cette agence
+        await User.deleteMany({ agency: agency._id });
+      }
 
-    // Supprimer les agences du pays
-    await Agency.deleteMany({ country: country._id });
-
-    // Supprimer le `country_manager`
-    await countryManager.deleteOne();
+      // Supprimer les agences du pays
+      await Agency.deleteMany({ country: country._id });
+    } catch (error) {
+      return res.status(500).json({ 
+        message: 'Error removing agencies and agents',
+        error: error.message
+      });
+    }
   }
 
   // Supprimer le pays lui-même
-  await country.deleteOne();
+  try {
+    await country.deleteOne();
+  } catch (error) {
+    return res.status(500).json({ 
+      message: 'Error removing country',
+      error: error.message
+    });
+  }
 
-  res.status(200).json({ message: 'Country and related entities removed' });
+  res.status(200).json({ 
+    success: true,
+    message: 'Country removed successfully', 
+    details: countryManager ? 'Country manager has been updated with country set to null' : 'No country manager was associated with this country'
+  });
 });
 
 
