@@ -9,7 +9,8 @@ const {
   updateUser,
   deleteUser,
   resetPassword,
-  forgotPassword
+  forgotPassword,
+  getUser
 } = require('../controllers/userController')
 const { protect } = require('../middleware/authMiddleware');
 
@@ -17,7 +18,7 @@ router.post('/', protect, createUser)
 router.post('/login', loginUser)
 router.get('/me', protect, getMe)
 router.get('/all', protect, getUsers)
-router.route('/:id').delete(protect, deleteUser).put(protect, updateUser)
+router.route('/:id').get(protect, getUser).delete(protect, deleteUser).put(protect, updateUser)
 router.post('/forgot-password', forgotPassword)
 router.post('/reset-password/:id', resetPassword);
 
