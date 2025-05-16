@@ -362,12 +362,12 @@ const InventaireFacture = () => {
                       {displayExpenses.map((transaction, index) => (
                         <tr key={index}>
                           <td className="center">{formatDate(transaction.createdAt)}</td>
-                          <td className="left strong">{transaction.country.name}/{transaction.agency.name}</td>
+                          <td className="left strong">{transaction.country?.name}/{transaction.agency?.name}</td>
                           <td>
                             <div className="d-flex align-items-center">
                             <img src={logo} alt="" className="rounded me-3" width="30" />
                             <div>
-                              <h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.spender.name}</h6>
+                              <h6 className="fs-16 text-black font-w600 mb-0 text-nowrap">{transaction.spender?.name}</h6>
                               <span className="fs-14">{transaction.label}</span>
                             </div>
                             </div>
